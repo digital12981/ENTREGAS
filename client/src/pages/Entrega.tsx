@@ -216,15 +216,25 @@ const Entrega: React.FC = () => {
         telefone = parsedUserData.telefone || "";
       }
       
-      const apiEndpoint = `${API_BASE_URL}/api/payments/pix`;
+      // Em produção, use a URL completa do Heroku
+      const apiEndpoint = import.meta.env.PROD 
+        ? 'https://shopee-delivery-api.herokuapp.com/api/payments/pix'
+        : '/api/payments/pix';
+        
       console.log('Enviando requisição de pagamento para For4Payments via:', apiEndpoint);
       
-      // Enviar requisição para API da For4Payments sem usar credenciais
+      // Configurar headers, especialmente para CORS
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      });
+      
+      // Enviar requisição para API da For4Payments com configuração CORS apropriada
       const response = await fetch(apiEndpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: headers,
+        mode: 'cors',
+        credentials: 'omit', // Importante para CORS
         body: JSON.stringify({
           name: dadosUsuario.nome,
           cpf: dadosUsuario.cpf,

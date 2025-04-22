@@ -10,7 +10,20 @@ import {
   insertUserSchema 
 } from "@shared/schema";
 
+// Importar spawn do child_process para executar scripts Python
+import { spawn } from 'child_process';
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Rota de healthcheck
+  app.get('/health', (req, res) => {
+    res.json({
+      status: 'ok',
+      env: process.env.NODE_ENV || 'development',
+      version: '1.0.0',
+      message: 'For4Payments API está operacional',
+      timestamp: new Date().toISOString()
+    });
+  });
   // Rota para obter todos os estados
   app.get('/api/states', async (req, res) => {
     try {
@@ -126,27 +139,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rota para processar pagamento PIX (usando TS API For4Payments)
   app.post('/api/payments/pix', async (req, res) => {
     try {
+      // Verificar se a API For4Payments está configurada
+      if (!process.env.FOR4PAYMENTS_SECRET_KEY) {
+        console.error('ERRO: FOR4PAYMENTS_SECRET_KEY não configurada');
+        return res.status(500).json({
+          error: 'Serviço de pagamento não configurado. Configure a chave de API For4Payments.',
+        });
+      }
+
+      console.log('Dados de pagamento recebidos:', req.body);
+      
       // Validar dados da requisição
       const { name, email, cpf, phone } = req.body;
       
       // Validação básica
-      if (!name || !email || !cpf) {
-        return res.status(400).json({ 
-          error: 'Dados incompletos. Nome, CPF e email são obrigatórios.' 
-        });
+      if (!name) {
+        return res.status(400).json({ error: 'Nome é obrigatório.' });
+      }
+      
+      if (!cpf) {
+        return res.status(400).json({ error: 'CPF é obrigatório.' });
       }
       
       // Valor fixo para o kit de segurança: R$ 84,70
       const paymentAmount = 84.70;
       
+      console.log(`Processando pagamento de R$ ${paymentAmount} para ${name}, CPF ${cpf}`);
+      
       // Processar pagamento via For4Payments
       const paymentResult = await paymentService.createPixPayment({
         name,
-        email,
+        email: email || '',
         cpf,
-        phone,
+        phone: phone || '',
         amount: paymentAmount
       });
+      
+      console.log('Resultado do pagamento For4Payments:', paymentResult);
       
       // Retornar resultado para o frontend
       res.status(200).json(paymentResult);
