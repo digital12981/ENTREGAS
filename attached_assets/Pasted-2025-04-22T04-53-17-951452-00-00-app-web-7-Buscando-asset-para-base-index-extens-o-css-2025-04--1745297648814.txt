@@ -1,0 +1,130 @@
+2025-04-22T04:53:17.951452+00:00 app[web.7]: Buscando asset para base: index, extensão: css
+2025-04-22T04:53:17.951492+00:00 app[web.7]: Procurando em: /app/dist/public/assets
+2025-04-22T04:53:17.951600+00:00 app[web.7]: ✅ Referência corrigida: href="/assets/index-BRHWOuev.css" -> href="/assets/index-BRHWOuev.css"
+2025-04-22T04:53:17.954408+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=www.shopee-entregas.com request_id=f4a3dfc9-eef4-40b5-87d4-d2e7a594aca4 fwd="201.87.251.220" dyno=web.7 connect=0ms service=9ms status=304 bytes=151 protocol=https
+2025-04-22T04:53:25.010575+00:00 heroku[api.12]: State changed from crashed to starting
+2025-04-22T04:53:25.584619+00:00 heroku[api.9]: State changed from crashed to starting
+2025-04-22T04:53:26.372861+00:00 heroku[api.5]: State changed from crashed to starting
+2025-04-22T04:53:26.587068+00:00 heroku[api.29]: State changed from crashed to starting
+2025-04-22T04:53:26.652849+00:00 heroku[api.23]: State changed from crashed to starting
+2025-04-22T04:53:26.880643+00:00 heroku[api.31]: State changed from crashed to starting
+2025-04-22T04:53:27.373677+00:00 heroku[api.32]: State changed from crashed to starting
+2025-04-22T04:53:27.443848+00:00 heroku[api.27]: State changed from crashed to starting
+2025-04-22T04:53:27.454219+00:00 heroku[api.19]: State changed from crashed to starting
+2025-04-22T04:53:28.992473+00:00 heroku[api.18]: State changed from crashed to starting
+2025-04-22T04:53:29.137171+00:00 heroku[api.22]: State changed from crashed to starting
+2025-04-22T04:53:29.616029+00:00 heroku[api.28]: State changed from crashed to starting
+2025-04-22T04:53:30.232978+00:00 heroku[api.1]: State changed from crashed to starting
+2025-04-22T04:53:30.120200+00:00 heroku[router]: at=info method=GET path="/" host=www.shopee-entregas.com request_id=83778107-da74-4e24-913f-36792117271b fwd="201.87.251.220" dyno=web.8 connect=1ms service=17ms status=304 bytes=151 protocol=https
+2025-04-22T04:53:30.113465+00:00 app[web.8]: Servindo página principal de: /app/dist/public/index.html
+2025-04-22T04:53:30.113801+00:00 app[web.8]: Índice contém referências a assets com hash dinâmico
+2025-04-22T04:53:30.114414+00:00 app[web.8]: Processando referência a asset: src="/assets/index-B7US44-a.js"
+2025-04-22T04:53:30.114642+00:00 app[web.8]: Buscando asset para base: index-B7US44, extensão: js
+2025-04-22T04:53:30.114776+00:00 app[web.8]: Procurando em: /app/dist/public/assets
+2025-04-22T04:53:30.115034+00:00 app[web.8]: ✅ Referência corrigida: src="/assets/index-B7US44-a.js" -> src="/assets/index-B7US44-a.js"
+2025-04-22T04:53:30.115110+00:00 app[web.8]: Processando referência a asset: href="/assets/index-BRHWOuev.css"
+2025-04-22T04:53:30.115282+00:00 app[web.8]: Buscando asset para base: index, extensão: css
+2025-04-22T04:53:30.115386+00:00 app[web.8]: Procurando em: /app/dist/public/assets
+2025-04-22T04:53:30.115586+00:00 app[web.8]: ✅ Referência corrigida: href="/assets/index-BRHWOuev.css" -> href="/assets/index-BRHWOuev.css"
+2025-04-22T04:53:30.298054+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=www.shopee-entregas.com request_id=a18547b7-87c6-4f42-a725-51567eb0a1d6 fwd="201.87.251.220" dyno=web.20 connect=0ms service=12ms status=304 bytes=151 protocol=https
+2025-04-22T04:53:30.292569+00:00 app[web.20]: ❌ Arquivo não encontrado: /favicon.ico
+2025-04-22T04:53:30.292841+00:00 app[web.20]: Servindo página principal de: /app/dist/public/index.html
+2025-04-22T04:53:30.293089+00:00 app[web.20]: Índice contém referências a assets com hash dinâmico
+2025-04-22T04:53:30.293566+00:00 app[web.20]: Processando referência a asset: src="/assets/index-B7US44-a.js"
+2025-04-22T04:53:30.293616+00:00 app[web.20]: Buscando asset para base: index-B7US44, extensão: js
+2025-04-22T04:53:30.293809+00:00 app[web.20]: Procurando em: /app/dist/public/assets
+2025-04-22T04:53:30.294036+00:00 app[web.20]: ✅ Referência corrigida: src="/assets/index-B7US44-a.js" -> src="/assets/index-B7US44-a.js"
+2025-04-22T04:53:30.294085+00:00 app[web.20]: Processando referência a asset: href="/assets/index-BRHWOuev.css"
+2025-04-22T04:53:30.294112+00:00 app[web.20]: Buscando asset para base: index, extensão: css
+2025-04-22T04:53:30.294173+00:00 app[web.20]: Procurando em: /app/dist/public/assets
+2025-04-22T04:53:30.294330+00:00 app[web.20]: ✅ Referência corrigida: href="/assets/index-BRHWOuev.css" -> href="/assets/index-BRHWOuev.css"
+2025-04-22T04:53:32.529461+00:00 heroku[api.36]: State changed from crashed to starting
+2025-04-22T04:53:32.627079+00:00 heroku[api.12]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:32.668699+00:00 heroku[api.11]: State changed from crashed to starting
+2025-04-22T04:53:33.016294+00:00 heroku[api.9]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:33.214129+00:00 heroku[api.12]: State changed from starting to up
+2025-04-22T04:53:33.225378+00:00 heroku[api.12]: Process exited with status 127
+2025-04-22T04:53:33.173233+00:00 app[api.12]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:33.244947+00:00 heroku[api.12]: State changed from up to crashed
+2025-04-22T04:53:33.444499+00:00 heroku[api.30]: State changed from crashed to starting
+2025-04-22T04:53:33.582580+00:00 heroku[api.9]: State changed from starting to up
+2025-04-22T04:53:33.580200+00:00 heroku[api.9]: Process exited with status 127
+2025-04-22T04:53:33.535405+00:00 app[api.9]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:33.600118+00:00 heroku[api.9]: State changed from up to crashed
+2025-04-22T04:53:33.749332+00:00 heroku[api.5]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:33.940060+00:00 heroku[api.23]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:34.159972+00:00 heroku[api.29]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:34.296839+00:00 heroku[api.31]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:34.315392+00:00 heroku[api.5]: State changed from starting to up
+2025-04-22T04:53:34.326521+00:00 heroku[api.5]: Process exited with status 127
+2025-04-22T04:53:34.277155+00:00 app[api.5]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:34.348396+00:00 heroku[api.5]: State changed from up to crashed
+2025-04-22T04:53:34.362810+00:00 heroku[api.15]: State changed from crashed to starting
+2025-04-22T04:53:34.467597+00:00 heroku[api.23]: Process exited with status 127
+2025-04-22T04:53:34.433384+00:00 app[api.23]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:34.487662+00:00 heroku[api.23]: State changed from starting to crashed
+2025-04-22T04:53:34.745354+00:00 heroku[api.29]: Process exited with status 127
+2025-04-22T04:53:34.709218+00:00 app[api.29]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:34.765635+00:00 heroku[api.29]: State changed from starting to crashed
+2025-04-22T04:53:34.824972+00:00 heroku[api.31]: Process exited with status 127
+2025-04-22T04:53:34.786789+00:00 app[api.31]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:34.835122+00:00 heroku[api.19]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:34.848489+00:00 heroku[api.31]: State changed from starting to crashed
+2025-04-22T04:53:34.898763+00:00 heroku[api.27]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:35.091958+00:00 heroku[api.16]: State changed from crashed to starting
+2025-04-22T04:53:35.103457+00:00 heroku[api.32]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:35.237981+00:00 heroku[api.4]: State changed from crashed to starting
+2025-04-22T04:53:35.384948+00:00 heroku[api.19]: Process exited with status 127
+2025-04-22T04:53:35.348976+00:00 app[api.19]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:35.410259+00:00 heroku[api.19]: State changed from starting to crashed
+2025-04-22T04:53:35.449812+00:00 heroku[api.27]: State changed from starting to up
+2025-04-22T04:53:35.484240+00:00 heroku[api.27]: Process exited with status 127
+2025-04-22T04:53:35.445595+00:00 app[api.27]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:35.507671+00:00 heroku[api.27]: State changed from up to crashed
+2025-04-22T04:53:35.673401+00:00 heroku[api.32]: State changed from starting to up
+2025-04-22T04:53:35.700438+00:00 heroku[api.32]: Process exited with status 127
+2025-04-22T04:53:35.658732+00:00 app[api.32]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:35.723150+00:00 heroku[api.32]: State changed from up to crashed
+2025-04-22T04:53:36.583813+00:00 heroku[api.22]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:36.592239+00:00 heroku[api.18]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:36.878603+00:00 heroku[api.28]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:37.146280+00:00 heroku[api.22]: State changed from starting to up
+2025-04-22T04:53:37.150992+00:00 heroku[api.22]: Process exited with status 127
+2025-04-22T04:53:37.102938+00:00 app[api.22]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:37.167938+00:00 heroku[api.18]: State changed from starting to up
+2025-04-22T04:53:37.176013+00:00 heroku[api.22]: State changed from up to crashed
+2025-04-22T04:53:37.167341+00:00 heroku[api.18]: Process exited with status 127
+2025-04-22T04:53:37.122215+00:00 app[api.18]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:37.190056+00:00 heroku[api.18]: State changed from up to crashed
+2025-04-22T04:53:37.362505+00:00 heroku[api.28]: Process exited with status 127
+2025-04-22T04:53:37.316856+00:00 app[api.28]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:37.381165+00:00 heroku[api.28]: State changed from starting to crashed
+2025-04-22T04:53:37.860197+00:00 heroku[api.1]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:38.379114+00:00 heroku[api.1]: Process exited with status 127
+2025-04-22T04:53:38.347367+00:00 app[api.1]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:38.399615+00:00 heroku[api.1]: State changed from starting to crashed
+2025-04-22T04:53:39.863927+00:00 heroku[api.36]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:40.319819+00:00 app[api.36]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:40.363682+00:00 heroku[api.36]: Process exited with status 127
+2025-04-22T04:53:40.384231+00:00 heroku[api.36]: State changed from starting to crashed
+2025-04-22T04:53:40.376784+00:00 heroku[api.11]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:40.921378+00:00 heroku[api.11]: State changed from starting to up
+2025-04-22T04:53:40.948366+00:00 heroku[api.11]: Process exited with status 127
+2025-04-22T04:53:40.907097+00:00 app[api.11]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:40.974869+00:00 heroku[api.11]: State changed from up to crashed
+2025-04-22T04:53:40.982303+00:00 heroku[api.30]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:41.515409+00:00 heroku[api.30]: Process exited with status 127
+2025-04-22T04:53:41.467686+00:00 app[api.30]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:41.542984+00:00 heroku[api.30]: State changed from starting to crashed
+2025-04-22T04:53:41.671202+00:00 heroku[api.15]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:42.156566+00:00 app[api.15]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:42.202655+00:00 heroku[api.15]: Process exited with status 127
+2025-04-22T04:53:42.227103+00:00 heroku[api.15]: State changed from starting to crashed
+2025-04-22T04:53:42.506951+00:00 heroku[api.16]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:42.599348+00:00 heroku[api.4]: Starting process with command `gunicorn for4payments-wrapper:app --timeout 120`
+2025-04-22T04:53:43.039654+00:00 heroku[api.16]: Process exited with status 127
+2025-04-22T04:53:43.068183+00:00 heroku[api.16]: State changed from starting to crashed
+2025-04-22T04:53:43.003572+00:00 app[api.16]: /bin/bash: line 1: gunicorn: command not found
+2025-04-22T04:53:43.112558+00:00 heroku[api.4]: Process exited with status 127
+2025-04-22T04:53:43.132763+00:00 heroku[api.4]: State changed from starting to crashed
+2025-04-22T04:53:43.072615+00:00 app[api.4]: /bin/bash: line 1: gunicorn: command not found

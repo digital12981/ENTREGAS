@@ -534,8 +534,40 @@ function serveStaticFiles() {
           if (hasHashedAssets) {
             console.log('Índice contém referências a assets com hash dinâmico');
             
+            // Inspecionar que o HTML tem o conteúdo correto
+            console.log(`Conteúdo HTML (primeiros 500 caracteres): ${indexContent.substring(0, 500)}`);
+            
+            // Adicionar código de debugging para ver se há erros JavaScript no console
+            const debugScript = `
+<script>
+  console.log('Debug script carregado');
+  window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Erro Javascript:', message, 'em', source, 'linha:', lineno);
+    document.body.innerHTML += '<div style="position:fixed; top:0; left:0; background:#f8d7da; color:#721c24; padding:20px; z-index:9999; width:100%;">' + 
+      '<h3>Erro JavaScript detectado:</h3>' +
+      '<p>' + message + '</p>' +
+      '<p>Em: ' + source + ', linha: ' + lineno + '</p>' +
+      '</div>';
+    return true;
+  };
+  
+  // Verificar se o React está carregando
+  setTimeout(function() {
+    if (document.body.childElementCount === 0 || (document.getElementById('root') && document.getElementById('root').childElementCount === 0)) {
+      document.body.innerHTML += '<div style="position:fixed; top:0; left:0; background:#fff3cd; color:#856404; padding:20px; z-index:9999; width:100%;">' + 
+        '<h3>Aviso:</h3>' +
+        '<p>A aplicação React não renderizou nenhum conteúdo. Verificando estado do DOM.</p>' +
+        '<p>Elementos no body: ' + document.body.childElementCount + '</p>' +
+        '</div>';
+    }
+  }, 3000);
+</script>`;
+            
             // Processar o HTML para modificar referências a assets com hash
-            const processedHtml = fixAssetReferences(indexContent, distDir);
+            let processedHtml = fixAssetReferences(indexContent, distDir);
+            
+            // Inserir o script de debug antes do fechamento do </body>
+            processedHtml = processedHtml.replace('</body>', debugScript + '</body>');
             
             // Enviar o HTML processado
             res.set('Content-Type', 'text/html');
