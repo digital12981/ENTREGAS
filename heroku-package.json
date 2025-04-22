@@ -7,9 +7,9 @@
   "type": "commonjs",
   "private": true,
   "description": "Versão Heroku do aplicativo Shopee Entregas",
-  "main": "heroku.cjs",
+  "main": "heroku-index.cjs",
   "scripts": {
-    "start": "node heroku.cjs",
+    "start": "node heroku-index.cjs",
     "heroku-postbuild": "node build-for-heroku.cjs"
   },
   "dependencies": {

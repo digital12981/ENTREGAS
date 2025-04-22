@@ -1,1 +1,1 @@
-web: node heroku.cjs
+web: node heroku-index.cjs
