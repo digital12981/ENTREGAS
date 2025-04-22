@@ -123,6 +123,27 @@ function serveStaticFiles() {
   
   if (!fs.existsSync(publicDir)) {
     console.warn(`⚠️ Diretório de arquivos estáticos não encontrado: ${publicDir}`);
+    console.log('Diretórios disponíveis:');
+    
+    // Listar diretórios disponíveis para debug
+    try {
+      const distDir = join(__dirname, 'dist');
+      if (fs.existsSync(distDir)) {
+        console.log(`Conteúdo de ${distDir}:`);
+        const distContent = fs.readdirSync(distDir);
+        console.log(distContent);
+        
+        // Verificar pasta assets
+        const assetsDir = join(distDir, 'public', 'assets');
+        if (fs.existsSync(assetsDir)) {
+          console.log(`Conteúdo de ${assetsDir}:`);
+          const assetsContent = fs.readdirSync(assetsDir);
+          console.log(assetsContent);
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao listar diretórios:', e);
+    }
     
     // Criar uma página temporária caso os arquivos estáticos não existam
     app.get('*', (req, res) => {
@@ -153,8 +174,101 @@ function serveStaticFiles() {
     return;
   }
   
-  // Servir arquivos estáticos
-  app.use(express.static(publicDir));
+  // Verificar a estrutura real dos diretórios após o build
+  const directoryStructure = {};
+  
+  // Investigar a estrutura de dist
+  const distDir = join(__dirname, 'dist');
+  if (fs.existsSync(distDir)) {
+    directoryStructure.dist = fs.readdirSync(distDir);
+    
+    // Verificar se existe a pasta 'assets' diretamente em dist
+    const distAssets = join(distDir, 'assets');
+    if (fs.existsSync(distAssets)) {
+      directoryStructure.distAssets = fs.readdirSync(distAssets);
+    }
+    
+    // Verificar se existe a pasta 'public' em dist
+    const distPublic = join(distDir, 'public');
+    if (fs.existsSync(distPublic)) {
+      directoryStructure.distPublic = fs.readdirSync(distPublic);
+      
+      // Verificar se existe a pasta 'assets' dentro de public
+      const publicAssets = join(distPublic, 'assets');
+      if (fs.existsSync(publicAssets)) {
+        directoryStructure.publicAssets = fs.readdirSync(publicAssets);
+      }
+    }
+  }
+  
+  console.log('Estrutura de diretórios encontrada:');
+  console.log(JSON.stringify(directoryStructure, null, 2));
+  
+  // Servir arquivos estáticos considerando todas as possíveis estruturas
+  
+  // 1. Primeiro, tentar servir de dist/public se existir
+  if (fs.existsSync(publicDir)) {
+    console.log(`Servindo arquivos estáticos de: ${publicDir}`);
+    app.use(express.static(publicDir));
+  }
+  
+  // 2. Servir também diretamente de dist/ como fallback
+  console.log(`Servindo arquivos estáticos também de: ${distDir}`);
+  app.use(express.static(distDir));
+  
+  // 3. Rota específica para assets que lida com diferentes formatos de URL
+  app.get(['/assets/*', '*/assets/*'], (req, res, next) => {
+    console.log(`Requisição para asset: ${req.path}`);
+    
+    // Remover qualquer prefixo do caminho e extrair o nome do arquivo
+    const assetPath = req.path.replace(/^.*assets\//, '');
+    
+    // Listar todos os caminhos possíveis para o arquivo
+    const possiblePaths = [
+      join(distDir, 'assets', assetPath),
+      join(publicDir, 'assets', assetPath),
+      join(distDir, 'public', 'assets', assetPath),
+      // Adicionar suporte para subdiretórios
+      ...directoryStructure.distAssets?.map(subdir => 
+        join(distDir, 'assets', subdir, assetPath)) || [],
+      ...directoryStructure.publicAssets?.map(subdir => 
+        join(publicDir, 'assets', subdir, assetPath)) || []
+    ];
+    
+    // Verificar cada caminho e enviar o primeiro arquivo encontrado
+    for (const path of possiblePaths) {
+      if (fs.existsSync(path)) {
+        console.log(`Asset encontrado em: ${path}`);
+        return res.sendFile(path);
+      }
+    }
+    
+    console.log(`⚠️ Asset não encontrado: ${assetPath}`);
+    next();
+  });
+  
+  // 4. Rota específica para lidar com requisições diretas de JS e CSS
+  app.get(['*.js', '*.css'], (req, res, next) => {
+    const filename = req.path.split('/').pop();
+    console.log(`Requisição para arquivo ${filename}`);
+    
+    // Procurar o arquivo em diretórios dist e seus subdiretórios
+    const possibleLocations = [
+      join(distDir, filename),
+      join(publicDir, filename),
+      join(distDir, 'assets', filename),
+      join(publicDir, 'assets', filename)
+    ];
+    
+    for (const location of possibleLocations) {
+      if (fs.existsSync(location)) {
+        console.log(`Arquivo encontrado em: ${location}`);
+        return res.sendFile(location);
+      }
+    }
+    
+    next();
+  });
   
   // Fallback para index.html (SPA routing)
   app.get('*', (req, res) => {
