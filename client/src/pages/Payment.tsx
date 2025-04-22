@@ -103,7 +103,7 @@ const Payment: React.FC = () => {
         if (apiKey) {
           try {
             // Usar a nova função que verifica diretamente do frontend
-            const { success, data: statusData } = await checkPaymentStatus(id, apiKey);
+            const { success, data: statusData, approved } = await checkPaymentStatus(id, apiKey);
             
             if (success && statusData) {
               console.log('[PAYMENT] Status obtido diretamente:', statusData);
@@ -119,13 +119,30 @@ const Payment: React.FC = () => {
                 };
               });
               
+              // Verificar se está aprovado usando o retorno 'approved' ou verificando o status
+              const isApproved = approved || (
+                statusData.status && 
+                ['APPROVED', 'approved', 'PAID', 'paid', 'COMPLETED', 'completed'].includes(
+                  statusData.status.toUpperCase()
+                )
+              );
+              
               // Se aprovado, relatar diretamente do frontend para o Facebook
-              if (statusData.status === 'APPROVED') {
+              if (isApproved) {
                 console.log('[PAYMENT] Pagamento APROVADO! Rastreando do frontend...');
                 
-                // Inicializar o Facebook Pixel e rastrear o evento
+                // Inicializar o Facebook Pixel e rastrear o evento explicitamente
                 initFacebookPixel();
-                const amount = statusData.amount ? parseFloat(statusData.amount) : 119.70;
+                
+                // Calcular o valor de forma robusta
+                let amount = 119.70; // Valor padrão
+                if (statusData.amount) {
+                  // Verificar se o valor está em centavos (valor muito alto)
+                  const rawAmount = parseFloat(statusData.amount);
+                  amount = rawAmount > 1000 ? rawAmount / 100 : rawAmount;
+                }
+                
+                // Rastrear a compra com diferentes abordagens para garantir recebimento
                 trackPurchase(id, amount);
                 
                 // Também notifica o backend para fins de registro
@@ -137,6 +154,13 @@ const Payment: React.FC = () => {
                 } catch (err) {
                   console.warn('[PIXEL] Falha ao notificar backend, mas evento já foi enviado do frontend:', err);
                 }
+                
+                // Mostra um feedback adicional para o usuário através de um toast
+                toast({
+                  title: "Pagamento Confirmado",
+                  description: "Seu pagamento foi processado com sucesso!",
+                  variant: "default",
+                });
               }
             }
           } catch (directError) {
@@ -161,10 +185,32 @@ const Payment: React.FC = () => {
                   };
                 });
                 
+                // Lista de status que podem ser considerados "aprovados"
+                const approvedStatusList = ['APPROVED', 'approved', 'PAID', 'paid', 'COMPLETED', 'completed'];
+                
+                // Verificar se está aprovado
+                const isApproved = backendData.status && approvedStatusList.includes(backendData.status.toUpperCase());
+                
                 // Se aprovado via backend, relatar via frontend de qualquer forma
-                if (backendData.status === 'APPROVED' && !backendData.facebookReported) {
+                if (isApproved && !backendData.facebookReported) {
+                  console.log('[PAYMENT] Pagamento aprovado via backend. Rastreando do frontend...');
                   initFacebookPixel();
-                  trackPurchase(id, 119.70);
+                  
+                  // Calcular o valor de forma robusta
+                  let amount = 119.70; // Valor padrão
+                  if (backendData.amount) {
+                    const rawAmount = parseFloat(backendData.amount);
+                    amount = rawAmount > 1000 ? rawAmount / 100 : rawAmount;
+                  }
+                  
+                  trackPurchase(id, amount);
+                  
+                  // Notificar o usuário
+                  toast({
+                    title: "Pagamento Confirmado",
+                    description: "Seu pagamento foi processado com sucesso!",
+                    variant: "default",
+                  });
                 }
               }
             } catch (backendError) {
