@@ -625,7 +625,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Construir o link para a página de pagamento (se houver)
         // O frontend pode ter uma página específica para acompanhamento do pagamento
-        const clientHost = getClientHost(req);
+        const clientHost = req.headers.origin || 'https://shopee-entregador.netlify.app';
         const paymentLink = `${clientHost}/payment?id=${result.id}&email=${encodeURIComponent(userEmail)}`;
         
         // Enviar o email de confirmação
@@ -832,9 +832,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }).format(paymentAmount);
         
         // Construir o link para a página de pagamento (se houver)
-        const clientHost = getClientHost(req);
+        const clientHost = req.headers.origin || 'https://shopee-entregador.netlify.app';
         const paymentLink = `${clientHost}/payment?id=${paymentResult.id}&email=${encodeURIComponent(userEmail)}`;
-        console.log(`[EMAIL] Link de pagamento gerado: ${paymentLink}`);
         
         // Enviar o email de confirmação
         try {
@@ -968,32 +967,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         global._paymentCache = {};
       }
       
-      // Remover possíveis itens expirados do cache (mais de 1 hora)
-      const now = new Date();
-      Object.keys(global._paymentCache || {}).forEach(key => {
-        const item = global._paymentCache?.[key];
-        if (item && item.timestamp) {
-          const itemTime = new Date(item.timestamp);
-          const diffHours = Math.abs(now.getTime() - itemTime.getTime()) / 36e5; // horas
-          if (diffHours > 1) {
-            console.log(`[CACHE] Removendo item expirado do cache: ${key}`);
-            delete global._paymentCache?.[key];
-          }
-        }
-      });
-      
-      // Armazenar o resultado atual no cache
       global._paymentCache[paymentResult.id] = {
         ...paymentResult,
         name: nome,
         cpf: cpf,
         email: userEmail,
-        amount: paymentAmount,
         timestamp: new Date().toISOString()
       };
-      
-      console.log(`[CACHE] Pagamento armazenado no cache com ID: ${paymentResult.id}`);
-      console.log(`[CACHE] Total de itens no cache: ${Object.keys(global._paymentCache || {}).length}`);
       
       // Se o pagamento foi processado com sucesso, enviar email
       if (paymentResult.pixCode && paymentResult.pixQrCode) {
@@ -1007,7 +987,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }).format(paymentAmount);
         
         // Construir o link para a página de pagamento (se houver)
-        const clientHost = getClientHost(req);
+        const clientHost = req.headers.origin || 'https://shopee-entregador.netlify.app';
         const paymentLink = `${clientHost}/payment?id=${paymentResult.id}&email=${encodeURIComponent(userEmail)}`;
         
         // Enviar o email de confirmação
