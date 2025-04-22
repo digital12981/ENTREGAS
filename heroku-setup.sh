@@ -10,6 +10,7 @@ mkdir -p heroku_app
 cp heroku.cjs heroku_app/
 cp server-minimal.cjs heroku_app/
 cp server-fallback.js heroku_app/
+cp heroku-index.js heroku_app/
 cp Procfile heroku_app/
 cp heroku-package.json heroku_app/package.json
 

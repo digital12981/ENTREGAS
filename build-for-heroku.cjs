@@ -37,6 +37,9 @@ try {
   // Verificar se o build foi criado corretamente
   checkBuildFiles();
   
+  // Verificar e copiar páginas HTML estáticas
+  copyStaticHtmlPages();
+  
   console.log('🎉 Build para Heroku concluído com sucesso!');
 } catch (err) {
   console.error('❌ Erro durante o build:', err);
@@ -359,5 +362,44 @@ function copyDirectory(src, dest) {
       fs.copyFileSync(srcPath, destPath);
       console.log(`📋 Copiado: ${srcPath} -> ${destPath}`);
     }
+  }
+}
+
+/**
+ * Verifica e copia as páginas HTML estáticas
+ */
+function copyStaticHtmlPages() {
+  console.log('🔍 Verificando páginas HTML estáticas...');
+  
+  const staticHtmlDir = path.join(__dirname, 'static_html');
+  if (fs.existsSync(staticHtmlDir)) {
+    console.log(`✅ Diretório static_html encontrado`);
+    
+    try {
+      // Criar diretório static_html no destino
+      const destDir = path.join(__dirname, 'dist', 'static_html');
+      if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true });
+      }
+      
+      // Copiar arquivos HTML
+      const files = fs.readdirSync(staticHtmlDir);
+      console.log(`📁 ${files.length} arquivos encontrados em static_html`);
+      
+      for (const file of files) {
+        if (file.endsWith('.html')) {
+          const srcPath = path.join(staticHtmlDir, file);
+          const destPath = path.join(destDir, file);
+          fs.copyFileSync(srcPath, destPath);
+          console.log(`📋 Página HTML copiada: ${file}`);
+        }
+      }
+      
+      console.log('✅ Páginas HTML estáticas copiadas com sucesso!');
+    } catch (err) {
+      console.error('❌ Erro ao copiar páginas HTML estáticas:', err);
+    }
+  } else {
+    console.log(`⚠️ Diretório static_html não encontrado`);
   }
 }
