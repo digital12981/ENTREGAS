@@ -282,7 +282,7 @@ async function desktopDetectionMiddleware(req: Request, res: Response, next: Nex
   
   if (!existingBannedIp) {
     // IP não existe, criar novo registro
-    await storage.createBannedIp({
+    const bannedIpData = {
       ip,
       isBanned: true,
       userAgent: userAgent || '',
@@ -298,10 +298,86 @@ async function desktopDetectionMiddleware(req: Request, res: Response, next: Nex
         : `Tentativa de acesso via desktop (${refererAnalysis})`,
       location,
       accessUrl: req.originalUrl || req.url || '/'
-    });
+    };
+    
+    await storage.createBannedIp(bannedIpData);
+    
+    // Notificar os clientes WebSocket sobre o novo IP banido se houver conexões ativas
+    if (typeof connectedClients !== 'undefined' && connectedClients.length > 0) {
+      const ipInfo = {
+        ip,
+        userAgent: userAgent || 'Desconhecido',
+        device,
+        browserInfo,
+        platform,
+        location,
+        reason: device === "WhatsApp Web" 
+          ? `Tentativa de acesso via WhatsApp Web (${refererAnalysis})`
+          : `Tentativa de acesso via desktop (${refererAnalysis})`,
+        timestamp: new Date().toISOString()
+      };
+      
+      broadcastToAll({
+        type: 'ip_banned',
+        ip: ipInfo
+      });
+      
+      // Atualizar estatísticas de dispositivos
+      if (typeof deviceStats !== 'undefined') {
+        if (device.includes('WhatsApp Web')) {
+          deviceStats = deviceStats.map(stat => 
+            stat.type === 'WhatsApp Web' ? {...stat, count: stat.count + 1} : stat
+          );
+        } else if (device.includes('Desktop')) {
+          deviceStats = deviceStats.map(stat => 
+            stat.type === 'Desktop (Bloqueado)' ? {...stat, count: stat.count + 1} : stat
+          );
+        }
+        
+        // Broadcast das estatísticas atualizadas
+        broadcastToAll({
+          type: 'device_stats',
+          devices: deviceStats
+        });
+      }
+      
+      // Atualizar estatísticas de origens de acesso
+      if (typeof accessSources !== 'undefined') {
+        let source = "Outros";
+        if (referer.includes('whatsapp')) {
+          source = "WhatsApp";
+        } else if (referer.includes('facebook') || referer.includes('fb.com')) {
+          source = "Facebook";
+        } else if (referer.includes('instagram')) {
+          source = "Instagram";
+        } else if (referer.includes('google')) {
+          source = referer.includes('ads') ? "Google" : "Pesquisa Orgânica";
+        } else if (!referer) {
+          source = "Link Direto";
+        }
+        
+        accessSources = accessSources.map(item => 
+          item.source === source ? {...item, count: item.count + 1} : item
+        );
+        
+        // Broadcast das estatísticas atualizadas
+        broadcastToAll({
+          type: 'access_sources',
+          sources: accessSources
+        });
+      }
+    }
   } else if (!existingBannedIp.isBanned) {
     // IP existe mas não está banido, atualizar para banido
     await storage.updateBannedIpStatus(ip, true);
+    
+    // Notificar WebSocket se necessário
+    if (typeof connectedClients !== 'undefined' && connectedClients.length > 0) {
+      broadcastToAll({
+        type: 'dashboard_stats',
+        stats: await getDashboardStats()
+      });
+    }
   }
   
   console.log(`[BLOQUEIO] IP ${ip} banido por acesso via ${device}. Origem: ${refererAnalysis}, Navegador: ${browserInfo}, SO: ${platform}`);
@@ -905,6 +981,243 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Configurar o servidor WebSocket para a dashboard
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // Rastrear conexões ativas
+  const connectedClients: WebSocket[] = [];
+  
+  // Variável para armazenar as estatísticas de acesso
+  let accessSources: { source: string, count: number }[] = [
+    { source: "WhatsApp", count: 0 },
+    { source: "Facebook", count: 0 },
+    { source: "Instagram", count: 0 },
+    { source: "Google", count: 0 },
+    { source: "Pesquisa Orgânica", count: 0 },
+    { source: "Link Direto", count: 0 },
+    { source: "Outros", count: 0 }
+  ];
+  
+  // Variável para armazenar estatísticas de dispositivos
+  let deviceStats: { type: string, count: number }[] = [
+    { type: "Smartphone", count: 0 },
+    { type: "Tablet", count: 0 },
+    { type: "Desktop (Permitido)", count: 0 },
+    { type: "Desktop (Bloqueado)", count: 0 },
+    { type: "WhatsApp Web", count: 0 }
+  ];
+  
+  // Simulação de usuários online para a dashboard
+  let onlineUsers = 0;
+  let totalVisits = 0;
+  
+  // Função para obter estatísticas do dashboard
+  async function getDashboardStats() {
+    try {
+      // Obter dados do banco de dados
+      const bannedIps = await storage.getAllBannedIps();
+      const allowedDomains = await storage.getAllAllowedDomains();
+      
+      // Calcular estatísticas
+      const stats = {
+        onlineUsers,
+        totalVisits,
+        bannedIPs: bannedIps.filter(ip => ip.isBanned).length,
+        allowedDomains: allowedDomains.filter(domain => domain.isActive).length
+      };
+      
+      return {
+        stats,
+        bannedIPs: bannedIps
+          .filter(ip => ip.isBanned)
+          .sort((a, b) => (new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()))
+          .slice(0, 50)
+          .map(ip => ({
+            ip: ip.ip,
+            userAgent: ip.userAgent || 'Desconhecido',
+            device: ip.device || 'Desconhecido',
+            browserInfo: ip.browserInfo || 'Desconhecido',
+            platform: ip.platform || 'Desconhecido',
+            location: ip.location || 'Desconhecido',
+            reason: ip.reason || 'Acesso bloqueado',
+            timestamp: ip.updatedAt?.toISOString() || new Date().toISOString()
+          })),
+        accessSources,
+        deviceStats
+      };
+    } catch (error) {
+      console.error('Erro ao obter estatísticas do dashboard:', error);
+      return {
+        stats: { onlineUsers: 0, totalVisits: 0, bannedIPs: 0, allowedDomains: 0 },
+        bannedIPs: [],
+        accessSources,
+        deviceStats
+      };
+    }
+  }
+  
+  // Função para broadcast de mensagens para todos os clientes conectados
+  function broadcastToAll(message: any) {
+    const messageString = JSON.stringify(message);
+    connectedClients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(messageString);
+      }
+    });
+  }
+  
+  // Configuração de listener para conexões WebSocket
+  wss.on('connection', async (ws) => {
+    console.log('Nova conexão WebSocket estabelecida');
+    
+    // Adicionar à lista de clientes conectados
+    connectedClients.push(ws);
+    
+    // Atualizar contador de usuários online
+    onlineUsers += 1;
+    totalVisits += 1;
+    
+    // Broadcast do número atualizado de usuários online
+    broadcastToAll({
+      type: 'user_connected',
+      count: onlineUsers
+    });
+    
+    // Enviar dados iniciais
+    try {
+      const data = await getDashboardStats();
+      ws.send(JSON.stringify({
+        type: 'initial_data',
+        ...data
+      }));
+    } catch (error) {
+      console.error('Erro ao enviar dados iniciais:', error);
+    }
+    
+    // Lidar com mensagens do cliente
+    ws.on('message', async (message) => {
+      try {
+        const data = JSON.parse(message.toString());
+        
+        if (data.type === 'get_dashboard_data') {
+          const dashboardData = await getDashboardStats();
+          
+          ws.send(JSON.stringify({
+            type: 'dashboard_stats',
+            stats: dashboardData.stats
+          }));
+          
+          ws.send(JSON.stringify({
+            type: 'banned_ips',
+            ips: dashboardData.bannedIPs
+          }));
+          
+          ws.send(JSON.stringify({
+            type: 'access_sources',
+            sources: dashboardData.accessSources
+          }));
+          
+          ws.send(JSON.stringify({
+            type: 'device_stats',
+            devices: dashboardData.deviceStats
+          }));
+        }
+      } catch (error) {
+        console.error('Erro ao processar mensagem WebSocket:', error);
+      }
+    });
+    
+    // Lidar com fechamento de conexão
+    ws.on('close', () => {
+      // Remover da lista de clientes
+      const index = connectedClients.indexOf(ws);
+      if (index !== -1) {
+        connectedClients.splice(index, 1);
+      }
+      
+      // Atualizar contador de usuários online
+      onlineUsers = Math.max(0, onlineUsers - 1);
+      
+      // Broadcast do número atualizado de usuários online
+      broadcastToAll({
+        type: 'user_connected',
+        count: onlineUsers
+      });
+      
+      console.log('Conexão WebSocket fechada');
+    });
+  });
+  
+  // Alimentar as estatísticas iniciais com dados do banco
+  (async () => {
+    try {
+      const bannedIps = await storage.getAllBannedIps();
+      
+      // Atualizar estatísticas de dispositivos com base nos dados existentes
+      const deviceCounts: Record<string, number> = {};
+      
+      bannedIps.forEach(ip => {
+        const device = ip.device || 'Desconhecido';
+        
+        if (device.includes('WhatsApp Web')) {
+          deviceCounts['WhatsApp Web'] = (deviceCounts['WhatsApp Web'] || 0) + 1;
+        } else if (device.includes('Desktop')) {
+          if (ip.isBanned) {
+            deviceCounts['Desktop (Bloqueado)'] = (deviceCounts['Desktop (Bloqueado)'] || 0) + 1;
+          } else {
+            deviceCounts['Desktop (Permitido)'] = (deviceCounts['Desktop (Permitido)'] || 0) + 1;
+          }
+        } else if (device.includes('Tablet')) {
+          deviceCounts['Tablet'] = (deviceCounts['Tablet'] || 0) + 1;
+        } else {
+          deviceCounts['Smartphone'] = (deviceCounts['Smartphone'] || 0) + 1;
+        }
+      });
+      
+      // Atualizar estatísticas de dispositivos
+      deviceStats = deviceStats.map(stat => ({
+        ...stat,
+        count: deviceCounts[stat.type] || 0
+      }));
+      
+      // Atualizar estatísticas de origens de acesso
+      const sourceCounts: Record<string, number> = {};
+      
+      bannedIps.forEach(ip => {
+        let source = "Outros";
+        const referer = ip.referer || '';
+        
+        if (referer.includes('whatsapp')) {
+          source = "WhatsApp";
+        } else if (referer.includes('facebook') || referer.includes('fb.com')) {
+          source = "Facebook";
+        } else if (referer.includes('instagram')) {
+          source = "Instagram";
+        } else if (referer.includes('google')) {
+          if (referer.includes('ads') || referer.includes('adwords')) {
+            source = "Google";
+          } else {
+            source = "Pesquisa Orgânica";
+          }
+        } else if (!referer) {
+          source = "Link Direto";
+        }
+        
+        sourceCounts[source] = (sourceCounts[source] || 0) + 1;
+      });
+      
+      // Atualizar estatísticas de origens de acesso
+      accessSources = accessSources.map(source => ({
+        ...source,
+        count: sourceCounts[source.source] || 0
+      }));
+      
+      console.log('Estatísticas iniciais carregadas para o dashboard');
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas iniciais:', error);
+    }
+  })();
 
   return httpServer;
 }
