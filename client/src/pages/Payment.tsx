@@ -23,6 +23,9 @@ interface PaymentInfo {
   facebookReported?: boolean;
 }
 
+// Definir um tipo auxiliar para atualizações de estado mais seguras
+type PaymentInfoUpdate = Partial<PaymentInfo> & { id: string; pixCode: string; pixQrCode: string; }
+
 const Payment: React.FC = () => {
   useScrollTop();
   const [, setLocation] = useLocation();
@@ -178,13 +181,16 @@ const Payment: React.FC = () => {
               const backendData = await backendResponse.json();
               
               // Atualizar o estado com os dados do backend
-              setPaymentInfo(prev => ({
-                ...prev,
-                status: backendData.status || prev?.status || 'PENDING',
-                approvedAt: backendData.approvedAt || prev?.approvedAt,
-                rejectedAt: backendData.rejectedAt || prev?.rejectedAt,
-                facebookReported: backendData.facebookReported || prev?.facebookReported
-              }));
+              setPaymentInfo(prev => {
+                if (!prev) return prev;
+                return {
+                  ...prev,
+                  status: backendData.status || prev.status || 'PENDING',
+                  approvedAt: backendData.approvedAt || prev.approvedAt,
+                  rejectedAt: backendData.rejectedAt || prev.rejectedAt,
+                  facebookReported: backendData.facebookReported || prev.facebookReported
+                };
+              });
               
               // Se aprovado, garantir que o evento seja enviado do frontend
               if (backendData.status === 'APPROVED') {
