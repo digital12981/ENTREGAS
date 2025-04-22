@@ -333,6 +333,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
+  // Novos endpoints para gerenciamento de IPs banidos
+  
+  // Verificar se o IP atual está banido
+  app.get("/api/admin/check-ip-banned", async (req, res) => {
+    try {
+      const ip = req.ip || req.socket.remoteAddress || '0.0.0.0';
+      const bannedIp = await storage.getBannedIp(ip);
+      
+      res.json({ 
+        isBanned: !!bannedIp?.isBanned,
+        ip: ip,
+        bannedAt: bannedIp?.createdAt 
+      });
+    } catch (error) {
+      console.error("Erro ao verificar IP banido:", error);
+      res.status(500).json({ error: "Erro ao verificar status do IP" });
+    }
+  });
+  
+  // Reportar acesso desktop para banir o IP permanentemente
+  app.post("/api/admin/report-desktop-access", async (req, res) => {
+    try {
+      const ip = req.ip || req.socket.remoteAddress || '0.0.0.0';
+      
+      // Verificar se o IP já está na lista de exceções
+      const ipBaseWithoutProxy = ip.split(',')[0].trim();
+      if (neverBanIPs.some(whitelistedIP => ipBaseWithoutProxy.includes(whitelistedIP))) {
+        console.log(`[PERMITIDO] IP ${ip} está na lista de exceções. Não será banido.`);
+        return res.json({ 
+          success: true, 
+          message: "IP está na lista de exceções",
+          ip: ip,
+          isBanned: false
+        });
+      }
+      
+      const userAgent = req.headers["user-agent"] || '';
+      const referer = req.headers.referer || '';
+      const origin = req.headers.origin || '';
+      const location = await getIpLocation(ip);
+      
+      // Verificar se o IP já está registrado
+      let bannedIp = await storage.getBannedIp(ip);
+      
+      // Se não existir, criar um novo registro com status banido
+      if (!bannedIp) {
+        bannedIp = await storage.createBannedIp({
+          ip,
+          isBanned: true,
+          userAgent: userAgent || '',
+          referer: referer || '',
+          origin: origin || '',
+          device: "Desktop (Frontend)",
+          browserInfo: userAgent,
+          screenSize: "",
+          platform: "",
+          language: req.headers["accept-language"] as string || '',
+          reason: "Acesso via desktop detectado pelo frontend",
+          location,
+          accessUrl: req.originalUrl || req.url || '/'
+        });
+        console.log(`[BLOQUEIO] Novo IP banido via frontend: ${ip}`);
+      } 
+      // Se já existir, mas não estiver banido, atualizar para banido
+      else if (!bannedIp.isBanned) {
+        bannedIp = await storage.updateBannedIpStatus(ip, true);
+        console.log(`[BLOQUEIO] IP atualizado para banido via frontend: ${ip}`);
+      }
+      
+      res.json({ 
+        success: true, 
+        message: "IP banido com sucesso",
+        ip: ip,
+        isBanned: true
+      });
+    } catch (error) {
+      console.error("Erro ao banir IP:", error);
+      res.status(500).json({ error: "Erro ao banir IP" });
+    }
+  });
+  
   // Rota proxy para For4Payments para evitar CORS
   app.post('/api/proxy/for4payments/pix', async (req, res) => {
     try {
