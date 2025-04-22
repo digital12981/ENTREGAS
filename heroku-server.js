@@ -10,8 +10,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuração
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000; // Usar porta 5000 como padrão para compatibilidade com o Replit
 const STATIC_DIR = path.join(__dirname, 'dist', 'public');
+
+// Verificar se estamos no Heroku
+const isHeroku = process.env.DYNO ? true : false;
+if (isHeroku) {
+  console.log('Detectado ambiente Heroku - usando variável PORT do Heroku:', process.env.PORT);
+} else {
+  console.log('Ambiente de desenvolvimento - usando porta 5000');
+}
 
 // Inicializar o Express
 const app = express();
@@ -22,6 +30,45 @@ app.use(compression());
 app.use(express.json());
 
 // Verificar se o diretório de arquivos estáticos existe
+if (!fs.existsSync(STATIC_DIR)) {
+  console.log(`Static directory does not exist at ${STATIC_DIR}, creating it...`);
+  try {
+    fs.mkdirSync(STATIC_DIR, { recursive: true });
+    console.log(`Created static directory at ${STATIC_DIR}`);
+    
+    // Também criar o diretório de assets para evitar erros
+    const assetsDir = path.join(STATIC_DIR, 'assets');
+    fs.mkdirSync(assetsDir, { recursive: true });
+    console.log(`Created assets directory at ${assetsDir}`);
+    
+    // Criar um arquivo index.html básico de fallback
+    const fallbackHtml = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopee Delivery Partners</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; text-align: center; }
+    h1 { color: #ee4d2d; }
+    p { margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>Shopee Delivery Partners</h1>
+  <p>Este é um arquivo de fallback. Se você está vendo esta mensagem, o build não foi gerado corretamente.</p>
+  <p>Por favor, execute "npm run build" antes de fazer o deploy.</p>
+</body>
+</html>`;
+    fs.writeFileSync(path.join(STATIC_DIR, 'index.html'), fallbackHtml);
+    console.log('Created fallback index.html');
+  } catch (err) {
+    console.error(`Error creating static directory: ${err.message}`);
+  }
+}
+
+// Verificar o conteúdo do diretório estático
+console.log('Checking static directory content...');
 if (fs.existsSync(STATIC_DIR)) {
   console.log('Static directory exists!');
   
@@ -37,9 +84,12 @@ if (fs.existsSync(STATIC_DIR)) {
     console.log(`Files in assets directory: ${assetFiles.join(', ')}`);
   } else {
     console.log('Assets directory does not exist!');
+    // Criar o diretório de assets
+    fs.mkdirSync(assetsDir, { recursive: true });
+    console.log(`Created assets directory at ${assetsDir}`);
   }
 } else {
-  console.log(`Static directory does not exist at ${STATIC_DIR}`);
+  console.log(`Error: Static directory still does not exist at ${STATIC_DIR} after creation attempt`);
 }
 
 // Middleware para log de requisições
@@ -48,10 +98,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Servir arquivos estáticos, com preferência para o diretório 'assets'
-app.use('/assets', express.static(path.join(STATIC_DIR, 'assets'), {
-  maxAge: '1d'
-}));
+// Servir arquivos estáticos para múltiplas variações de caminhos de assets
+// Esta abordagem cobre todos os possíveis caminhos que o navegador pode tentar
+['/assets', '/assets/', 'assets', 'assets/', './assets', './assets/'].forEach(assetPath => {
+  app.use(assetPath, express.static(path.join(STATIC_DIR, 'assets'), {
+    maxAge: '1d',
+    setHeaders: function(res) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+    }
+  }));
+  console.log(`Serving assets on path: ${assetPath}`);
+});
 
 // Para requisições diretas a arquivos CSS ou JS que não encontraram no caminho absoluto
 app.use((req, res, next) => {
@@ -156,22 +214,60 @@ app.get('/', (req, res) => {
       if (href && href[1]) console.log(`- ${href[1]}`);
     });
     
-    // Substituir caminhos absolutos por relativos
+    // Substituir caminhos absolutos por relativos e fazer outras modificações importantes no HTML
     const originalHtml = html;
-    html = html.replace(/src="\/assets\//g, 'src="./assets/');
-    html = html.replace(/href="\/assets\//g, 'href="./assets/');
     
-    if (html !== originalHtml) {
-      console.log('Paths were modified to relative');
-    } else {
-      console.log('No absolute paths were found to modify');
+    // Converter paths absolutos para relativos (múltiplas variações para garantir compatibilidade)
+    html = html.replace(/src="\/assets\//g, 'src="assets/');
+    html = html.replace(/href="\/assets\//g, 'href="assets/');
+    
+    // Extrair e modificar todas as tags de script e link diretamente
+    const scriptTags = [];
+    html = html.replace(/<script[^>]*src=["']([^"']+)["'][^>]*><\/script>/g, function(match, src) {
+      // Identificar se é um asset que precisamos modificar
+      if (src.includes('/assets/')) {
+        const newSrc = src.replace('/assets/', 'assets/');
+        scriptTags.push({original: src, modified: newSrc});
+        return `<script src="${newSrc}" type="module" crossorigin></script>`;
+      }
+      return match;
+    });
+    
+    const cssLinks = [];
+    html = html.replace(/<link[^>]*href=["']([^"']+)["'][^>]*>/g, function(match, href) {
+      // Somente modificar links para assets CSS, não externos
+      if (href.includes('/assets/') && match.includes('stylesheet')) {
+        const newHref = href.replace('/assets/', 'assets/');
+        cssLinks.push({original: href, modified: newHref});
+        return match.replace(href, newHref);
+      }
+      return match;
+    });
+    
+    // Logar mudanças
+    if (scriptTags.length > 0) {
+      console.log('Script tags modified:');
+      scriptTags.forEach(tag => console.log(`  ${tag.original} -> ${tag.modified}`));
     }
     
-    // Adicionar meta tag de debug e remover base tag
+    if (cssLinks.length > 0) {
+      console.log('CSS links modified:');
+      cssLinks.forEach(link => console.log(`  ${link.original} -> ${link.modified}`));
+    }
+    
+    if (html !== originalHtml) {
+      console.log('HTML was modified successfully');
+    } else {
+      console.log('Warning: No paths were modified in the HTML');
+    }
+    
+    // Adicionar meta tag de debug, informações sobre porta e remover base tag
     html = html.replace('</head>', 
       '<!-- Heroku optimized version -->\n' +
       '<meta name="heroku-version" content="1.1">\n' +
       '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">\n' +
+      `<meta name="server-port" content="${PORT}">\n` +
+      `<meta name="is-heroku" content="${isHeroku}">\n` +
       '</head>'
     );
     
@@ -226,6 +322,67 @@ app.get('/', (req, res) => {
         
         statusEl.textContent = 'Carregando recursos (' + loadedResources + '/' + totalResources + ')';
         
+        // Injetar assets diretamente para contornar problemas de carregamento
+        function injectScript(url) {
+          return new Promise((resolve, reject) => {
+            // Primeiro tenta carregar o script normalmente
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.crossOrigin = true;
+            script.src = url;
+            script.onload = () => {
+              console.log(`Successfully loaded script: ${url}`);
+              loadedResources++;
+              resolve();
+            };
+            script.onerror = () => {
+              console.error(`Failed to load script: ${url}`);
+              // Se falhar, tenta alternativas
+              fetch(url)
+                .then(response => {
+                  if (!response.ok) {
+                    // Tentar variações de caminhos
+                    const variations = [
+                      url.replace('/assets/', 'assets/'),
+                      url.replace('/assets/', './assets/'),
+                      'assets/' + url.split('/').pop(),
+                      './assets/' + url.split('/').pop()
+                    ];
+                    
+                    return Promise.all(variations.map(v => 
+                      fetch(v).then(r => r.ok ? {url: v, ok: true} : {url: v, ok: false})
+                    )).then(results => {
+                      const success = results.find(r => r.ok);
+                      if (success) {
+                        console.log(`Found working alternative: ${success.url}`);
+                        return fetch(success.url);
+                      } else {
+                        throw new Error('All variations failed');
+                      }
+                    });
+                  }
+                  return response;
+                })
+                .then(response => response.text())
+                .then(code => {
+                  console.log(`Injecting script content directly`);
+                  const inlineScript = document.createElement('script');
+                  inlineScript.type = 'module';
+                  inlineScript.textContent = code;
+                  document.head.appendChild(inlineScript);
+                  loadedResources++;
+                  resolve();
+                })
+                .catch(err => {
+                  console.error(`Could not fetch script: ${err.message}`);
+                  failedResources++;
+                  resolve(); // resolve anyway to continue
+                });
+            };
+            document.head.appendChild(script);
+          });
+        }
+        
         // Monitorar falhas de carregamento
         window.addEventListener('error', function(e) {
           if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
@@ -237,6 +394,18 @@ app.get('/', (req, res) => {
             
             // Tentar caminhos alternativos
             if (src) {
+              // Se for um script JS, usar nossa função especial de injeção
+              if (src.endsWith('.js') && e.target.tagName === 'SCRIPT') {
+                // Remover o script que falhou
+                e.target.remove();
+                // Injetar com nosso método mais robusto
+                injectScript(src).then(() => {
+                  console.log(`Script recovery attempt complete for ${src}`);
+                });
+                return;
+              }
+              
+              // Para outros recursos, tentar as alternativas comuns
               let newSrc = src;
               
               if (src.startsWith('/assets/')) {
