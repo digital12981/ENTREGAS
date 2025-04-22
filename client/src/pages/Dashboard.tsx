@@ -77,7 +77,20 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     // Determinar o protocolo (ws ou wss dependendo se estamos em http ou https)
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    
+    // Em produção, conectar ao backend Heroku
+    // Em desenvolvimento, conectar ao servidor local
+    let wsUrl;
+    
+    if (window.location.hostname.includes('netlify')) {
+      // Se estiver rodando no Netlify, conecte ao backend Heroku
+      wsUrl = 'wss://disparador-f065362693d3.herokuapp.com/ws';
+      console.log('Conectando ao WebSocket de produção (Heroku):', wsUrl);
+    } else {
+      // Em desenvolvimento, conecte ao servidor local
+      wsUrl = `${protocol}//${window.location.host}/ws`;
+      console.log('Conectando ao WebSocket de desenvolvimento (local):', wsUrl);
+    }
     
     const newSocket = new WebSocket(wsUrl);
     

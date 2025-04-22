@@ -1,5 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from 'ws';
 import { storage } from "./storage";
 import { paymentService } from "./payment";
 import { createFor4Payment } from "./for4payments-bridge";
@@ -12,7 +13,6 @@ import {
 } from "@shared/schema";
 import axios from "axios";
 import MobileDetect from "mobile-detect";
-import { WebSocketServer, WebSocket } from 'ws';
 
 // Importar spawn do child_process para executar scripts Python
 import { spawn } from 'child_process';
@@ -982,8 +982,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   
-  // Configurar o servidor WebSocket para a dashboard
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  // Configurar o servidor WebSocket para a dashboard com verificação de origem
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/ws',
+    // Permitir conexões de qualquer origem em produção
+    verifyClient: (info, done) => {
+      // Permitir todas as origens, já que o dashboard pode ser acessado pelo Netlify
+      // em produção e também de hosts locais em desenvolvimento
+      const origin = info.origin || '';
+      console.log(`Conexão WebSocket tentada da origem: ${origin}`);
+      
+      // Sempre aceitar a conexão
+      done(true);
+    }
+  });
   
   // Rastrear conexões ativas
   const connectedClients: WebSocket[] = [];
