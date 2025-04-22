@@ -119,6 +119,7 @@ console.log('\n🔧 Executando scripts de correção de arquivos estáticos...')
 try {
   const fixScripts = [
     'node rebuild-static.mjs',
+    'node create-basic-assets.mjs',
     'node fix-static-paths.mjs',
     'node copy-static-files.mjs'
   ];

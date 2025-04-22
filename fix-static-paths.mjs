@@ -86,27 +86,65 @@ function fixHtmlFile(filePath) {
     // Corrigir referências ao script principal
     const scriptPattern = /<script\s+type="module"\s+src="(\/src\/main\.tsx)"><\/script>/g;
     const scriptReplacement = (match, srcPath) => {
-      const newPath = '/assets/index.js';
-      console.log(`  - Corrigindo caminho do script: ${srcPath} -> ${newPath}`);
-      return `<script type="module" src="${newPath}"></script>`;
+      // Verificar se temos index.js ou basic.js disponível
+      const assetsDir = path.join(path.dirname(filePath), 'assets');
+      if (fs.existsSync(path.join(assetsDir, 'index.js'))) {
+        console.log(`  - Corrigindo caminho do script para index.js: ${srcPath} -> /assets/index.js`);
+        return `<script type="module" crossorigin src="/assets/index.js"></script>`;
+      } else if (fs.existsSync(path.join(assetsDir, 'basic.js'))) {
+        console.log(`  - Corrigindo caminho do script para basic.js: ${srcPath} -> /assets/basic.js`);
+        return `<script type="module" src="/assets/basic.js"></script>`;
+      } else {
+        // Fallback para index.js mesmo que não exista ainda
+        console.log(`  - Corrigindo caminho do script (fallback): ${srcPath} -> /assets/index.js`);
+        return `<script type="module" src="/assets/index.js"></script>`;
+      }
     };
     html = html.replace(scriptPattern, scriptReplacement);
     
     // Corrigir referências a CSS
     const cssPattern = /<link\s+rel="stylesheet"\s+href="(\/src\/[^"]+\.css)"\s*\/?>/g;
     const cssReplacement = (match, hrefPath) => {
-      const newPath = '/assets/index.css';
-      console.log(`  - Corrigindo caminho do CSS: ${hrefPath} -> ${newPath}`);
-      return `<link rel="stylesheet" href="${newPath}">`;
+      // Verificar se temos index.css ou basic.css disponível
+      const assetsDir = path.join(path.dirname(filePath), 'assets');
+      if (fs.existsSync(path.join(assetsDir, 'index.css'))) {
+        console.log(`  - Corrigindo caminho do CSS para index.css: ${hrefPath} -> /assets/index.css`);
+        return `<link rel="stylesheet" crossorigin href="/assets/index.css">`;
+      } else if (fs.existsSync(path.join(assetsDir, 'basic.css'))) {
+        console.log(`  - Corrigindo caminho do CSS para basic.css: ${hrefPath} -> /assets/basic.css`);
+        return `<link rel="stylesheet" href="/assets/basic.css">`;
+      } else {
+        // Fallback para index.css mesmo que não exista ainda
+        console.log(`  - Corrigindo caminho do CSS (fallback): ${hrefPath} -> /assets/index.css`);
+        return `<link rel="stylesheet" href="/assets/index.css">`;
+      }
     };
     html = html.replace(cssPattern, cssReplacement);
     
     // Adicionar a tag link para o CSS se não existir
-    if (!html.includes('link rel="stylesheet" href="/assets/index.css"')) {
+    const assetsDir = path.join(path.dirname(filePath), 'assets');
+    if (!html.includes('link rel="stylesheet" href="/assets/index.css"') && 
+        !html.includes('link rel="stylesheet" href="/assets/basic.css"') &&
+        !html.includes('link rel="stylesheet" crossorigin href="/assets/index') &&
+        !html.match(/href="\/assets\/index[^"]*\.css"/)) {
+      
       const headPattern = /<\/head>/;
-      const cssTag = '<link rel="stylesheet" href="/assets/index.css">\n  ';
+      
+      // Decidir qual arquivo CSS usar
+      let cssTag;
+      if (fs.existsSync(path.join(assetsDir, 'index.css'))) {
+        cssTag = '<link rel="stylesheet" crossorigin href="/assets/index.css">\n  ';
+        console.log('  - Adicionando tag link para index.css');
+      } else if (fs.existsSync(path.join(assetsDir, 'basic.css'))) {
+        cssTag = '<link rel="stylesheet" href="/assets/basic.css">\n  ';
+        console.log('  - Adicionando tag link para basic.css');
+      } else {
+        // Fallback
+        cssTag = '<link rel="stylesheet" href="/assets/basic.css">\n  ';
+        console.log('  - Adicionando tag link para CSS (fallback)');
+      }
+      
       html = html.replace(headPattern, `${cssTag}</head>`);
-      console.log('  - Adicionando tag link para o CSS');
     }
     
     // Se não houve alterações, verificar outros padrões mais específicos

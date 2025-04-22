@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Script para criar arquivos básicos de assets quando o build falha
+ * Script para criar assets básicos para o frontend
  * 
- * Este script cria arquivos CSS e JavaScript básicos para garantir
- * que a aplicação funcione minimamente mesmo quando o build falha.
+ * Este script cria arquivos CSS e JS básicos que serão usados como fallback
+ * caso os arquivos compilados pelo Vite não estejam disponíveis.
  */
 
 import fs from 'fs';
@@ -15,32 +15,31 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = process.cwd();
-const publicDir = path.join(rootDir, 'public');
-const assetsDir = path.join(publicDir, 'assets');
 
 console.log('🔧 Criando assets básicos para o frontend...');
 
-// Garantir que o diretório public exista
-if (!fs.existsSync(publicDir)) {
-  console.log('Criando diretório public/ que não existe...');
-  fs.mkdirSync(publicDir, { recursive: true });
-}
+// Garantir que os diretórios existam
+const publicDir = path.join(rootDir, 'public');
+const assetsDir = path.join(publicDir, 'assets');
+const distPublicDir = path.join(rootDir, 'dist', 'public');
+const distPublicAssetsDir = path.join(distPublicDir, 'assets');
+const distClientDir = path.join(rootDir, 'dist', 'client');
+const distClientAssetsDir = path.join(distClientDir, 'assets');
 
-// Criar diretório de assets
-if (!fs.existsSync(assetsDir)) {
-  console.log('Criando diretório assets/...');
-  fs.mkdirSync(assetsDir, { recursive: true });
-}
+// Criar diretórios se não existirem
+[publicDir, assetsDir, distPublicDir, distPublicAssetsDir, distClientDir, distClientAssetsDir].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
-// Criar arquivo CSS básico
-const cssContent = `
-/* CSS básico para Shopee Entregas */
+// CSS básico que simula o estilo do Shopee
+const basicCss = `/* Estilos básicos para a página */
 :root {
   --primary: #ee4d2d;
-  --background: #ffffff;
-  --text: #333333;
-  --border: #e0e0e0;
-  --radius: 8px;
+  --secondary: #f5f5f5;
+  --dark: #222;
+  --light: #fff;
 }
 
 * {
@@ -50,248 +49,330 @@ const cssContent = `
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--background);
-  color: var(--text);
-  line-height: 1.5;
+  font-family: 'Roboto', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--dark);
+  background-color: var(--secondary);
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
 }
 
-.header {
+header {
   background-color: var(--primary);
   color: white;
-  padding: 16px 0;
+  padding: 1rem 0;
 }
 
-.header .container {
+header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+}
+
+nav ul li {
+  margin-left: 20px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.hero {
+  padding: 80px 0;
+  text-align: center;
+  background-color: var(--primary);
+  color: white;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
 }
 
 .btn {
   display: inline-block;
-  background-color: var(--primary);
-  color: white;
-  padding: 8px 16px;
-  border-radius: var(--radius);
+  background-color: white;
+  color: var(--primary);
+  padding: 12px 24px;
+  border-radius: 4px;
   text-decoration: none;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
-  opacity: 0.9;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.section {
-  padding: 48px 0;
+.features {
+  padding: 80px 0;
+  background-color: var(--light);
 }
 
-.section-title {
-  font-size: 32px;
-  margin-bottom: 24px;
+.features h2 {
+  text-align: center;
+  margin-bottom: 40px;
   color: var(--primary);
 }
 
-.card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 16px;
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
 }
 
-.footer {
-  background-color: #f5f5f5;
-  padding: 24px 0;
-  margin-top: 48px;
+.feature-card {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.feature-card .icon {
+  color: var(--primary);
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  margin-bottom: 15px;
+  color: var(--primary);
+}
+
+footer {
+  background-color: var(--dark);
+  color: white;
+  padding: 40px 0;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  nav ul {
+    display: none;
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
 }
 `;
 
-// Criar arquivo JS básico
-const jsContent = `
-// Script básico para Shopee Entregas
+// JavaScript básico para simular interatividade
+const basicJs = `// Script básico para interatividade
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Shopee Entregas carregado em modo básico');
+  console.log('Página carregada com ativos básicos');
   
-  // Função básica para mostrar alerta ao clicar em botões
-  const buttons = document.querySelectorAll('button, .btn');
-  buttons.forEach(button => {
-    button.addEventListener('click', (e) => {
-      if (e.target.getAttribute('data-no-action') !== 'true') {
+  // Obter elementos importantes
+  const root = document.getElementById('root');
+  
+  // Se o elemento raiz estiver vazio, adicionar conteúdo básico
+  if (root && root.children.length === 0) {
+    root.innerHTML = \`
+      <div class="animate-fade-in">
+        <header>
+          <div class="container">
+            <div class="logo">Shopee Entregas</div>
+            <nav>
+              <ul>
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Benefícios</a></li>
+                <li><a href="#">Cadastro</a></li>
+                <li><a href="#">Contato</a></li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+        
+        <section class="hero">
+          <div class="container">
+            <h1>Seja um Entregador Parceiro da Shopee</h1>
+            <p>Junte-se à nossa equipe e tenha uma fonte de renda extra com flexibilidade de horários.</p>
+            <a href="#" class="btn">Cadastre-se Agora</a>
+          </div>
+        </section>
+        
+        <section class="features">
+          <div class="container">
+            <h2>Nossos Benefícios</h2>
+            <div class="features-grid">
+              <div class="feature-card">
+                <div class="icon">🚚</div>
+                <h3>Flexibilidade de Horários</h3>
+                <p>Trabalhe quando e quanto quiser, adaptando-se à sua rotina.</p>
+              </div>
+              <div class="feature-card">
+                <div class="icon">💰</div>
+                <h3>Pagamentos Semanais</h3>
+                <p>Receba seus pagamentos toda semana diretamente na sua conta.</p>
+              </div>
+              <div class="feature-card">
+                <div class="icon">📱</div>
+                <h3>Aplicativo Intuitivo</h3>
+                <p>Nosso app é fácil de usar e te auxilia em todas as entregas.</p>
+              </div>
+              <div class="feature-card">
+                <div class="icon">🛡️</div>
+                <h3>Suporte 24/7</h3>
+                <p>Conte com nossa equipe de suporte a qualquer momento.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <footer>
+          <div class="container">
+            <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
+          </div>
+        </footer>
+      </div>
+    \`;
+    
+    // Adicionar listeners de eventos
+    const btn = document.querySelector('.btn');
+    if (btn) {
+      btn.addEventListener('click', function(e) {
         e.preventDefault();
-        alert('Esta funcionalidade não está disponível no modo básico.');
-      }
-    });
-  });
-
-  // Manipulador básico para formulários
-  const forms = document.querySelectorAll('form');
-  forms.forEach(form => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Envio de formulário não disponível no modo básico.');
-    });
-  });
+        alert('Funcionalidade de cadastro em desenvolvimento!');
+      });
+    }
+  }
+  
+  // Verificar e corrigir problemas de carregamento
+  window.addEventListener('error', function(e) {
+    if (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK') {
+      console.warn('Erro ao carregar recurso:', e.target.src || e.target.href);
+    }
+  }, true);
 });
 `;
 
-// Criar index.html básico se não existir
-const indexHtmlPath = path.join(publicDir, 'index.html');
-if (!fs.existsSync(indexHtmlPath)) {
-  console.log('Criando index.html básico...');
+// Função para salvar arquivos básicos
+function saveBasicAssets() {
+  const files = [
+    { path: path.join(assetsDir, 'basic.css'), content: basicCss },
+    { path: path.join(assetsDir, 'basic.js'), content: basicJs },
+    { path: path.join(distPublicAssetsDir, 'basic.css'), content: basicCss },
+    { path: path.join(distPublicAssetsDir, 'basic.js'), content: basicJs },
+    { path: path.join(distClientAssetsDir, 'basic.css'), content: basicCss },
+    { path: path.join(distClientAssetsDir, 'basic.js'), content: basicJs }
+  ];
   
-  const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopee Entregas</title>
-  <link rel="stylesheet" href="/assets/basic.css">
-  <link rel="icon" href="/favicon.ico">
-</head>
-<body>
-  <header class="header">
-    <div class="container">
-      <div class="logo">Shopee Entregas</div>
-      <div>
-        <a href="#contato" class="btn">Quero ser entregador</a>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <section class="section">
-      <div class="container">
-        <h1 class="section-title">Seja um entregador parceiro da Shopee</h1>
-        <p>Junte-se a nossa equipe de entregadores e aproveite os benefícios:</p>
-        <div class="cards">
-          <div class="card">
-            <h3>Flexibilidade de horários</h3>
-            <p>Trabalhe nos dias e horários que mais combinam com você.</p>
-          </div>
-          <div class="card">
-            <h3>Pagamentos semanais</h3>
-            <p>Receba seus pagamentos toda semana diretamente na sua conta.</p>
-          </div>
-          <div class="card">
-            <h3>Suporte 24/7</h3>
-            <p>Conte com nossa equipe de suporte a qualquer momento.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="contato">
-      <div class="container">
-        <h2 class="section-title">Cadastre-se como entregador</h2>
-        <p>Preencha o formulário abaixo para iniciar seu cadastro:</p>
-        <div class="card">
-          <form id="cadastro-form">
-            <div>
-              <label for="nome">Nome completo</label>
-              <input type="text" id="nome" placeholder="Seu nome completo">
-            </div>
-            <div>
-              <label for="email">E-mail</label>
-              <input type="email" id="email" placeholder="seu@email.com">
-            </div>
-            <div>
-              <label for="telefone">Telefone</label>
-              <input type="tel" id="telefone" placeholder="(00) 00000-0000">
-            </div>
-            <div>
-              <label for="cidade">Cidade</label>
-              <input type="text" id="cidade" placeholder="Sua cidade">
-            </div>
-            <div>
-              <button type="submit" class="btn">Cadastrar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
-    </div>
-  </footer>
-
-  <script src="/assets/basic.js"></script>
-</body>
-</html>`;
-
-  try {
-    fs.writeFileSync(indexHtmlPath, htmlContent);
-    console.log('✅ index.html básico criado com sucesso.');
-  } catch (err) {
-    console.error('❌ Erro ao criar index.html:', err.message);
-  }
-}
-
-// Salvar os arquivos
-try {
-  fs.writeFileSync(path.join(assetsDir, 'basic.css'), cssContent);
-  fs.writeFileSync(path.join(assetsDir, 'basic.js'), jsContent);
-  console.log('✅ Arquivos de assets básicos criados com sucesso.');
-} catch (err) {
-  console.error('❌ Erro ao criar arquivos de assets:', err.message);
-  process.exit(1);
-}
-
-// Verificar se favicon.ico existe
-const faviconPath = path.join(publicDir, 'favicon.ico');
-if (!fs.existsSync(faviconPath)) {
-  console.log('favicon.ico não encontrado. Criando...');
-  try {
-    const faviconScript = path.join(rootDir, 'create-favicon.mjs');
-    if (fs.existsSync(faviconScript)) {
-      // Use dynamic import
-      import('./create-favicon.mjs')
-        .then(() => console.log('favicon.ico criado via script externo.'))
-        .catch(err => console.error('Erro ao importar script de favicon:', err));
-    } else {
-      // Dados binários básicos para um favicon simples
-      const faviconData = Buffer.from([
-        0, 0, 1, 0, 1, 0, 16, 16, 0, 0, 1, 0, 24, 0, 104, 4, 
-        0, 0, 22, 0, 0, 0, 40, 0, 0, 0, 16, 0, 0, 0, 32, 0, 
-        0, 0, 1, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 77, 45, 238, 77, 
-        45, 238, 77, 45, 238, 77, 45, 238, 77, 45, 238, 77, 45
-      ]);
-      
-      fs.writeFileSync(faviconPath, faviconData);
-      console.log('favicon.ico básico criado com sucesso.');
+  files.forEach(file => {
+    try {
+      fs.writeFileSync(file.path, file.content);
+    } catch (err) {
+      console.error(`Erro ao salvar arquivo ${file.path}: ${err.message}`);
     }
-  } catch (err) {
-    console.error('Erro ao criar favicon.ico:', err.message);
-  }
+  });
 }
 
-console.log('\nVerificando diretório public:');
-if (fs.existsSync(publicDir)) {
-  const publicFiles = fs.readdirSync(publicDir);
-  console.log(`Diretório public/ contém ${publicFiles.length} arquivos/diretórios:`);
-  console.log(publicFiles.join(', '));
+// Atualizar arquivos HTML para usar os ativos básicos se necessário
+function updateHtmlFiles() {
+  const htmlFiles = [
+    path.join(publicDir, 'index.html'),
+    path.join(distPublicDir, 'index.html'),
+    path.join(distClientDir, 'index.html')
+  ];
   
-  if (fs.existsSync(assetsDir)) {
-    const assetFiles = fs.readdirSync(assetsDir);
-    console.log(`Diretório assets/ contém ${assetFiles.length} arquivos:`);
-    console.log(assetFiles.join(', '));
+  htmlFiles.forEach(htmlFile => {
+    if (fs.existsSync(htmlFile)) {
+      try {
+        let html = fs.readFileSync(htmlFile, 'utf8');
+        let updated = false;
+        
+        // Verificar se o HTML já faz referência a assets/index.js
+        if (!html.includes('src="/assets/index') && !html.includes("src='/assets/index")) {
+          // Substituir a referência ao script de desenvolvimento pelo script de produção
+          const scriptPattern = /<script\s+type="module"\s+src="\/src\/main\.tsx"><\/script>/g;
+          if (html.match(scriptPattern)) {
+            html = html.replace(scriptPattern, '<script type="module" src="/assets/basic.js"></script>');
+            updated = true;
+          } else {
+            // Inserir o script básico antes do fechamento do body se não encontrou o pattern
+            const bodyClosePattern = /<\/body>/;
+            if (html.match(bodyClosePattern)) {
+              html = html.replace(bodyClosePattern, '<script type="module" src="/assets/basic.js"></script>\n</body>');
+              updated = true;
+            }
+          }
+        }
+        
+        // Verificar se o HTML já faz referência a assets/index.css
+        if (!html.includes('href="/assets/index') && !html.includes("href='/assets/index")) {
+          // Adicionar o link para o CSS básico antes do fechamento do head
+          const headClosePattern = /<\/head>/;
+          if (html.match(headClosePattern)) {
+            html = html.replace(headClosePattern, '<link rel="stylesheet" href="/assets/basic.css">\n</head>');
+            updated = true;
+          }
+        }
+        
+        if (updated) {
+          fs.writeFileSync(htmlFile, html);
+          console.log(`Arquivo ${path.relative(rootDir, htmlFile)} atualizado com sucesso.`);
+        } else {
+          console.log(`Arquivo ${path.relative(rootDir, htmlFile)} já está correto ou não pôde ser atualizado.`);
+        }
+      } catch (err) {
+        console.error(`Erro ao atualizar arquivo ${htmlFile}: ${err.message}`);
+      }
+    }
+  });
+}
+
+// Executar operações
+try {
+  saveBasicAssets();
+  updateHtmlFiles();
+  console.log('✅ Arquivos de assets básicos criados com sucesso.');
+  
+  // Exibir informações sobre os diretórios
+  console.log('\nVerificando diretório public:');
+  if (fs.existsSync(publicDir)) {
+    const publicFiles = fs.readdirSync(publicDir);
+    console.log(`Diretório public/ contém ${publicFiles.length} arquivos/diretórios:`);
+    console.log(publicFiles.join(', '));
+    
+    if (fs.existsSync(assetsDir)) {
+      const assetsFiles = fs.readdirSync(assetsDir);
+      console.log(`Diretório assets/ contém ${assetsFiles.length} arquivos:`);
+      console.log(assetsFiles.join(', '));
+    }
   }
+} catch (err) {
+  console.error(`❌ Erro: ${err.message}`);
 }
 
 console.log('\n🎉 Criação de assets básicos concluída.');
