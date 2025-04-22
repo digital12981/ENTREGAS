@@ -10,13 +10,13 @@ Este projeto pode ser implantado de diferentes maneiras:
 
 Para implantar o aplicativo completo no Heroku com o Vite em modo de desenvolvimento, igual ao preview da Replit:
 
-1. Já configuramos o Procfile principal para usar nosso servidor Vite:
+1. Já configuramos o Procfile principal para usar nosso servidor Vite standalone:
    ```
-   web: NODE_ENV=development node heroku-vite-server.js
+   web: NODE_ENV=development node heroku-vite-server-standalone.js
    ```
    
-   > Nota: Esta abordagem usa o Vite em modo de desenvolvimento, igual ao preview da Replit, para garantir o funcionamento correto
-   > O servidor `heroku-vite-server.js` carrega todo o ambiente de desenvolvimento diretamente no Heroku
+   > Nota: Esta abordagem usa o Vite em modo de desenvolvimento, igual ao preview da Replit
+   > O servidor `heroku-vite-server-standalone.js` é uma versão independente que não requer transpilação de TypeScript
 
 2. Certifique-se de que você tem o buildpack Node.js configurado:
    ```bash
@@ -70,12 +70,12 @@ Se encontrar problemas com a aplicação no Heroku:
 
 Nossa nova solução usa o Vite em modo de desenvolvimento diretamente no Heroku, da mesma forma que funciona no preview da Replit:
 
-1. Use o servidor Vite diretamente:
+1. Use o servidor Vite standalone:
    ```bash
-   # Atualizar Procfile para usar o servidor Vite
-   echo "web: NODE_ENV=development node heroku-vite-server.js" > Procfile
+   # Atualizar Procfile para usar o servidor Vite standalone
+   echo "web: NODE_ENV=development node heroku-vite-server-standalone.js" > Procfile
    git add Procfile
-   git commit -m "Use Vite development server"
+   git commit -m "Use Vite development server standalone"
    git push heroku main
    ```
 
@@ -118,13 +118,16 @@ Se preferir usar uma abordagem tradicional com arquivos estáticos:
 ### Solução para tipos específicos de erro
 
 #### Erro: SyntaxError: missing ) after argument list
-Este erro acontece por causa de template literals aninhados no código. Use o `heroku-vite-server.js` (preferencial) ou `heroku-simple-server.js`.
+Este erro acontece por causa de template literals aninhados no código. Use o `heroku-vite-server-standalone.js` ou `heroku-simple-server.js`.
+
+#### Erro: ERR_MODULE_NOT_FOUND: shared/schema.js
+Este erro ocorre porque o arquivo TypeScript não foi transpilado. Use o servidor standalone: `heroku-vite-server-standalone.js`.
 
 #### Erro: Cannot find module
 Verifique se todas as dependências estão no `package.json` e que `npm install` foi executado durante o build do Heroku.
 
 #### Página branca (sem erro no console)
-O melhor é usar o `heroku-vite-server.js` que evita completamente esse problema.
+O melhor é usar o `heroku-vite-server-standalone.js` que evita completamente esse problema.
 
 ### Alternativa de última instância
 
@@ -138,7 +141,8 @@ Se mesmo com o servidor Vite você continuar tendo problemas, considere separar 
 - `/server`: API backend com Express
 - `/shared`: Esquemas e tipos compartilhados
 - `/dist`: Arquivos compilados para produção 
-- `/heroku-vite-server.js`: Servidor Vite em modo dev para Heroku (RECOMENDADO)
+- `/heroku-vite-server-standalone.js`: Servidor Vite standalone (MAIS RECOMENDADO)
+- `/heroku-vite-server.js`: Servidor Vite que requer transpilação do schema.ts
 - `/heroku-simple-server.js`: Servidor simplificado para servir assets estáticos
 - `/heroku-server.js`: Servidor avançado para assets estáticos (pode ter problemas de sintaxe)
 - `/heroku-rebuild-server.js`: Servidor que executa build antes de servir
