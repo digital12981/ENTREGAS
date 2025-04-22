@@ -70,6 +70,7 @@ const Entrega: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<number>(30 * 60); // 30 minutos em segundos
   const timerRef = useRef<number | null>(null);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const { toast } = useToast();
 
   // Configuração do formulário
