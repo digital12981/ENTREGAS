@@ -60,11 +60,11 @@ try {
   // Verificar possíveis locais para arquivos estáticos
   const rootDir = process.cwd();
   const possibleDirs = [
+    path.join(rootDir, 'dist/public'),
     path.join(rootDir, 'dist'),
-    path.join(rootDir, 'client/dist'),
-    path.join(rootDir, 'build'),
     path.join(rootDir, 'public'),
-    path.join(rootDir, 'static')
+    path.join(rootDir, 'client/dist'),
+    path.join(rootDir, 'build')
   ];
 
   // Verificar onde estão os arquivos e servi-los
