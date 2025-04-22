@@ -1,66 +1,60 @@
-# Como corrigir o erro "Cannot find package '@vitejs/plugin-react'" no Heroku
+# Solução para erros de módulos ESM no Heroku com Node.js 22
 
-O erro que você está enfrentando é relacionado a dependências de desenvolvimento que não estão sendo instaladas corretamente no ambiente de produção do Heroku. O erro específico é:
+## Problema
 
-```
-Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /app/dist/index.js
-```
+Quando você faz deploy no Heroku, pode enfrentar o erro:
+`Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@jridgewell/trace-mapping'`
 
-## Solução 1 - Mover dependências de desenvolvimento para dependências regulares
+Isso acontece porque o Node.js 22 no Heroku tem um comportamento diferente com módulos ESM.
 
-Como não podemos modificar o arquivo `package.json` diretamente, use os seguintes comandos no terminal para mover as dependências necessárias para o grupo de dependências regulares:
+## Solução
 
-```bash
-heroku config:set NPM_CONFIG_PRODUCTION=false
-```
+### 1. Definir a versão do Node.js
 
-O comando acima força o Heroku a instalar todas as dependências, incluindo as de desenvolvimento.
+Crie ou edite o arquivo `package.json` e adicione:
 
-## Solução 2 - Definir Node.js versão 18.x
-
-A aplicação foi desenvolvida com Node.js 18, mas o Heroku está usando Node.js 22 (v22.14.0), o que pode causar problemas de compatibilidade:
-
-```bash
-heroku config:set NODE_VERSION=18.18.2
+```json
+"engines": {
+  "node": "22.x"
+}
 ```
 
-## Solução 3 - Verificar e reparar buildpacks
+### 2. Especificar variáveis de ambiente
 
-```bash
-heroku buildpacks:clear
-heroku buildpacks:set heroku/nodejs
+No Heroku, configure:
+
+```
+heroku config:set NODE_OPTIONS="--experimental-specifier-resolution=node"
 ```
 
-## Solução 4 - Modificar a configuração de buildpack
+### 3. Atualizar o Procfile
 
-O comando a seguir força o Heroku a aumentar o timeout para o build e outros ajustes:
+Seu Procfile deve conter:
 
-```bash
-heroku config:set NODE_OPTIONS=--max_old_space_size=2560
+```
+web: npm start
 ```
 
-## Após realizar as alterações
+### 4. Certificar-se que o package.json tem o script start
 
-Depois de aplicar essas mudanças:
-
-1. Faça deploy novamente:
-```bash
-git push heroku main
+```json
+"scripts": {
+  "start": "NODE_ENV=production node dist/server/index.js"
+}
 ```
 
-2. Verifique os logs:
-```bash
-heroku logs --tail
+### 5. Verificar que você tem um processo de build claro
+
+```json
+"scripts": {
+  "build": "vite build && tsc",
+  "heroku-postbuild": "npm run build"
+}
 ```
 
-3. Reinicie a aplicação:
-```bash
-heroku restart
-```
+## Importante
 
-4. Acesse a rota de diagnóstico:
-```bash
-curl https://www.shopee-entregas.com/api/diagnostic
-```
-
-Com essas alterações, o deploy deve funcionar corretamente!
+- A integração com For4Payments foi restaurada e adaptada para funcionar com Node.js 22
+- A integração usa a rota `/api/payments/pix-python` ou `/api/payments/pix` do backend
+- O valor fixo para o kit de segurança (R$ 84,70) está configurado na integração
+- Certifique-se que a variável de ambiente `FOR4PAYMENTS_SECRET_KEY` está configurada
