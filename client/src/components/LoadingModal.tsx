@@ -55,53 +55,104 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
   }, [isOpen, loadingSteps.length, onComplete, completionMessage, loadingTime]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md p-6 bg-white">
-        <DialogTitle className="font-semibold text-lg text-gray-900 mb-4 text-center">{title}</DialogTitle>
-        <DialogDescription className="sr-only">Modal para exibir o progresso do processamento.</DialogDescription>
-        <div className="flex flex-col items-center justify-center w-full">
-          
-          {!isComplete ? (
-            <div className="flex justify-center mb-6">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-solid border-[#E83D22] border-t-transparent" />
-            </div>
-          ) : (
-            <div className="flex justify-center mb-6 text-[#E83D22]">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check-circle">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
+    <Dialog open={isOpen} onOpenChange={() => {}} modal={true}>
+      <DialogContent className="p-0 sm:max-w-none w-full h-full max-h-screen overflow-hidden border-none shadow-none bg-white">
+        <div className="absolute top-0 left-0 w-full h-full bg-white z-0"></div>
+        
+        <div className="relative flex flex-col justify-center items-center h-screen bg-transparent z-10">
+          {/* Loader */}
+          {!isComplete && (
+            <div className="flex space-x-2 mb-8 fixed top-1/4">
+              <div className="loading-dot w-3 h-3 bg-[#E83D22] rounded-full"></div>
+              <div className="loading-dot w-3 h-3 bg-[#E83D22] rounded-full"></div>
+              <div className="loading-dot w-3 h-3 bg-[#E83D22] rounded-full"></div>
             </div>
           )}
           
-          <div className="w-full space-y-2">
-            {loadingSteps.map((step, index) => (
-              <div 
-                key={index} 
-                className={`flex items-center ${index <= currentStep ? 'text-gray-900' : 'text-gray-400'}`}
-              >
-                <div className={`w-6 h-6 rounded-full mr-3 flex items-center justify-center text-xs
-                  ${index < currentStep 
-                    ? 'bg-[#E83D22] text-white' 
-                    : index === currentStep 
-                      ? 'bg-[#E83D2220] text-[#E83D22] border border-[#E83D22]' 
-                      : 'bg-gray-100 text-gray-400 border border-gray-200'}
-                `}>
-                  {index < currentStep ? '✓' : index + 1}
+          {/* Status Modal */}
+          <div className="w-11/12 max-w-md mt-48">
+            <h2 className="font-semibold text-lg text-center mb-6">{title}</h2>
+
+            <div className="space-y-3">
+              {loadingSteps.map((step, index) => (
+                <div 
+                  key={index} 
+                  id={`status${index+1}`} 
+                  className={`status-item flex items-center p-2 bg-gray-100 rounded-lg ${index <= currentStep ? 'active' : ''}`}
+                >
+                  <div className={`status-icon bg-gray-300 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 ${index <= currentStep ? 'bg-[#E83D22]' : ''}`}>
+                    {index < currentStep ? (
+                      <i className="fas fa-check text-sm"></i>
+                    ) : (
+                      <span className="text-sm">{index + 1}</span>
+                    )}
+                  </div>
+                  <div className={`status-text text-gray-600 text-sm ${index <= currentStep ? 'text-gray-900' : ''}`}>
+                    {step}
+                  </div>
                 </div>
-                <span className={`text-sm ${index <= currentStep ? 'font-medium' : 'font-normal'}`}>
-                  {step}
-                </span>
-              </div>
-            ))}
-          </div>
-          
-          {isComplete && (
-            <div className="mt-6 text-center text-[#E83D22] font-medium">
-              {finishText}
+              ))}
             </div>
-          )}
+            
+            {isComplete && (
+              <div className="mt-6 text-center text-[#E83D22] font-medium">
+                {finishText}
+              </div>
+            )}
+          </div>
         </div>
+        
+        {/* CSS animações */}
+        <style jsx>{`
+          @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+          }
+          
+          .loading-dot {
+            animation: bounce 1.4s infinite ease-in-out both;
+          }
+          
+          .loading-dot:nth-child(1) {
+            animation-delay: -0.32s;
+          }
+          
+          .loading-dot:nth-child(2) {
+            animation-delay: -0.16s;
+          }
+
+          .status-item {
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            transform: translateY(10px);
+          }
+
+          .status-item.active {
+            opacity: 1;
+            transform: translateY(0);
+          }
+
+          .status-item.active .status-icon {
+            background-color: #E83D22;
+            color: white;
+          }
+
+          .status-item.active .status-text {
+            color: #111827;
+            font-weight: bold;
+          }
+
+          @keyframes fadeInUp {
+            from {
+              opacity: 0.5;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
       </DialogContent>
     </Dialog>
   );
