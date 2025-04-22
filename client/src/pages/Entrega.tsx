@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
+import { useScrollTop } from '@/hooks/use-scroll-top';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -55,6 +56,9 @@ const enderecoSchema = z.object({
 type EnderecoFormValues = z.infer<typeof enderecoSchema>;
 
 const Entrega: React.FC = () => {
+  // Aplica o scroll para o topo quando o componente é montado
+  useScrollTop();
+  
   const [endereco, setEndereco] = useState<EnderecoUsuario | null>(null);
   const [dadosUsuario, setDadosUsuario] = useState<DadosUsuario | null>(null);
   const [dataEntrega, setDataEntrega] = useState<string>('');

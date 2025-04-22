@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingModal } from '@/components/LoadingModal';
+import { useScrollTop } from '@/hooks/use-scroll-top';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 
@@ -26,6 +27,9 @@ const finalizacaoSchema = z.object({
 type FinalizacaoFormValues = z.infer<typeof finalizacaoSchema>;
 
 const Finalizacao: React.FC = () => {
+  // Aplica o scroll para o topo quando o componente é montado
+  useScrollTop();
+  
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
