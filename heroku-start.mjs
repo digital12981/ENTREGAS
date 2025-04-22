@@ -120,6 +120,7 @@ try {
   const fixScripts = [
     'node rebuild-static.mjs',
     'node create-basic-assets.mjs',
+    'node update-vite-html.mjs',
     'node fix-static-paths.mjs',
     'node copy-static-files.mjs'
   ];
