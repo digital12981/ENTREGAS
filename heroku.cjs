@@ -59,7 +59,17 @@ try {
 
   // Verificar possíveis locais para arquivos estáticos
   const rootDir = process.cwd();
+  
+  // Adicionar diretório de páginas estáticas HTML
+  const staticHtmlDir = path.join(rootDir, 'static_html');
+  if (fs.existsSync(staticHtmlDir)) {
+    console.log(`✅ Diretório de páginas HTML estáticas encontrado: ${staticHtmlDir}`);
+  } else {
+    console.log(`⚠️ Diretório de páginas HTML estáticas não encontrado: ${staticHtmlDir}`);
+  }
+  
   const possibleDirs = [
+    path.join(rootDir, 'static_html'),
     path.join(rootDir, 'dist/public'),
     path.join(rootDir, 'dist'),
     path.join(rootDir, 'public'),
