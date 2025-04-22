@@ -80,6 +80,57 @@ export const insertBenefitSchema = createInsertSchema(benefits).pick({
   iconName: true,
 });
 
+// Tabela de IPs banidos
+export const bannedIps = pgTable("banned_ips", {
+  id: serial("id").primaryKey(),
+  ip: text("ip").notNull().unique(),
+  isBanned: boolean("is_banned").default(true).notNull(),
+  userAgent: text("user_agent"),
+  referer: text("referer"),
+  origin: text("origin"),
+  device: text("device"),
+  browserInfo: text("browser_info"),
+  screenSize: text("screen_size"),
+  platform: text("platform"),
+  language: text("language"),
+  reason: text("reason"),
+  location: text("location"),
+  accessUrl: text("access_url"),
+  bannedAt: timestamp("banned_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Tabela de domínios permitidos
+export const allowedDomains = pgTable("allowed_domains", {
+  id: serial("id").primaryKey(),
+  domain: text("domain").notNull().unique(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Schemas de inserção para IPs banidos e domínios permitidos
+export const insertBannedIpSchema = createInsertSchema(bannedIps).pick({
+  ip: true,
+  isBanned: true,
+  userAgent: true,
+  referer: true,
+  origin: true,
+  device: true,
+  browserInfo: true,
+  screenSize: true,
+  platform: true,
+  language: true,
+  reason: true,
+  location: true,
+  accessUrl: true,
+});
+
+export const insertAllowedDomainSchema = createInsertSchema(allowedDomains).pick({
+  domain: true,
+  isActive: true,
+});
+
 // Definição dos tipos
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -92,3 +143,9 @@ export type State = typeof states.$inferSelect;
 
 export type InsertBenefit = z.infer<typeof insertBenefitSchema>;
 export type Benefit = typeof benefits.$inferSelect;
+
+export type InsertBannedIp = z.infer<typeof insertBannedIpSchema>;
+export type BannedIp = typeof bannedIps.$inferSelect;
+
+export type InsertAllowedDomain = z.infer<typeof insertAllowedDomainSchema>;
+export type AllowedDomain = typeof allowedDomains.$inferSelect;

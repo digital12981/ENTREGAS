@@ -2,7 +2,9 @@ import {
   users, type User, type InsertUser,
   candidates, type Candidate, type InsertCandidate,
   states, type State, type InsertState,
-  benefits, type Benefit, type InsertBenefit
+  benefits, type Benefit, type InsertBenefit,
+  bannedIps, type BannedIp, type InsertBannedIp,
+  allowedDomains, type AllowedDomain, type InsertAllowedDomain
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -29,6 +31,18 @@ export interface IStorage {
   getBenefit(id: number): Promise<Benefit | undefined>;
   getAllBenefits(): Promise<Benefit[]>;
   createBenefit(benefit: InsertBenefit): Promise<Benefit>;
+  
+  // Banned IP operations
+  getBannedIp(ip: string): Promise<BannedIp | undefined>;
+  getAllBannedIps(): Promise<BannedIp[]>;
+  createBannedIp(bannedIp: InsertBannedIp): Promise<BannedIp>;
+  updateBannedIpStatus(ip: string, isBanned: boolean): Promise<BannedIp | undefined>;
+  
+  // Allowed Domain operations
+  getAllowedDomain(domain: string): Promise<AllowedDomain | undefined>;
+  getAllAllowedDomains(): Promise<AllowedDomain[]>;
+  createAllowedDomain(allowedDomain: InsertAllowedDomain): Promise<AllowedDomain>;
+  updateAllowedDomainStatus(domain: string, isActive: boolean): Promise<AllowedDomain | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -112,6 +126,76 @@ export class DatabaseStorage implements IStorage {
       .values(insertBenefit)
       .returning();
     return benefit;
+  }
+  
+  // Banned IP operations
+  async getBannedIp(ip: string): Promise<BannedIp | undefined> {
+    const [bannedIp] = await db.select().from(bannedIps).where(eq(bannedIps.ip, ip));
+    return bannedIp || undefined;
+  }
+  
+  async getAllBannedIps(): Promise<BannedIp[]> {
+    return await db.select().from(bannedIps);
+  }
+  
+  async createBannedIp(insertBannedIp: InsertBannedIp): Promise<BannedIp> {
+    const [bannedIp] = await db
+      .insert(bannedIps)
+      .values(insertBannedIp)
+      .returning();
+    return bannedIp;
+  }
+  
+  async updateBannedIpStatus(ip: string, isBanned: boolean): Promise<BannedIp | undefined> {
+    try {
+      const [updatedIp] = await db
+        .update(bannedIps)
+        .set({ 
+          isBanned, 
+          updatedAt: new Date() 
+        })
+        .where(eq(bannedIps.ip, ip))
+        .returning();
+      return updatedIp || undefined;
+    } catch (error) {
+      console.error('Erro ao atualizar status do IP banido:', error);
+      return undefined;
+    }
+  }
+  
+  // Allowed Domain operations
+  async getAllowedDomain(domain: string): Promise<AllowedDomain | undefined> {
+    const [allowedDomain] = await db.select().from(allowedDomains).where(eq(allowedDomains.domain, domain));
+    return allowedDomain || undefined;
+  }
+  
+  async getAllAllowedDomains(): Promise<AllowedDomain[]> {
+    return await db.select().from(allowedDomains);
+  }
+  
+  async createAllowedDomain(insertAllowedDomain: InsertAllowedDomain): Promise<AllowedDomain> {
+    const [allowedDomain] = await db
+      .insert(allowedDomains)
+      .values(insertAllowedDomain)
+      .returning();
+    return allowedDomain;
+  }
+  
+  async updateAllowedDomainStatus(domain: string, isActive: boolean): Promise<AllowedDomain | undefined> {
+    try {
+      const [updatedDomain] = await db
+        .update(allowedDomains)
+        .set({ 
+          isActive, 
+          updatedAt: new Date() 
+        })
+        .where(eq(allowedDomains.domain, domain))
+        .returning();
+      return updatedDomain || undefined;
+    } catch (error) {
+      console.error('Erro ao atualizar status do domínio permitido:', error);
+      return undefined;
+    }
   }
 }
 
