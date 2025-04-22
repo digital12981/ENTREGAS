@@ -14,6 +14,99 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Função utilitária para processar HTML e ajustar referências a assets com hash
+function fixAssetReferences(html, distDir) {
+  if (!html) return html;
+  
+  // Substituir referências a arquivos JS e CSS com hash para versões sem hash
+  return html.replace(/(src|href)="(\/assets\/[^"]+)-[A-Za-z0-9]+\.([^"]+)"/g, (match, attr, path, ext) => {
+    console.log(`Processando referência a asset: ${match}`);
+    
+    // Extrair informações do caminho
+    const pathParts = path.split('/');
+    const baseName = pathParts.pop(); // Último elemento é o nome do arquivo sem extensão/hash
+    const assetDir = pathParts.join('/'); // Diretório onde o asset deveria estar
+    
+    console.log(`Buscando asset para base: ${baseName}, extensão: ${ext}`);
+    
+    // Tentar encontrar o arquivo real com hash na pasta de assets
+    try {
+      // Lista de diretórios a verificar
+      const dirsToCheck = [
+        join(distDir, 'assets'),
+        join(distDir, 'public', 'assets'),
+        join(distDir)
+      ];
+      
+      for (const dir of dirsToCheck) {
+        if (!fs.existsSync(dir)) continue;
+        
+        console.log(`Procurando em: ${dir}`);
+        const files = fs.readdirSync(dir);
+        const pattern = new RegExp(`^${baseName}(-[A-Za-z0-9]+)?\\.${ext}$`);
+        const matchingFiles = files.filter(file => pattern.test(file));
+        
+        if (matchingFiles.length > 0) {
+          const fixedPath = `${attr}="/assets/${matchingFiles[0]}"`;
+          console.log(`✅ Referência corrigida: ${match} -> ${fixedPath}`);
+          return fixedPath;
+        }
+      }
+      
+      // Se não encontrou em nenhum diretório padrão, tentar busca recursiva
+      function findFileRecursive(dir, pattern) {
+        if (!fs.existsSync(dir)) return null;
+        
+        try {
+          const files = fs.readdirSync(dir);
+          
+          // Procurar por arquivos correspondentes neste diretório
+          for (const file of files) {
+            if (pattern.test(file)) {
+              return join(dir, file);
+            }
+          }
+          
+          // Procurar em subdiretórios
+          for (const file of files) {
+            const fullPath = join(dir, file);
+            try {
+              if (fs.statSync(fullPath).isDirectory()) {
+                const found = findFileRecursive(fullPath, pattern);
+                if (found) return found;
+              }
+            } catch (e) {
+              // Ignorar erros ao verificar subdiretórios
+            }
+          }
+        } catch (e) {
+          console.warn(`Erro ao ler diretório ${dir}:`, e.message);
+        }
+        
+        return null;
+      }
+      
+      // Tentar buscar de forma mais abrangente em toda a árvore de dist
+      console.log(`Realizando busca recursiva para ${baseName}.${ext}...`);
+      const pattern = new RegExp(`^${baseName}(-[A-Za-z0-9]+)?\\.${ext}$`);
+      const foundPath = findFileRecursive(distDir, pattern);
+      
+      if (foundPath) {
+        const relativePath = foundPath.replace(distDir, '').replace(/^\//, '');
+        const fixedPath = `${attr}="/${relativePath}"`;
+        console.log(`✅ Encontrado por busca recursiva: ${fixedPath}`);
+        return fixedPath;
+      }
+    } catch (e) {
+      console.error('Erro ao buscar asset real:', e.message);
+    }
+    
+    // Se não encontrou, remover o hash para tentar encontrar a versão não hashada
+    console.log(`⚠️ Não encontrado asset real, usando versão sem hash: ${baseName}.${ext}`);
+    return `${attr}="${assetDir}/${baseName}.${ext}"`; 
+  });
+}
+
 // Importar APIs necessárias
 import { pool, db } from './dist/server/db.js';
 import { storage } from './dist/server/storage.js';
@@ -440,9 +533,16 @@ function serveStaticFiles() {
           
           if (hasHashedAssets) {
             console.log('Índice contém referências a assets com hash dinâmico');
+            
+            // Processar o HTML para modificar referências a assets com hash
+            const processedHtml = fixAssetReferences(indexContent, distDir);
+            
+            // Enviar o HTML processado
+            res.set('Content-Type', 'text/html');
+            return res.send(processedHtml);
           }
           
-          // Enviar o arquivo
+          // Se não tem referências com hash, enviar o arquivo diretamente
           return res.sendFile(indexPath);
         } catch (e) {
           console.warn(`Erro ao ler/processar o arquivo ${indexPath}:`, e.message);
