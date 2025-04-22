@@ -81,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${secretKey}`,
+          'Authorization': secretKey, // A API espera apenas o token sem o prefixo 'Bearer'
           'Accept': 'application/json'
         },
         body: JSON.stringify(payload)

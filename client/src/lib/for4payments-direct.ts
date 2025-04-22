@@ -88,7 +88,7 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${secretKey}`,
+        'Authorization': secretKey, // A API espera apenas o token sem o prefixo 'Bearer'
         'Accept': 'application/json'
       },
       mode: 'cors',
