@@ -72,153 +72,47 @@ export class EmailService {
       minute: '2-digit'
     });
     
-    // Construir o corpo do email HTML
+    // Construir o corpo do email HTML - versão simplificada sem imagens para evitar spam
     const emailBody = `
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Entregador Aprovado - Shopee</title>
-    <style>
-        body { 
-            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; 
-            background-color: #f4f4f4; 
-            margin: 0; 
-            padding: 0; 
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .header {
-            background-color: #F64535;
-            padding: 20px;
-            text-align: center;
-        }
-        .content {
-            padding: 30px;
-        }
-        h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        p {
-            color: #555;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        .payment-info {
-            background-color: #fff8f0;
-            border: 1px solid #ffdfc2;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .payment-info h2 {
-            color: #F64535;
-            font-size: 18px;
-            margin-top: 0;
-        }
-        .qrcode {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .pix-code {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            word-break: break-all;
-            margin: 15px 0;
-        }
-        .button {
-            display: inline-block;
-            background-color: #F64535;
-            color: white;
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .button:hover {
-            background-color: #D63A2B;
-        }
-        .cta {
-            text-align: center;
-            margin: 25px 0;
-        }
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 12px;
-            color: #777;
-        }
-    </style>
+    <title>Confirmação de Cadastro - Entregador Shopee</title>
 </head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <img src="https://i.imgur.com/zTrIKuu.png" alt="Logo da Shopee" width="150">
-        </div>
-        
-        <!-- Content -->
-        <div class="content">
-            <h1>Cadastro Aprovado - Realize o Pagamento</h1>
-            
-            <p>Olá, <strong>${name}</strong>!</p>
-            
-            <p>Parabéns! Seu cadastro para se tornar um Entregador Parceiro Shopee foi <strong>aprovado com sucesso</strong>.</p>
-            
-            <p>Para completar o processo e garantir sua segurança, precisamos que você efetue o pagamento do <strong>Kit de Segurança Shopee</strong>, um requisito essencial para todos os nossos entregadores parceiros.</p>
-            
-            <div class="payment-info">
-                <h2>Informações do Pagamento</h2>
-                <p><strong>Valor:</strong> ${formattedAmount}</p>
-                <p><strong>Método:</strong> PIX</p>
-                <p><strong>Prazo:</strong> O pagamento expira em ${formattedExpiration}</p>
-                
-                <div class="qrcode">
-                    <img src="${pixQrCode}" alt="QR Code do PIX" width="200">
-                    <p>Escaneie o QR Code acima com o app do seu banco</p>
-                </div>
-                
-                <p><strong>Ou copie o código PIX abaixo:</strong></p>
-                <div class="pix-code">
-                    ${pixCode}
-                </div>
-            </div>
-            
-            <div class="cta">
-                <a href="${paymentLink}" class="button">Acessar página de pagamento</a>
-            </div>
-            
-            <p>Após o pagamento, o prazo de entrega do seu Kit de Segurança é de aproximadamente <strong>5 dias úteis</strong>.</p>
-            
-            <p>O kit contém:</p>
-            <ul>
-                <li>2 Coletes de identificação oficial Shopee</li>
-                <li>1 Par de Luvas de proteção</li>
-                <li>1 Par de Botinas de segurança</li>
-            </ul>
-            
-            <p>Ao receber o kit, você estará pronto para iniciar suas atividades como Entregador Parceiro Shopee.</p>
-            
-            <div class="footer">
-                <p>Para dúvidas ou suporte, entre em contato: <strong>suporte.entregador@shopee.com.br</strong></p>
-                <p>Este é um e-mail automático. Por favor, não responda diretamente a esta mensagem.</p>
-                <p>© 2023 Shopee. Todos os direitos reservados.</p>
-            </div>
-        </div>
-    </div>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: #e84c3d; margin-bottom: 20px; font-size: 24px;">Confirmação de Cadastro - Entregador Shopee</h1>
+    
+    <p>Olá ${name},</p>
+    
+    <p>Seu cadastro para se tornar Entregador Parceiro Shopee foi aprovado com sucesso.</p>
+    
+    <p>Para finalizar seu processo de registro, você precisa realizar o pagamento do Kit de Segurança no valor de ${formattedAmount}.</p>
+    
+    <p>Acesse sua página de pagamento pessoal através do link abaixo:</p>
+    
+    <p style="margin: 30px 0; text-align: center;">
+        <a href="${paymentLink}" style="background-color: #e84c3d; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Acessar Página de Pagamento</a>
+    </p>
+    
+    <p><strong>Informações importantes:</strong></p>
+    <ul>
+        <li>O pagamento deve ser realizado via PIX</li>
+        <li>O link expira em: ${formattedExpiration}</li>
+        <li>O Kit de Segurança será entregue em até 5 dias úteis após confirmação do pagamento</li>
+    </ul>
+    
+    <p>O kit contém todos os itens necessários para iniciar suas atividades como entregador parceiro.</p>
+    
+    <p>Atenciosamente,<br>
+    Equipe Shopee</p>
+    
+    <hr style="border: 1px solid #eee; margin: 30px 0;">
+    
+    <p style="font-size: 12px; color: #777;">
+        Em caso de dúvidas, entre em contato conosco pelo email: suporte.entregador@shopee.com.br<br>
+        Esta é uma mensagem automática, não responda este email.
+    </p>
 </body>
 </html>
     `;
