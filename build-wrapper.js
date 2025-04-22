@@ -100,6 +100,20 @@ try {
     }
   }
   
+  // Verificação final
+  console.log('Verificando estrutura final dos arquivos na pasta dist...');
+  try {
+    const filesInDist = fs.readdirSync(join(__dirname, 'dist'));
+    console.log('Arquivos em dist:', filesInDist);
+    
+    if (filesInDist.includes('assets')) {
+      const assetsFiles = fs.readdirSync(join(__dirname, 'dist', 'assets'));
+      console.log('Arquivos em dist/assets:', assetsFiles);
+    }
+  } catch (e) {
+    console.warn('Erro ao listar arquivos finais:', e);
+  }
+  
   console.log('✅ Build concluído com sucesso');
 } catch (error) {
   console.error('❌ Erro durante o build:', error);

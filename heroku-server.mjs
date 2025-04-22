@@ -270,15 +270,18 @@ function serveStaticFiles() {
     next();
   });
   
-  // Fallback para index.html (SPA routing)
+  // Rota para index.html (SPA routing)
   app.get('*', (req, res) => {
     // Skip para APIs
     if (req.path.startsWith('/api')) return;
     
     const indexPath = join(publicDir, 'index.html');
+    
     if (fs.existsSync(indexPath)) {
+      console.log(`Servindo página principal de: ${indexPath}`);
       res.sendFile(indexPath);
     } else {
+      console.log(`Não foi possível encontrar index.html em ${indexPath}`);
       res.status(404).send('Página não encontrada');
     }
   });
