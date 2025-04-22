@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { setupStaticMiddleware } from "./static-middleware";
 import path from "path";
+import fs from "fs";
 
 const app = express();
 // Configuração para utilizar UTF-8 na aplicação
@@ -11,14 +12,35 @@ app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
 // Se estiver em produção, adiciona middleware para corrigir caminhos de assets no Heroku
 if (process.env.NODE_ENV === 'production') {
+  console.log('[express] Running in production mode');
+  
   setupStaticMiddleware(app);
   
   // Serve arquivos estáticos da pasta dist com configurações otimizadas
   const distPublicPath = path.join(process.cwd(), 'dist', 'public');
+  console.log(`[express] Serving static files from: ${distPublicPath}`);
+  
+  // Serve arquivos estáticos da pasta assets diretamente, com prioridade
+  const assetsPath = path.join(distPublicPath, 'assets');
+  if (fs.existsSync(assetsPath)) {
+    console.log(`[express] Assets directory exists: ${assetsPath}`);
+    app.use('/assets', express.static(assetsPath, {
+      maxAge: '1y',
+      etag: true
+    }));
+  }
+  
+  // Serve outros arquivos estáticos
   app.use(express.static(distPublicPath, {
-    maxAge: '1y',
+    maxAge: '1d',
     etag: true
   }));
+  
+  // Adiciona rota específica para index.html
+  app.get('/', (req, res) => {
+    console.log('[express] Serving index.html');
+    res.sendFile(path.join(distPublicPath, 'index.html'));
+  });
 }
 
 // Configurar cabeçalhos para UTF-8
