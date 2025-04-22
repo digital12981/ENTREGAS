@@ -24,6 +24,7 @@ function Router() {
       <Route path="/finalizacao" component={Finalizacao} />
       <Route path="/entrega" component={Entrega} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/payment" component={Payment} />
       <Route component={NotFound} />
     </Switch>
   );

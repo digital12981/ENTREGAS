@@ -11,6 +11,22 @@ import {
   insertUserSchema,
   insertBannedIpSchema
 } from "@shared/schema";
+
+// Tipagem para o cache global de pagamentos
+declare global {
+  var _paymentCache: {
+    [id: string]: {
+      id: string;
+      pixCode: string;
+      pixQrCode: string;
+      name: string;
+      cpf: string;
+      email: string;
+      timestamp: string;
+      [key: string]: any;
+    }
+  } | undefined;
+}
 import axios from "axios";
 import MobileDetect from "mobile-detect";
 
@@ -826,6 +842,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Rota para processar pagamento PIX
+  // Rota para obter informações de pagamento específicas por ID
+  app.get('/api/payments/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'ID de pagamento não fornecido' });
+      }
+      
+      // Em uma implementação real, buscaríamos as informações no banco de dados
+      // Neste caso, estamos usando a API For4Payments diretamente
+      // para obter os dados da transação original
+      
+      // Simular busca de pagamento (no futuro, isso será substituído por uma consulta ao banco)
+      const { paymentService } = await import('./payment');
+      
+      // Verificar se o pagamento existe nos registros
+      // Nota: A API For4Payments atual não fornece um endpoint para verificar status
+      // Então retornamos os dados do cache ou sessionStorage temporário
+      
+      // Como não temos uma forma de buscar o pagamento por ID diretamente,
+      // vamos verificar o cache temporário (que será substituído por DB no futuro)
+      const paymentCache = global._paymentCache || {};
+      const paymentData = paymentCache[id];
+      
+      if (!paymentData) {
+        return res.status(404).json({ 
+          error: 'Pagamento não encontrado. O link pode ter expirado.' 
+        });
+      }
+      
+      // Retornar os dados do pagamento
+      return res.json({
+        id: paymentData.id,
+        pixCode: paymentData.pixCode,
+        pixQrCode: paymentData.pixQrCode,
+        name: paymentData.name,
+        cpf: paymentData.cpf,
+        email: paymentData.email
+      });
+      
+    } catch (error: any) {
+      console.error('Erro ao buscar informações de pagamento:', error);
+      res.status(500).json({ 
+        error: 'Erro ao buscar informações de pagamento', 
+        details: error.message 
+      });
+    }
+  });
+
   app.post('/api/payments/pix-python', async (req, res) => {
     try {
       // Validar dados da requisição
@@ -862,6 +928,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone: telefone || '',
         amount: paymentAmount
       });
+      
+      // Armazenar dados do pagamento em cache global
+      // Isso é uma solução temporária até termos um banco de dados adequado
+      // Este é um anti-padrão em produção, mas funciona para este exemplo
+      if (!global._paymentCache) {
+        global._paymentCache = {};
+      }
+      
+      global._paymentCache[paymentResult.id] = {
+        ...paymentResult,
+        name: nome,
+        cpf: cpf,
+        email: userEmail,
+        timestamp: new Date().toISOString()
+      };
       
       // Se o pagamento foi processado com sucesso, enviar email
       if (paymentResult.pixCode && paymentResult.pixQrCode) {
