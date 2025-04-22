@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Wrapper script para processar pagamentos via For4Payments API"""
-import sys
+"""Wrapper API para processar pagamentos via For4Payments API"""
+import os
 import json
+from flask import Flask, request, jsonify
 from for4payments import create_payment_api
 
-def main():
-    if len(sys.argv) != 2:
-        print(json.dumps({"error": "Formato incorreto. Uso: python3 for4payments-wrapper.py '{\"nome\": \"...\", \"cpf\": \"...\"}'"}))
-        sys.exit(1)
-    
+app = Flask(__name__)
+
+@app.route('/api/for4payments', methods=['POST'])
+def process_payment():
     try:
-        # Processar o JSON de entrada
-        user_data = json.loads(sys.argv[1])
+        # Processar o JSON da requisição
+        user_data = request.json
+        
+        if not user_data:
+            return jsonify({"error": "Dados de usuário não fornecidos"}), 400
         
         # Criar a instância da API
         api = create_payment_api()
@@ -19,14 +22,17 @@ def main():
         # Processar o pagamento
         result = api.create_encceja_payment(user_data)
         
-        # Retornar o resultado como JSON para o caller
-        print(json.dumps(result))
-        sys.exit(0)
+        # Retornar o resultado como JSON
+        return jsonify(result)
         
     except Exception as e:
         error_message = str(e)
-        print(json.dumps({"error": f"Erro ao processar pagamento: {error_message}"}))
-        sys.exit(1)
+        return jsonify({"error": f"Erro ao processar pagamento: {error_message}"}), 500
+
+@app.route('/')
+def index():
+    return "For4Payments API está funcionando. Use POST /api/for4payments para processar pagamentos."
 
 if __name__ == "__main__":
-    main()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
