@@ -158,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Rota para processar pagamento PIX
+  // Rota para processar pagamento PIX usando a API TS nativa
   app.post('/api/payments/pix-python', async (req, res) => {
     try {
       // Validar dados da requisição
@@ -179,7 +179,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log('Processando pagamento via API For4Payments...');
+      console.log('Processando pagamento via API For4Payments (TS)...');
       
       // Processar pagamento via API For4Payments 
       // Valor fixo para o kit de segurança: R$ 84,70
@@ -195,6 +195,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json(paymentResult);
     } catch (error: any) {
       console.error('Erro ao processar pagamento PIX:', error);
+      res.status(500).json({ 
+        error: error.message || 'Falha ao processar pagamento PIX.'
+      });
+    }
+  });
+  
+  // Rota para processar pagamento PIX usando a API Python (via wrapper Flask)
+  app.post('/api/payments/pix-flask', async (req, res) => {
+    try {
+      // Validar dados da requisição
+      const { nome, email, cpf, telefone } = req.body;
+      
+      // Validação básica
+      if (!nome || !cpf) {
+        return res.status(400).json({ 
+          error: 'Dados incompletos. Nome e CPF são obrigatórios.' 
+        });
+      }
+      
+      console.log('Processando pagamento via API For4Payments (Flask)...');
+      
+      // Chamar o serviço Flask via wrapper
+      const paymentResult = await createFor4Payment({
+        nome,
+        cpf,
+        email: email || '',
+        telefone: telefone || '',
+      });
+      
+      console.log('Resultado do pagamento Flask:', paymentResult);
+      
+      // Retornar resultado para o frontend
+      res.status(200).json(paymentResult);
+    } catch (error: any) {
+      console.error('Erro ao processar pagamento PIX via Flask:', error);
       res.status(500).json({ 
         error: error.message || 'Falha ao processar pagamento PIX.'
       });
