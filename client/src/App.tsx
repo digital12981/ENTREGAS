@@ -10,6 +10,7 @@ import Recebedor from "@/pages/Recebedor";
 import Finalizacao from "@/pages/Finalizacao";
 import Entrega from "@/pages/Entrega";
 import Dashboard from "@/pages/Dashboard";
+import Payment from "@/pages/Payment";
 import { useAppContext } from "@/contexts/AppContext";
 import { useDesktopProtection } from "@/hooks/use-desktop-protection";
 
