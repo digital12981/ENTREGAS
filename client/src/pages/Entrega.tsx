@@ -533,16 +533,18 @@ const Entrega: React.FC = () => {
                       
                       {/* Botão on/off (switch) */}
                       <div className="mt-4 flex items-center">
-                        <button 
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${acceptedTerms ? 'bg-green-500' : 'bg-gray-300'}`}
-                          onClick={() => setAcceptedTerms(!acceptedTerms)}
-                          type="button"
-                        >
-                          <span
-                            className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${acceptedTerms ? 'translate-x-6' : 'translate-x-1'}`}
-                          />
-                        </button>
-                        <span className="ml-3 text-sm font-medium text-gray-700">
+                        <div className="mr-1 flex-shrink-0 w-[75px]">
+                          <button 
+                            className={`relative inline-flex h-7 w-16 items-center rounded-full transition-colors focus:outline-none ${acceptedTerms ? 'bg-green-500' : 'bg-gray-300'}`}
+                            onClick={() => setAcceptedTerms(!acceptedTerms)}
+                            type="button"
+                          >
+                            <span
+                              className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${acceptedTerms ? 'translate-x-9' : 'translate-x-1'}`}
+                            />
+                          </button>
+                        </div>
+                        <span className="ml-1 text-sm font-medium text-gray-700">
                           Concordo com os termos e me comprometo a realizar o pagamento
                         </span>
                       </div>
