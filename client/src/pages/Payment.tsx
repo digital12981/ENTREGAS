@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
 import { initFacebookPixel, trackPurchase, checkPaymentStatus } from '@/lib/facebook-pixel';
+import ConversionTracker from '@/components/ConversionTracker';
 
 import pixLogo from '../assets/pix-logo.png';
 import kitEpiImage from '../assets/kit-epi-new.webp';
@@ -320,8 +321,23 @@ const Payment: React.FC = () => {
     }
   };
 
+  // Verifica se o pagamento está aprovado para rastrear conversão
+  const isApproved = paymentInfo?.status && 
+    ['APPROVED', 'approved', 'PAID', 'paid', 'COMPLETED', 'completed'].includes(
+      paymentInfo.status.toUpperCase()
+    );
+
   return (
     <div className="bg-white min-h-screen flex flex-col">
+      {/* Componente de rastreamento de conversão que não renderiza nada visualmente */}
+      {isApproved && (
+        <ConversionTracker 
+          transactionId={paymentInfo.id} 
+          amount={119.70} 
+          enabled={true} 
+        />
+      )}
+      
       <Header />
       
       <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
