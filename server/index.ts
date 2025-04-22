@@ -49,9 +49,16 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+    
+    console.error(`[ERROR HANDLER] ${status} ${message}`);
+    console.error(err.stack);
+    
+    // Responder com o erro formatado como JSON
+    res.status(status).json({ 
+      error: message,
+      status: status,
+      timestamp: new Date().toISOString()
+    });
   });
 
   // importantly only setup vite in development and after
@@ -63,15 +70,22 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  // Suporte para porta configurável (Heroku atribui a porta via PORT)
+  // Isso serve tanto para a API quanto para o cliente.
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+  
+  // Log de variáveis de ambiente importantes
+  log(`Environment: ${app.get("env")}`);
+  log(`PORT: ${process.env.PORT || 'not set, using default 5000'}`);
+  log(`DATABASE_URL: ${process.env.DATABASE_URL ? 'configured' : 'not configured'}`);
+  log(`FOR4PAYMENTS_SECRET_KEY: ${process.env.FOR4PAYMENTS_SECRET_KEY ? 'configured' : 'not configured'}`);
+  log(`FOR4PAYMENTS_API_URL: ${process.env.FOR4PAYMENTS_API_URL || 'not configured'}`);
+  
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`Server started successfully on port ${port}`);
   });
 })();
