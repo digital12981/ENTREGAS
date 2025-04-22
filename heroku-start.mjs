@@ -118,6 +118,7 @@ console.log('\n🔧 Executando scripts de correção de arquivos estáticos...')
 
 try {
   const fixScripts = [
+    'node build-server.mjs',
     'node rebuild-static.mjs',
     'node create-basic-assets.mjs',
     'node update-vite-html.mjs',

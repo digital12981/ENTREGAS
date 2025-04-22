@@ -238,7 +238,7 @@ function updateHtmlFiles(jsFile, cssFile) {
 }
 
 // Encontrar e criar assets básicos se nenhum for encontrado
-function createBasicAssetsIfNeeded(jsFileFound, cssFileFound) {
+async function createBasicAssetsIfNeeded(jsFileFound, cssFileFound) {
   if (!jsFileFound || !cssFileFound) {
     console.log('Assets não encontrados. Criando assets básicos...');
     
