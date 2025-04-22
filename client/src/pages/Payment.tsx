@@ -7,7 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/hooks/use-toast';
 import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
-import { initFacebookPixel, trackPurchase } from '@/lib/facebook-pixel';
+import { initFacebookPixel, trackPurchase, checkPaymentStatus } from '@/lib/facebook-pixel';
 
 import pixLogo from '../assets/pix-logo.png';
 import kitEpiImage from '../assets/kit-epi-new.webp';
@@ -55,13 +55,13 @@ const Payment: React.FC = () => {
     fetchPaymentInfo(id);
   }, []);
 
-  // Buscar informações de pagamento da API
+  // Buscar informações de pagamento da API e priorizar verificação direta no frontend (Netlify)
   const fetchPaymentInfo = async (id: string, checkStatus: boolean = false) => {
     try {
       setIsLoading(true);
       
-      // Adicionar parâmetro para verificar status em tempo real da For4Payments
-      const url = `${API_BASE_URL}/api/payments/${id}${checkStatus ? '?check_status=true' : ''}`;
+      // Primeiro, obter os dados básicos do pagamento do backend
+      const url = `${API_BASE_URL}/api/payments/${id}`;
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -74,7 +74,11 @@ const Payment: React.FC = () => {
         throw new Error(data.error);
       }
       
-      // Atualizar as informações do pagamento com todos os dados disponíveis
+      // Extrair nome e CPF das informações recuperadas
+      if (data.name) setName(data.name);
+      if (data.cpf) setCpf(data.cpf);
+      
+      // Atualizar as informações básicas do pagamento
       setPaymentInfo({
         id: data.id,
         pixCode: data.pixCode,
@@ -85,37 +89,114 @@ const Payment: React.FC = () => {
         facebookReported: data.facebookReported
       });
       
-      // Extrair nome e CPF das informações recuperadas
-      if (data.name) setName(data.name);
-      if (data.cpf) setCpf(data.cpf);
-      
-      // Se o pagamento foi aprovado, atualizar a UI e relatar ao Facebook Pixel
-      if (data.status === 'APPROVED') {
-        console.log('[PAYMENT] Transação APROVADA!');
+      // Se a verificação de status estiver ativada, verifica diretamente na For4Payments (frontend)
+      if (checkStatus) {
+        console.log('[PAYMENT] Verificando status diretamente do frontend...');
         
-        // Inicializar o Facebook Pixel se ainda não estiver inicializado
-        initFacebookPixel();
+        // Obter a chave de API For4Payments via variável de ambiente específica para frontend
+        // Esta variável deve ser configurada no arquivo .env com VITE_FOR4PAYMENTS_SECRET_KEY
+        const apiKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
         
-        // Reportar a conversão para o Facebook se ainda não foi reportada
-        if (!data.facebookReported) {
-          console.log('[PIXEL] Reportando conversão para o Facebook Pixel...');
-          trackPurchase(data.id, 84.70);
-          
-          // Enviar solicitação para marcar como reportado no servidor
+        if (apiKey) {
           try {
-            await fetch(`${API_BASE_URL}/api/payments/${id}/check-status`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
+            // Usar a nova função que verifica diretamente do frontend
+            const { success, data: statusData } = await checkPaymentStatus(id, apiKey);
+            
+            if (success && statusData) {
+              console.log('[PAYMENT] Status obtido diretamente:', statusData);
+              
+              // Atualizar o status local
+              setPaymentInfo(prev => {
+                if (!prev) return prev;
+                return {
+                  ...prev,
+                  status: statusData.status || prev.status || 'PENDING',
+                  approvedAt: statusData.approvedAt || prev.approvedAt,
+                  rejectedAt: statusData.rejectedAt || prev.rejectedAt
+                };
+              });
+              
+              // Se aprovado, relatar diretamente do frontend para o Facebook
+              if (statusData.status === 'APPROVED') {
+                console.log('[PAYMENT] Pagamento APROVADO! Rastreando do frontend...');
+                
+                // Inicializar o Facebook Pixel e rastrear o evento
+                initFacebookPixel();
+                const amount = statusData.amount ? parseFloat(statusData.amount) : 84.70;
+                trackPurchase(id, amount);
+                
+                // Também notifica o backend para fins de registro
+                try {
+                  await fetch(`${API_BASE_URL}/api/payments/${id}/check-status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                } catch (err) {
+                  console.warn('[PIXEL] Falha ao notificar backend, mas evento já foi enviado do frontend:', err);
+                }
               }
-            });
-            console.log('[PIXEL] Notificação enviada ao servidor com sucesso');
-          } catch (pixelError) {
-            console.error('[PIXEL] Erro ao notificar servidor sobre relatório de conversão:', pixelError);
+            }
+          } catch (directError) {
+            console.error('[PAYMENT] Erro ao verificar status diretamente:', directError);
+            
+            // Se falhar a verificação direta, tentar via backend como fallback
+            try {
+              const backendCheckUrl = `${API_BASE_URL}/api/payments/${id}?check_status=true`;
+              const backendResponse = await fetch(backendCheckUrl);
+              if (backendResponse.ok) {
+                const backendData = await backendResponse.json();
+                
+                // Atualizar o estado com os dados do backend
+                setPaymentInfo(prev => {
+                  if (!prev) return prev;
+                  return {
+                    ...prev,
+                    status: backendData.status || prev.status || 'PENDING',
+                    approvedAt: backendData.approvedAt || prev.approvedAt,
+                    rejectedAt: backendData.rejectedAt || prev.rejectedAt,
+                    facebookReported: backendData.facebookReported || prev.facebookReported
+                  };
+                });
+                
+                // Se aprovado via backend, relatar via frontend de qualquer forma
+                if (backendData.status === 'APPROVED' && !backendData.facebookReported) {
+                  initFacebookPixel();
+                  trackPurchase(id, 84.70);
+                }
+              }
+            } catch (backendError) {
+              console.error('[PAYMENT] Erro também no fallback:', backendError);
+            }
+          }
+        } else {
+          // Sem a chave API no frontend, fazemos a verificação via backend
+          console.log('[PAYMENT] Sem acesso à chave API no frontend, verificando via backend...');
+          const backendCheckUrl = `${API_BASE_URL}/api/payments/${id}?check_status=true`;
+          try {
+            const backendResponse = await fetch(backendCheckUrl);
+            if (backendResponse.ok) {
+              const backendData = await backendResponse.json();
+              
+              // Atualizar o estado com os dados do backend
+              setPaymentInfo(prev => ({
+                ...prev,
+                status: backendData.status || prev?.status || 'PENDING',
+                approvedAt: backendData.approvedAt || prev?.approvedAt,
+                rejectedAt: backendData.rejectedAt || prev?.rejectedAt,
+                facebookReported: backendData.facebookReported || prev?.facebookReported
+              }));
+              
+              // Se aprovado, garantir que o evento seja enviado do frontend
+              if (backendData.status === 'APPROVED') {
+                initFacebookPixel();
+                trackPurchase(id, 84.70);
+              }
+            }
+          } catch (backendError) {
+            console.error('[PAYMENT] Erro na verificação via backend:', backendError);
           }
         }
       }
-      
     } catch (error: any) {
       console.error('Erro ao recuperar informações de pagamento:', error);
       setErrorMessage(error.message || 'Ocorreu um erro ao carregar as informações de pagamento.');

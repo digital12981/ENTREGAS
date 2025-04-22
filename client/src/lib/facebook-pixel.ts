@@ -1,5 +1,6 @@
 /**
  * Script de integração com Facebook Pixel
+ * Implementação priorizada para execução no frontend (Netlify)
  */
 
 // Facebook Pixel ID fornecido
@@ -39,6 +40,8 @@ export function initFacebookPixel(): void {
     img.src = `https://www.facebook.com/tr?id=${FACEBOOK_PIXEL_ID}&ev=PageView&noscript=1`;
     noscript.appendChild(img);
     head.appendChild(noscript);
+    
+    console.log('[PIXEL] Facebook Pixel inicializado com sucesso.');
   }
 }
 
@@ -48,11 +51,27 @@ export function initFacebookPixel(): void {
  * @param eventData Dados do evento (opcional)
  */
 export function trackEvent(eventName: string, eventData?: Record<string, any>): void {
-  if (typeof window !== 'undefined' && window.fbq) {
+  if (typeof window !== 'undefined') {
+    // Inicializar o Pixel se ainda não estiver inicializado
+    if (!window.fbq) {
+      initFacebookPixel();
+      
+      // Aguardar a inicialização do pixel
+      setTimeout(() => {
+        if (window.fbq) {
+          console.log(`[PIXEL] Rastreando evento após inicialização: ${eventName}`, eventData || '');
+          window.fbq('track', eventName, eventData);
+        } else {
+          console.warn('[PIXEL] Falha ao inicializar o Facebook Pixel para rastrear evento.');
+        }
+      }, 500);
+      return;
+    }
+    
     console.log(`[PIXEL] Rastreando evento: ${eventName}`, eventData || '');
     window.fbq('track', eventName, eventData);
   } else {
-    console.warn('[PIXEL] Facebook Pixel não inicializado ou não disponível');
+    console.warn('[PIXEL] Ambiente sem janela detectado, não é possível rastrear evento.');
   }
 }
 
@@ -68,15 +87,76 @@ export function trackPurchase(
   amount: number,
   currency: string = 'BRL',
   itemName: string = 'Kit de Segurança Shopee'
-): void {
-  trackEvent('Purchase', {
+): boolean {
+  console.log('[PIXEL] Rastreando compra aprovada:', { transactionId, amount });
+  
+  const eventData = {
     value: amount,
     currency: currency,
     content_name: itemName,
     content_type: 'product',
     content_ids: [transactionId],
     transaction_id: transactionId,
+  };
+  
+  trackEvent('Purchase', eventData);
+  
+  // Também envia um evento personalizado para ter certeza
+  trackEvent('CompleteRegistration', {
+    content_name: 'Cadastro com pagamento aprovado',
+    transaction_id: transactionId,
+    status: 'approved'
   });
+  
+  // Enviar evento via beacon para garantir envio mesmo se página for fechada
+  try {
+    if (navigator.sendBeacon) {
+      const pixelUrl = `https://www.facebook.com/tr?id=${FACEBOOK_PIXEL_ID}&ev=Purchase&noscript=1&cd[value]=${amount}&cd[currency]=${currency}&cd[transaction_id]=${transactionId}`;
+      navigator.sendBeacon(pixelUrl);
+      console.log('[PIXEL] Evento de compra enviado via beacon para garantir entrega.');
+    }
+  } catch (err) {
+    console.error('[PIXEL] Erro ao enviar via beacon:', err);
+  }
+  
+  return true;
+}
+
+/**
+ * Verifica o status de um pagamento diretamente na API For4Payments
+ * Esta função permite que o frontend verifique o status diretamente 
+ * quando o backend não conseguir processar
+ */
+export async function checkPaymentStatus(paymentId: string, apiKey: string): Promise<any> {
+  try {
+    const response = await fetch(`https://app.for4payments.com.br/api/v1/transaction.getPayment?id=${paymentId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': apiKey,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Erro ao verificar status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('[PIXEL] Status do pagamento verificado:', data);
+    
+    // Se aprovado, rastrear imediatamente
+    if (data && data.status === 'APPROVED') {
+      console.log('[PIXEL] Pagamento APROVADO! Rastreando evento...');
+      const amount = data.amount ? parseFloat(data.amount) : 84.70;
+      trackPurchase(paymentId, amount);
+      return { success: true, data };
+    }
+    
+    return { success: true, data };
+  } catch (error) {
+    console.error('[PIXEL] Erro ao verificar status diretamente:', error);
+    return { success: false, error };
+  }
 }
 
 // Adicionar tipagem para o Facebook Pixel no window global

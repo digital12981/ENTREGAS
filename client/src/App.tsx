@@ -13,6 +13,7 @@ import Dashboard from "@/pages/Dashboard";
 import Payment from "@/pages/Payment";
 import { useAppContext } from "@/contexts/AppContext";
 import { useDesktopProtection } from "@/hooks/use-desktop-protection";
+import FacebookPixelInitializer from "@/components/FacebookPixelInitializer";
 
 function Router() {
   return (
@@ -39,6 +40,7 @@ function App() {
   return (
     <TooltipProvider>
       <Toaster />
+      <FacebookPixelInitializer />
       <Router />
     </TooltipProvider>
   );
