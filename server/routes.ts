@@ -236,6 +236,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rota para diagnóstico - verifica e exibe as configurações do servidor (sem expor valores sensíveis)
+  app.get('/api/diagnostic', (req, res) => {
+    const diagnostic = {
+      serverTime: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'not set',
+      port: process.env.PORT || '5000 (default)',
+      database: process.env.DATABASE_URL ? 'configured' : 'not configured',
+      for4paymentsSecretKey: process.env.FOR4PAYMENTS_SECRET_KEY ? 'configured' : 'not configured',
+      for4paymentsApiUrl: process.env.FOR4PAYMENTS_API_URL || 'not configured',
+      nodeVersion: process.version,
+      memoryUsage: process.memoryUsage(),
+      uptime: process.uptime()
+    };
+    
+    res.json(diagnostic);
+  });
+
+  // Rota de status simplificada para verificação de saúde
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
