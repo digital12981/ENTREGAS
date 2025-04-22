@@ -510,10 +510,51 @@ const Entrega: React.FC = () => {
                   </div>
                 </div>
                 
+                {/* Box de alerta sobre o kit de segurança obrigatório */}
+                <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+                  <div className="flex items-start">
+                    <div className="text-red-500 mt-0.5 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-red-800 font-medium text-sm">ATENÇÃO: Kit de Segurança Obrigatório</h4>
+                      <p className="text-red-700 text-sm mt-1">
+                        O pagamento do Kit de Segurança do Entregador é <strong>obrigatório</strong> e você precisa 
+                        adquirir este kit oficial para exercer a função de entregador Shopee.
+                      </p>
+                      <p className="text-red-700 text-sm mt-2">
+                        Ao prosseguir, você se compromete a realizar o pagamento via PIX no prazo de 30 minutos, 
+                        caso contrário, perderá o direito à vaga de entregador.
+                      </p>
+                      
+                      {/* Botão on/off (switch) */}
+                      <div className="mt-4 flex items-center">
+                        <button 
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${acceptedTerms ? 'bg-green-500' : 'bg-gray-300'}`}
+                          onClick={() => setAcceptedTerms(!acceptedTerms)}
+                          type="button"
+                        >
+                          <span
+                            className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${acceptedTerms ? 'translate-x-6' : 'translate-x-1'}`}
+                          />
+                        </button>
+                        <span className="ml-3 text-sm font-medium text-gray-700">
+                          Concordo com os termos e me comprometo a realizar o pagamento
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
                 <Button
                   type="submit"
-                  className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
+                  className={`w-full text-white font-medium py-6 text-base rounded-[3px] transition-all ${acceptedTerms ? 'bg-[#E83D22] hover:bg-[#d73920]' : 'bg-[#E83D2280] cursor-not-allowed'}`}
                   style={{ height: '50px' }}
+                  disabled={!acceptedTerms}
                 >
                   Comprar e Ativar Cadastro
                 </Button>
