@@ -358,6 +358,9 @@ const Cadastro: React.FC = () => {
                   onChange={handlePlacaChange}
                   placeholder="ABC-1234 ou ABC1D23"
                   className={errors.placa ? 'border-red-500' : ''}
+                  pattern="[A-Za-z0-9-]*"
+                  inputMode="text"
+                  autoCapitalize="characters"
                 />
                 {errors.placa && (
                   <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
