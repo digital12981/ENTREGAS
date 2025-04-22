@@ -541,6 +541,8 @@ function serveStaticFiles() {
             const debugScript = `
 <script>
   console.log('Debug script carregado');
+  
+  // Capturar erros JavaScript
   window.onerror = function(message, source, lineno, colno, error) {
     console.error('Erro Javascript:', message, 'em', source, 'linha:', lineno);
     document.body.innerHTML += '<div style="position:fixed; top:0; left:0; background:#f8d7da; color:#721c24; padding:20px; z-index:9999; width:100%;">' + 
@@ -550,15 +552,89 @@ function serveStaticFiles() {
       '</div>';
     return true;
   };
+
+  // Capturar rejeições de promessas não tratadas
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('Promessa rejeitada não tratada:', event.reason);
+    document.body.innerHTML += '<div style="position:fixed; top:50px; left:0; background:#f8d7da; color:#721c24; padding:20px; z-index:9999; width:100%;">' + 
+      '<h3>Promessa rejeitada não tratada:</h3>' +
+      '<p>' + (event.reason ? event.reason.message || String(event.reason) : 'Razão desconhecida') + '</p>' +
+      '</div>';
+  });
+  
+  // Adicionar uma interface mínima com links para as principais rotas
+  function addMinimalInterface() {
+    const rootDiv = document.getElementById('root');
+    if (!rootDiv || rootDiv.childElementCount === 0) {
+      const debugPanel = document.createElement('div');
+      debugPanel.style.cssText = 'position:fixed; top:0; left:0; background:#e2f0ff; color:#0c5460; padding:20px; z-index:9999; width:100%; font-family: Arial, sans-serif;';
+      debugPanel.innerHTML = '<h2>Shopee Delivery Partners - Debug Panel</h2>' +
+        '<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;">' +
+        '  <a href="/" style="background:#0d6efd; color:white; padding:10px 15px; text-decoration:none; border-radius:5px;">Home</a>' +
+        '  <a href="/cadastro" style="background:#0d6efd; color:white; padding:10px 15px; text-decoration:none; border-radius:5px;">Cadastro</a>' +
+        '  <a href="/entrega" style="background:#0d6efd; color:white; padding:10px 15px; text-decoration:none; border-radius:5px;">Entrega</a>' +
+        '  <a href="/recebedor" style="background:#0d6efd; color:white; padding:10px 15px; text-decoration:none; border-radius:5px;">Recebedor</a>' +
+        '</div>' +
+        '<div id="api-results" style="margin-top:20px; padding:15px; background:#f7f7f9; border-radius:5px;"><h3>API Status:</h3><p>Checando APIs...</p></div>';
+      
+      // Append antes do root div para não interferir com o React se ele eventualmente inicializar
+      rootDiv.parentNode.insertBefore(debugPanel, rootDiv);
+      
+      // Testar a API para diagnóstico
+      setTimeout(function() {
+        const apiResultsDiv = document.getElementById('api-results');
+        
+        // Teste da API de regiões
+        apiResultsDiv.innerHTML = '<h3>API Status:</h3><p>Testando API de regiões...</p>';
+        
+        fetch('/api/regions')
+          .then(response => {
+            apiResultsDiv.innerHTML += '<p>✅ API /api/regions respondeu com status: ' + response.status + '</p>';
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Erro na resposta da API');
+            }
+          })
+          .then(data => {
+            apiResultsDiv.innerHTML += '<p>Dados recebidos: ' + JSON.stringify(data).substring(0, 100) + '...</p>';
+          })
+          .catch(err => {
+            apiResultsDiv.innerHTML += '<p>❌ Erro ao chamar API: ' + err.message + '</p>';
+          });
+      }, 1000);
+    }
+  }
   
   // Verificar se o React está carregando
   setTimeout(function() {
-    if (document.body.childElementCount === 0 || (document.getElementById('root') && document.getElementById('root').childElementCount === 0)) {
+    const rootDiv = document.getElementById('root');
+    console.log('Verificando renderização do React. Root encontrado:', !!rootDiv);
+    
+    if (!rootDiv || rootDiv.childElementCount === 0) {
+      console.warn('React não renderizou conteúdo após 3 segundos');
+      
       document.body.innerHTML += '<div style="position:fixed; top:0; left:0; background:#fff3cd; color:#856404; padding:20px; z-index:9999; width:100%;">' + 
         '<h3>Aviso:</h3>' +
         '<p>A aplicação React não renderizou nenhum conteúdo. Verificando estado do DOM.</p>' +
         '<p>Elementos no body: ' + document.body.childElementCount + '</p>' +
+        '<p>Elementos no #root: ' + (rootDiv ? rootDiv.childElementCount : 'elemento root não encontrado') + '</p>' +
         '</div>';
+      
+      // Adicionar interface mínima de navegação e diagnóstico
+      addMinimalInterface();
+      
+      // Verificar scripts carregados
+      const scripts = document.getElementsByTagName('script');
+      let scriptInfo = 'Scripts carregados:<br>';
+      for (let i=0; i < Math.min(scripts.length, 5); i++) {
+        scriptInfo += '- ' + (scripts[i].src || 'inline script') + '<br>';
+      }
+      if (scripts.length > 5) {
+        scriptInfo += `... e mais ${scripts.length - 5} scripts`;
+      }
+      
+      document.body.innerHTML += '<div style="position:fixed; bottom:10px; right:10px; background:#f8f9fa; padding:15px; border:1px solid #ddd; border-radius:5px;">' + scriptInfo + '</div>';
     }
   }, 3000);
 </script>`;
@@ -566,8 +642,117 @@ function serveStaticFiles() {
             // Processar o HTML para modificar referências a assets com hash
             let processedHtml = fixAssetReferences(indexContent, distDir);
             
-            // Inserir o script de debug antes do fechamento do </body>
-            processedHtml = processedHtml.replace('</body>', debugScript + '</body>');
+            // Corrigir problemas conhecidos com scripts module
+            processedHtml = processedHtml.replace(
+              /<script type="module" crossorigin src="\/assets\/([^"]+)"><\/script>/g,
+              '<script type="module" crossorigin src="/assets/$1" onerror="console.error(\'Erro ao carregar script module\', this.src)"></script>'
+            );
+            
+            // Adicionar scripts de fallback para lidar com problemas comuns
+            const fallbackScript = `
+<script>
+// Verificar se o script principal foi carregado corretamente
+window.reactLoaded = false;
+
+// Fallback para carregar o script principal manualmente se necessário
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificar se o React foi carregado após 1 segundo
+  setTimeout(function() {
+    if (!window.reactLoaded) {
+      console.warn('React não foi inicializado após 1 segundo, tentando alternativas');
+      
+      // 1. Primeiro: tentar recarregar o script principal
+      var mainScript = document.querySelector('script[src*="index-"]');
+      if (mainScript) {
+        console.log('Tentativa 1: Recarregando script principal:', mainScript.src);
+        
+        var newScript = document.createElement('script');
+        newScript.src = mainScript.src.split('?')[0] + '?' + new Date().getTime(); // Evitar cache
+        newScript.type = 'text/javascript';
+        newScript.async = false; // Forçar carregamento síncrono
+        document.body.appendChild(newScript);
+      }
+      
+      // 2. Carregar bibliotecas React diretamente de CDN como fallback
+      setTimeout(function() {
+        if (!window.reactLoaded) {
+          console.log('Tentativa 2: Carregando React diretamente de CDN');
+          
+          var reactScript = document.createElement('script');
+          reactScript.src = 'https://unpkg.com/react@18/umd/react.production.min.js';
+          reactScript.crossOrigin = '';
+          
+          var reactDomScript = document.createElement('script');
+          reactDomScript.src = 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js';
+          reactDomScript.crossOrigin = '';
+          
+          reactScript.onload = function() {
+            document.body.appendChild(reactDomScript);
+          };
+          
+          reactDomScript.onload = function() {
+            console.log('React e ReactDOM carregados de CDN');
+            
+            // 3. Tentar inicializar React manualmente
+            setTimeout(function() {
+              if (!window.reactLoaded && document.getElementById('root')) {
+                console.log('Tentativa 3: Inicializando React manualmente');
+                
+                // Criar um componente React mínimo
+                var rootElement = document.getElementById('root');
+                rootElement.innerHTML = '';
+                
+                // Mostrar uma mensagem dentro do elemento root
+                var fallbackElement = document.createElement('div');
+                fallbackElement.style.cssText = 'padding:20px; text-align:center; font-family:system-ui,sans-serif;';
+                fallbackElement.innerHTML = '<h1>Shopee Delivery Partners</h1>' +
+                  '<p>O aplicativo está carregando em modo alternativo.</p>' +
+                  '<div id="fallback-loading" style="margin:20px 0; padding:15px; border-radius:4px; background:#f8f9fa;">Carregando...</div>' +
+                  '<div style="margin:20px auto; max-width:600px;">' +
+                  '  <a href="/" style="display:inline-block; padding:10px 20px; background:#ee4d2d; color:white; text-decoration:none; border-radius:4px; margin:0 10px;">Início</a>' +
+                  '  <a href="/cadastro" style="display:inline-block; padding:10px 20px; background:#ee4d2d; color:white; text-decoration:none; border-radius:4px; margin:0 10px;">Cadastro</a>' +
+                  '</div>';
+                
+                rootElement.appendChild(fallbackElement);
+                
+                // Tentar carregar dados da API
+                var loadingElement = document.getElementById('fallback-loading');
+                fetch('/api/regions')
+                  .then(function(response) { return response.json(); })
+                  .then(function(data) {
+                    loadingElement.innerHTML = '<div style="color:green">✓ API conectada com sucesso!</div>';
+                  })
+                  .catch(function(error) {
+                    loadingElement.innerHTML = '<div style="color:red">✗ Erro ao conectar à API: ' + error.message + '</div>';
+                  });
+              }
+            }, 1000);
+          };
+          
+          document.body.appendChild(reactScript);
+        }
+      }, 2000);
+    }
+  }, 1000);
+});
+
+// Monitorar carregamento de React
+setInterval(function() {
+  if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined' && !window.reactLoaded) {
+    console.log('React detectado como carregado!');
+    window.reactLoaded = true;
+  }
+}, 500);
+</script>`;
+            
+            // Inserir os scripts antes do fechamento do </body>
+            processedHtml = processedHtml.replace('</body>', fallbackScript + debugScript + '</body>');
+            
+            // Adicionar meta tag para resolver problemas de cache
+            processedHtml = processedHtml.replace(
+              '<head>',
+              '<head>\n    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />\n    <meta http-equiv="Pragma" content="no-cache" />\n    <meta http-equiv="Expires" content="0" />'
+            );
             
             // Enviar o HTML processado
             res.set('Content-Type', 'text/html');
