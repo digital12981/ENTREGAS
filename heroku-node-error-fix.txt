@@ -1,0 +1,66 @@
+# Como corrigir o erro "Cannot find package '@vitejs/plugin-react'" no Heroku
+
+O erro que você está enfrentando é relacionado a dependências de desenvolvimento que não estão sendo instaladas corretamente no ambiente de produção do Heroku. O erro específico é:
+
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /app/dist/index.js
+```
+
+## Solução 1 - Mover dependências de desenvolvimento para dependências regulares
+
+Como não podemos modificar o arquivo `package.json` diretamente, use os seguintes comandos no terminal para mover as dependências necessárias para o grupo de dependências regulares:
+
+```bash
+heroku config:set NPM_CONFIG_PRODUCTION=false
+```
+
+O comando acima força o Heroku a instalar todas as dependências, incluindo as de desenvolvimento.
+
+## Solução 2 - Definir Node.js versão 18.x
+
+A aplicação foi desenvolvida com Node.js 18, mas o Heroku está usando Node.js 22 (v22.14.0), o que pode causar problemas de compatibilidade:
+
+```bash
+heroku config:set NODE_VERSION=18.18.2
+```
+
+## Solução 3 - Verificar e reparar buildpacks
+
+```bash
+heroku buildpacks:clear
+heroku buildpacks:set heroku/nodejs
+```
+
+## Solução 4 - Modificar a configuração de buildpack
+
+O comando a seguir força o Heroku a aumentar o timeout para o build e outros ajustes:
+
+```bash
+heroku config:set NODE_OPTIONS=--max_old_space_size=2560
+```
+
+## Após realizar as alterações
+
+Depois de aplicar essas mudanças:
+
+1. Faça deploy novamente:
+```bash
+git push heroku main
+```
+
+2. Verifique os logs:
+```bash
+heroku logs --tail
+```
+
+3. Reinicie a aplicação:
+```bash
+heroku restart
+```
+
+4. Acesse a rota de diagnóstico:
+```bash
+curl https://www.shopee-entregas.com/api/diagnostic
+```
+
+Com essas alterações, o deploy deve funcionar corretamente!
