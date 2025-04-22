@@ -1,5 +1,6 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
+const path = require('path');
 
 console.log('Running Heroku postbuild script...');
 
@@ -19,8 +20,30 @@ function execCommand(command) {
 console.log('Installing Python dependencies...');
 execCommand('pip install -r heroku-requirements.txt');
 
-// 2. Construir o aplicativo Node.js
-console.log('Building Node.js application...');
-execCommand('npm run build');
+// 2. Construir o aplicativo Node.js usando nosso script personalizado
+console.log('Building Node.js application with our custom script...');
+execCommand('node heroku-build.js');
+
+// 3. Log do ambiente para debug
+console.log('Environment information:');
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`PORT: ${process.env.PORT || '(not set)'}`);
+console.log(`Current directory: ${process.cwd()}`);
+
+const publicDir = path.resolve(process.cwd(), 'public');
+const distDir = path.resolve(process.cwd(), 'dist');
+
+console.log(`Public directory exists: ${fs.existsSync(publicDir)}`);
+console.log(`Dist directory exists: ${fs.existsSync(distDir)}`);
+
+if (fs.existsSync(publicDir)) {
+  console.log('Files in public directory:');
+  execCommand('ls -la public');
+}
+
+if (fs.existsSync(distDir)) {
+  console.log('Files in dist directory:');
+  execCommand('ls -la dist');
+}
 
 console.log('Heroku postbuild completed successfully!');
