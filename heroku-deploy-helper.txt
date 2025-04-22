@@ -1,52 +1,88 @@
-# Instruções para deploy no Heroku
+# Guia de Deploy no Heroku - Solução para erro H10
 
-Para solucionar o problema de H10 no Heroku, siga os passos abaixo:
+## Passo a Passo para Deploy Bem-Sucedido
 
-1. Execute os seguintes comandos no terminal:
+### 1. Configurar buildpacks corretamente
+
+Este é um projeto Node.js. Certifique-se de estar usando apenas o buildpack Node.js:
 
 ```
 heroku buildpacks:clear
 heroku buildpacks:set heroku/nodejs
 ```
 
-2. Configure as seguintes variáveis de ambiente:
+### 2. Configurar variáveis de ambiente essenciais
+
+Certifique-se de configurar todas estas variáveis de ambiente:
 
 ```
 heroku config:set NODE_ENV=production
-heroku config:set NPM_CONFIG_PRODUCTION=true
+heroku config:set NPM_CONFIG_PRODUCTION=false
 heroku config:set FOR4PAYMENTS_SECRET_KEY=seu-token-aqui
 ```
 
-3. Certifique-se de que o arquivo `Procfile` contém apenas:
+Importante: Configure `NPM_CONFIG_PRODUCTION=false` para permitir a instalação de devDependencies necessárias para o build.
+
+### 3. Verificar Procfile
+
+Certifique-se de que o arquivo `Procfile` contém apenas:
 
 ```
 web: npm run start
 ```
 
-4. Faça deploy com o seguinte comando:
+### 4. Reinstalar dependências localmente (opcional)
+
+Se você estiver enfrentando problemas com o lockfile:
+
+```
+rm -rf node_modules
+npm install
+git add package-lock.json
+git commit -m "Atualiza package-lock.json"
+```
+
+### 5. Fazer deploy e monitorar logs
 
 ```
 git push heroku main
-```
-
-5. Verifique os logs com:
-
-```
 heroku logs --tail
 ```
 
-Caso continue tendo problemas, tente reiniciar a aplicação:
-
-```
-heroku restart
-```
-
-Você também pode verificar o status dos dynos com:
+### 6. Verificar se a aplicação está em execução
 
 ```
 heroku ps
 ```
 
-# Nota importante:
-- Não tente usar o buildpack Python e Node.js juntos para simplificar
-- Estamos usando apenas o serviço Node.js que está contido no Procfile
+### 7. Se continuar enfrentando problemas, verifique o diagnóstico
+
+Acesse a rota `/api/diagnostic` no seu app após o deploy:
+
+```
+curl https://seu-app.herokuapp.com/api/diagnostic
+```
+
+### 8. Reiniciar a aplicação se necessário
+
+```
+heroku restart
+```
+
+## Notas Importantes
+
+1. **Simplificação da Aplicação**: Removemos a dependência do serviço Python/Flask para permitir um deploy mais simples.
+
+2. **Processamento de PIX**: A aplicação agora usa um serviço JavaScript nativo que implementa a mesma funcionalidade que o serviço Python.
+
+3. **Verificação de Status**: Use a rota `/api/diagnostic` para verificar o status da aplicação e confirmar que as variáveis de ambiente estão configuradas corretamente.
+
+4. **Performance**: Para melhorar a performance no Heroku, certifique-se de que seu dyno está com o tipo correto (pelo menos hobby).
+
+5. **Domínio Personalizado**: Se você usa um domínio personalizado (shopee-entregas.com), certifique-se de que a configuração DNS está correta.
+
+## Documentação de Referência
+
+- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
+- [Heroku Troubleshooting Node.js Deploys](https://devcenter.heroku.com/articles/troubleshooting-node-deploys)
+- [Heroku Error Codes](https://devcenter.heroku.com/articles/error-codes)
