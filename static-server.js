@@ -67,8 +67,19 @@ const staticOptions = {
   }
 };
 
-// Servir arquivos estáticos com alta prioridade para /assets
+// Middleware para interceptar requisições absolutas para /assets e redirecionar para caminho relativo
+app.use('/assets', (req, res, next) => {
+  console.log(`Asset request with absolute path: ${req.method} ${req.path}`);
+  res.redirect(`assets${req.path}`);
+});
+
+// Servir arquivos estáticos para assets com caminho relativo (alta prioridade)
 app.use('/assets', express.static(path.join(staticPath, 'assets'), {
+  maxAge: '1y',
+  etag: true
+}));
+
+app.use('assets', express.static(path.join(staticPath, 'assets'), {
   maxAge: '1y',
   etag: true
 }));
@@ -76,12 +87,44 @@ app.use('/assets', express.static(path.join(staticPath, 'assets'), {
 // Servir outros arquivos estáticos
 app.use(express.static(staticPath, staticOptions));
 
+// Adicionar um middleware para monitorar todas as requisições de assets
+app.use((req, res, next) => {
+  if (req.path.includes('/assets/') || req.path.includes('assets/')) {
+    console.log(`Asset request: ${req.method} ${req.path}`);
+    
+    // Se for uma requisição com caminho absoluto, tentar redirecionar para caminho relativo
+    if (req.path.startsWith('/assets/')) {
+      console.log(`Redirecting ${req.path} to relative path: assets/${req.path.substring(8)}`);
+      return res.redirect(`assets/${req.path.substring(8)}`);
+    }
+  }
+  next();
+});
+
 // Rota específica para index.html
 app.get('/', (req, res) => {
   const indexPath = path.join(staticPath, 'index.html');
   if (fs.existsSync(indexPath)) {
     console.log(`Serving index.html from ${indexPath}`);
-    res.sendFile(indexPath);
+    
+    // Ler o arquivo e injetar CSS inline (apenas como fallback)
+    try {
+      const indexContent = fs.readFileSync(indexPath, 'utf8');
+      console.log('Successfully read index.html content');
+      
+      // Injetar meta tag para debug
+      const modifiedContent = indexContent.replace('</head>', 
+        '<!-- Modified for Heroku by static-server.js -->\n' +
+        '<meta name="heroku-deploy" content="true">\n' +
+        '</head>'
+      );
+      
+      res.setHeader('Content-Type', 'text/html');
+      res.send(modifiedContent);
+    } catch (err) {
+      console.error(`Error reading index.html: ${err.message}`);
+      res.sendFile(indexPath);
+    }
   } else {
     console.error(`index.html not found at ${indexPath}`);
     res.status(404).send('index.html not found');
