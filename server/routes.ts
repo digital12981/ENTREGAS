@@ -344,7 +344,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         isBanned: !!bannedIp?.isBanned,
         ip: ip,
-        bannedAt: bannedIp?.createdAt 
+        bannedAt: bannedIp?.bannedAt 
       });
     } catch (error) {
       console.error("Erro ao verificar IP banido:", error);
