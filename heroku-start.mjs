@@ -119,13 +119,54 @@ if (fs.existsSync(publicDir)) {
   if (fs.existsSync(path.join(publicDir, 'index.html'))) {
     const publicFiles = fs.readdirSync(publicDir);
     const hasFavicon = fs.existsSync(path.join(publicDir, 'favicon.ico'));
+    const hasAssets = fs.existsSync(path.join(publicDir, 'assets'));
     
     console.log(`✅ Diretório public configurado com ${publicFiles.length} arquivos.`);
     console.log(`  index.html: encontrado`);
     console.log(`  favicon.ico: ${hasFavicon ? 'encontrado' : 'NÃO ENCONTRADO'}`);
+    console.log(`  diretório assets: ${hasAssets ? 'encontrado' : 'NÃO ENCONTRADO'}`);
+    
+    // Verificar se temos os assets específicos
+    const assetsDir = path.join(publicDir, 'assets');
+    if (hasAssets) {
+      const assetFiles = fs.readdirSync(assetsDir);
+      const hasJs = assetFiles.some(file => file.includes('index-') && file.endsWith('.js'));
+      const hasCss = assetFiles.some(file => file.includes('index-') && file.endsWith('.css'));
+      
+      console.log(`  assets/index*.js: ${hasJs ? 'encontrado' : 'NÃO ENCONTRADO'}`);
+      console.log(`  assets/index*.css: ${hasCss ? 'encontrado' : 'NÃO ENCONTRADO'}`);
+      
+      // Se estamos faltando arquivos importantes, executar o script de extração
+      if (!hasJs || !hasCss) {
+        console.log('Faltam arquivos importantes. Executando script de extração...');
+        const extractScript = path.join(process.cwd(), 'extract-html-and-create-assets.mjs');
+        if (fs.existsSync(extractScript)) {
+          spawn('node', [extractScript], { stdio: 'inherit', shell: true });
+        } else {
+          console.warn('Script extract-html-and-create-assets.mjs não encontrado.');
+        }
+      }
+    } else {
+      console.log('Diretório assets não encontrado. Executando script de extração...');
+      const extractScript = path.join(process.cwd(), 'extract-html-and-create-assets.mjs');
+      if (fs.existsSync(extractScript)) {
+        spawn('node', [extractScript], { stdio: 'inherit', shell: true });
+      } else {
+        console.warn('Script extract-html-and-create-assets.mjs não encontrado.');
+      }
+    }
   } else {
     console.warn('⚠️ Diretório public existe, mas não contém index.html.');
     console.warn('  A interface web pode não funcionar corretamente.');
+    
+    // Executar script de extração
+    console.log('Executando script de extração...');
+    const extractScript = path.join(process.cwd(), 'extract-html-and-create-assets.mjs');
+    if (fs.existsSync(extractScript)) {
+      spawn('node', [extractScript], { stdio: 'inherit', shell: true });
+    } else {
+      console.warn('Script extract-html-and-create-assets.mjs não encontrado.');
+    }
   }
 } else {
   console.warn('⚠️ Não foi possível criar o diretório public.');
