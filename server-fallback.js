@@ -1,3 +1,7 @@
+// @ts-nocheck
+// CommonJS module
+"use strict";
+
 /**
  * Servidor Express de fallback
  * 
@@ -23,13 +27,26 @@ console.log(`📌 Diretório atual: ${process.cwd()}`);
 console.log(`📌 Ambiente: ${process.env.NODE_ENV || 'não definido'}`);
 console.log(`📌 Node.js: ${process.version}`);
 
+// Verificar versão do Node.js e informações do ambiente
+const nodeVersion = process.version.replace('v', '');
+const majorVersion = parseInt(nodeVersion.split('.')[0], 10);
+const isHighNodeVersion = majorVersion >= 18;
+const isHeroku = !!process.env.DYNO;
+const isProd = process.env.NODE_ENV === 'production';
+
+console.log(`📊 Detalhes da plataforma:`);
+console.log(`📊 - Node.js: ${process.version} (Major: ${majorVersion})`);
+console.log(`📊 - Heroku: ${isHeroku ? 'Sim' : 'Não'}`);
+console.log(`📊 - Ambiente: ${isProd ? 'Produção' : 'Desenvolvimento/Teste'}`);
+
 // Verificar múltiplos locais para servir arquivos estáticos
 const rootDir = process.cwd();
 const publicDirs = [
   path.join(rootDir, 'dist', 'public'),
-  path.join(rootDir, 'public'),
   path.join(rootDir, 'dist', 'client'),
   path.join(rootDir, 'dist'), // Adicionar dist/ diretamente
+  path.join(rootDir, 'public'),
+  path.join(rootDir, 'build'),
   path.join(rootDir),         // Raiz do projeto
   path.join(rootDir, 'static')
 ];
