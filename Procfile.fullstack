@@ -1,1 +1,1 @@
-web: NODE_ENV=production node static-server.js
+web: node heroku-server.js

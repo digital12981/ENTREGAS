@@ -1,36 +1,31 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/public",
+  "builds": [
+    {
+      "src": "dist/public/**",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "https://sua-app-heroku.herokuapp.com/api/$1"
+    { 
+      "src": "/assets/(.*)", 
+      "dest": "/dist/public/assets/$1",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
     },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+    { 
+      "src": "/(.*\\.(js|css))", 
+      "dest": "/dist/public/$1",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
     },
-    {
-      "src": "/(.*)\\.js",
-      "dest": "/$1.js",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+    { 
+      "src": "/(.*\\.(jpg|jpeg|png|gif|ico|svg|webp))", 
+      "dest": "/dist/public/$1",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
     },
-    {
-      "src": "/(.*)\\.css",
-      "dest": "/$1.css",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+    { 
+      "src": "/(.*)", 
+      "dest": "/dist/public/index.html",
+      "headers": { "Cache-Control": "public, max-age=0, must-revalidate" }
     }
   ]
 }

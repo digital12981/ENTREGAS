@@ -1,25 +1,22 @@
 {
   "name": "Shopee Delivery Partners",
-  "description": "Plataforma de recrutamento para parceiros de entrega da Shopee no Brasil",
-  "scripts": {
-  },
-  "env": {
-    "NODE_ENV": {
-      "description": "Ambiente de execução",
-      "value": "production"
-    }
-  },
-  "formation": {
-    "web": {
-      "quantity": 1
-    }
-  },
-  "addons": [
-    "heroku-postgresql"
-  ],
+  "description": "Portal de Recrutamento para Shopee Delivery Partners",
+  "repository": "https://github.com/seu-usuario/shopee-delivery-partners",
+  "logo": "https://cdn.shopee.com.br/logo.png",
+  "keywords": ["node", "express", "static", "heroku", "shopee", "delivery"],
   "buildpacks": [
     {
       "url": "heroku/nodejs"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Ambiente de execução da aplicação",
+      "value": "production"
+    }
+  },
+  "scripts": {
+    "postdeploy": "echo 'Deploy completed'"
+  },
+  "success_url": "/"
 }

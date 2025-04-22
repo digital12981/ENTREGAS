@@ -1,14 +1,17 @@
 {
-  "name": "shopee-delivery-partners-heroku",
+  "name": "shopee-delivery-partners",
   "version": "1.0.0",
+  "description": "Shopee Delivery Partners - Portal de Recrutamento",
+  "type": "module",
   "engines": {
-    "node": "20.x"
+    "node": ">=16.0.0"
   },
   "scripts": {
-    "start": "node expressjs-server.js"
+    "start": "node heroku-server.js"
   },
   "dependencies": {
     "compression": "^1.7.4",
-    "express": "^4.18.3"
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
   }
 }
