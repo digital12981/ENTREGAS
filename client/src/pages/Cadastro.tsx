@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { useAppContext } from '@/contexts/AppContext';
 import { LoadingModal } from '@/components/LoadingModal';
+import { useScrollTop } from '@/hooks/use-scroll-top';
 
 import shopeeMotoImage from '../assets/shopee-moto.webp';
 import shopeeCarsImage from '../assets/shopee-cars.webp';
@@ -60,6 +61,9 @@ enum TipoVeiculo {
 }
 
 const Cadastro: React.FC = () => {
+  // Aplica o scroll para o topo quando o componente é montado
+  useScrollTop();
+  
   const { cepData } = useAppContext();
   const [tipoVeiculo, setTipoVeiculo] = useState<TipoVeiculo | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

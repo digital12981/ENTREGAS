@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } f
 import { useToast } from '@/hooks/use-toast';
 import { useAppContext } from '@/contexts/AppContext';
 import { LoadingModal } from '@/components/LoadingModal';
+import { useScrollTop } from '@/hooks/use-scroll-top';
 
 import municipiosPorEstado from '@/data/municipios-por-estado';
 
@@ -19,6 +20,9 @@ interface Municipio {
 }
 
 const Municipios: React.FC = () => {
+  // Aplica o scroll para o topo quando o componente é montado
+  useScrollTop();
+  
   const { cepData } = useAppContext();
   const [municipios, setMunicipios] = useState<Municipio[]>([]);
   const [loading, setLoading] = useState(true);

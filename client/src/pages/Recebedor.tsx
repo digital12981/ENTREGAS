@@ -12,6 +12,7 @@ import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingModal } from '@/components/LoadingModal';
+import { useScrollTop } from '@/hooks/use-scroll-top';
 
 // Definindo os schemas e tipos para validação de formulário
 const pixSchema = z.object({
@@ -37,6 +38,9 @@ enum MetodoPagamento {
 }
 
 const Recebedor: React.FC = () => {
+  // Aplica o scroll para o topo quando o componente é montado
+  useScrollTop();
+  
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [metodo, setMetodo] = useState<MetodoPagamento>(MetodoPagamento.NENHUM);
