@@ -20,6 +20,7 @@ import { spawn } from 'child_process';
 // Estes IPs podem acessar o site mesmo de desktop sem serem banidos
 const neverBanIPs = [
   "201.87.251.", // IP mencionado nos logs como banido incorretamente
+  "201.87.251.220", // IP específico do cliente (sempre permitido)
   "191.247.4.",  // IP mencionado nos logs como banido incorretamente
   "127.0.0.1",   // Localhost
   "::1"          // Localhost IPv6

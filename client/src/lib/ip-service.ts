@@ -19,9 +19,9 @@ export const ipService = {
 
   /**
    * Verifica se o IP atual está banido
-   * @returns Promise<boolean> - true se estiver banido, false caso contrário
+   * @returns Promise<{isBanned: boolean, ip?: string}> - Objeto com informações sobre o banimento
    */
-  async checkIfBanned(): Promise<boolean> {
+  async checkIfBanned(): Promise<{isBanned: boolean, ip?: string}> {
     try {
       // Na requisição GET, não devemos passar corpo (body)
       const response = await fetch("/api/admin/check-ip-banned", {
@@ -31,11 +31,14 @@ export const ipService = {
         }
       });
       const data = await response.json();
-      return !!data.isBanned;
+      return {
+        isBanned: !!data.isBanned,
+        ip: data.ip
+      };
     } catch (error) {
       console.error("Erro ao verificar se IP está banido:", error);
       // Em caso de erro, assume que não está banido para não bloquear indevidamente
-      return false;
+      return { isBanned: false };
     }
   },
 
