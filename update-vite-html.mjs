@@ -327,25 +327,27 @@ body {
   }
 }
 
-// Executar o script
-try {
-  // Encontrar os assets mais recentes
-  const { jsFile, cssFile, jsFileFound, cssFileFound } = findLatestAssets();
-  
-  // Criar assets básicos se necessário
-  if (!jsFileFound || !cssFileFound) {
-    createBasicAssetsIfNeeded(jsFileFound, cssFileFound);
+// Executar o script como função assíncrona
+(async function main() {
+  try {
+    // Encontrar os assets mais recentes
+    const { jsFile, cssFile, jsFileFound, cssFileFound } = findLatestAssets();
     
-    // Procurar novamente depois de criar
-    const assets = findLatestAssets();
-    updateHtmlFiles(assets.jsFile || 'basic.js', assets.cssFile || 'basic.css');
-  } else {
-    // Atualizar HTMLs com os assets encontrados
-    updateHtmlFiles(jsFile, cssFile);
+    // Criar assets básicos se necessário
+    if (!jsFileFound || !cssFileFound) {
+      await createBasicAssetsIfNeeded(jsFileFound, cssFileFound);
+      
+      // Procurar novamente depois de criar
+      const assets = findLatestAssets();
+      updateHtmlFiles(assets.jsFile || 'basic.js', assets.cssFile || 'basic.css');
+    } else {
+      // Atualizar HTMLs com os assets encontrados
+      updateHtmlFiles(jsFile, cssFile);
+    }
+    
+    console.log('✅ Processo de atualização de HTML concluído!');
+  } catch (err) {
+    console.error(`❌ Erro na execução do script: ${err.message}`);
+    console.error(err.stack);
   }
-  
-  console.log('✅ Processo de atualização de HTML concluído!');
-} catch (err) {
-  console.error(`❌ Erro na execução do script: ${err.message}`);
-  console.error(err.stack);
-}
+})();
