@@ -1,11 +1,12 @@
+
 /**
  * Heroku startup script for Node.js ESM application
  */
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { registerRoutes } from './server/routes.js';
-import { serveStatic } from './server/vite.js';
+import { registerRoutes } from './dist/server/routes.js';
+import { serveStatic } from './dist/server/vite.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
