@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAppContext } from '@/contexts/AppContext';
 import { useLocation } from 'wouter';
+import { apiUrl } from '@/lib/api-config';
 
 interface Region {
   name: string;
@@ -9,14 +10,48 @@ interface Region {
   vacancies: number;
 }
 
+// Função para carregar dados do JSON estático
+async function loadStaticRegions(): Promise<Region[]> {
+  try {
+    // Em desenvolvimento, tenta a API primeiro
+    if (import.meta.env.DEV) {
+      try {
+        console.log("Tentando carregar regiões da API...");
+        const apiResponse = await fetch('/api/regions');
+        if (apiResponse.ok) {
+          console.log("Regiões carregadas com sucesso da API");
+          return apiResponse.json();
+        }
+      } catch (err) {
+        console.warn("Não foi possível carregar da API, usando arquivo estático", err);
+      }
+    }
+
+    // Em produção ou fallback, carrega do arquivo estático
+    console.log("Carregando regiões do arquivo JSON estático...");
+    const response = await fetch('/data/regions.json');
+    if (!response.ok) {
+      throw new Error(`Erro ao carregar regions.json: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Dados estáticos carregados com sucesso:", data);
+    return data;
+  } catch (error) {
+    console.error("Erro ao carregar regiões:", error);
+    throw error;
+  }
+}
+
 const JobOpeningsSection: React.FC = () => {
   const { cepData, userCheckedCep } = useAppContext();
   const [, navigate] = useLocation();
   
-  // Usando React Query para buscar os dados da API
+  // Usando React Query com nossa função personalizada
   const { data: regions, isLoading, isError } = useQuery<Region[]>({
-    queryKey: ['/api/regions'],
+    queryKey: ['regions'],
+    queryFn: loadStaticRegions,
     staleTime: 1000 * 60 * 5, // 5 minutos
+    retry: 3
   });
 
   // Processamos as regiões considerando o estado do usuário, se disponível

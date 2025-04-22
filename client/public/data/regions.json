@@ -1,0 +1,7 @@
+[
+  { "name": "São Paulo", "abbr": "SP", "vacancies": 26 },
+  { "name": "Rio de Janeiro", "abbr": "RJ", "vacancies": 18 },
+  { "name": "Minas Gerais", "abbr": "MG", "vacancies": 14 },
+  { "name": "Bahia", "abbr": "BA", "vacancies": 10 },
+  { "name": "Paraná", "abbr": "PR", "vacancies": 8 }
+]
