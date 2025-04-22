@@ -17,6 +17,8 @@ const path = require('path');
 // Configurar Express
 const app = express();
 const PORT = process.env.PORT || 5000;
+console.log(`🚨 PORTA CONFIGURADA: ${PORT}`);
+console.log(`🚨 ENV PORT: ${process.env.PORT}`);
 
 // Usar JSON middleware
 app.use(express.json({ limit: '10mb' }));
@@ -438,7 +440,42 @@ app.get('*', (req, res) => {
   `);
 });
 
-// Iniciar o servidor
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Servidor Express de fallback rodando na porta ${PORT}`);
+// Iniciar o servidor - IMPORTANTE: Incializando a escuta na porta correta
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Servidor Express de fallback iniciado com sucesso na porta ${PORT}`);
+  console.log(`✅ URL do servidor: http://0.0.0.0:${PORT}`);
+  
+  // Mostrar todas as rotas registradas
+  console.log('📑 Rotas disponíveis:');
+  app._router.stack
+    .filter(r => r.route)
+    .map(r => {
+      console.log(`🔹 ${Object.keys(r.route.methods)[0].toUpperCase()} ${r.route.path}`);
+    });
+});
+
+// Configurar tratamento de erros do servidor
+server.on('error', (error) => {
+  console.error(`❌ ERRO AO INICIAR SERVIDOR: ${error.message}`);
+  
+  if (error.code === 'EADDRINUSE') {
+    console.error(`❌ A porta ${PORT} já está em uso. Tente uma porta diferente.`);
+  }
+});
+
+// Configurar tratamento de desligamento
+process.on('SIGTERM', () => {
+  console.log('🛑 Recebido sinal SIGTERM, encerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor encerrado com sucesso');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 Recebido sinal SIGINT, encerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor encerrado com sucesso');
+    process.exit(0);
+  });
 });
