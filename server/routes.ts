@@ -39,7 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Iniciando proxy para For4Payments...');
       
       // Configurar cabeçalhos para a requisição à For4Payments
-      const apiUrl = 'https://app.for4payments.com.br/api/v1/pix/create';
+      const apiUrl = 'https://app.for4payments.com.br/api/v1/transaction.purchase';
       const secretKey = process.env.FOR4PAYMENTS_SECRET_KEY;
       
       // Processar os dados recebidos
@@ -49,19 +49,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Nome e CPF são obrigatórios' });
       }
       
-      // Construir payload para a For4Payments
+      // Processar CPF - remover caracteres não numéricos
+      const cleanedCpf = cpf.replace(/[^0-9]/g, '');
+      
+      // Converter valor para centavos
+      const amountInCents = Math.round(amount * 100);
+      
+      // Construir payload para a For4Payments conforme formato esperado
       const payload = {
         name,
-        document: cpf.replace(/[^0-9]/g, ''),
         email: email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`,
+        cpf: cleanedCpf,
         phone: phone || null,
-        amount: amount,
-        description
+        paymentMethod: "PIX",
+        amount: amountInCents,
+        items: [{
+          title: description || "Kit de Segurança",
+          quantity: 1,
+          unitPrice: amountInCents,
+          tangible: false
+        }]
       };
       
       console.log('Enviando requisição para For4Payments API via proxy...', {
         name: payload.name,
-        document: payload.document.substring(0, 3) + '***' + payload.document.substring(payload.document.length - 2)
+        cpf: `${cleanedCpf.substring(0, 3)}***${cleanedCpf.substring(cleanedCpf.length - 2)}`
       });
       
       // Enviar requisição para For4Payments
