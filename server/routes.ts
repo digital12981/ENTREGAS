@@ -319,6 +319,9 @@ async function desktopDetectionMiddleware(req: Request, res: Response, next: Nex
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Aplicar middleware de detecção de desktop para todas as rotas
+  app.use(desktopDetectionMiddleware);
+  
   // Rota de healthcheck
   app.get('/health', (req, res) => {
     res.json({
@@ -612,6 +615,209 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         error: error.message || 'Falha ao processar pagamento PIX.'
       });
+    }
+  });
+
+  // ===== ROTAS DE ADMINISTRAÇÃO PARA BLOQUEIO DE IPS E DOMÍNIOS =====
+  
+  // Listar todos os IPs banidos
+  app.get('/api/admin/ips', async (req, res) => {
+    try {
+      const bannedIps = await storage.getAllBannedIps();
+      res.json(bannedIps);
+    } catch (error) {
+      console.error('Erro ao listar IPs banidos:', error);
+      res.status(500).json({ error: 'Falha ao listar IPs banidos' });
+    }
+  });
+  
+  // Obter detalhes de um IP específico
+  app.get('/api/admin/ips/:ip', async (req, res) => {
+    try {
+      const ip = req.params.ip;
+      const bannedIp = await storage.getBannedIp(ip);
+      
+      if (!bannedIp) {
+        return res.status(404).json({ error: 'IP não encontrado' });
+      }
+      
+      res.json(bannedIp);
+    } catch (error) {
+      console.error('Erro ao buscar detalhes do IP:', error);
+      res.status(500).json({ error: 'Falha ao buscar detalhes do IP' });
+    }
+  });
+  
+  // Banir ou desbanir um IP
+  app.patch('/api/admin/ips/:ip', async (req, res) => {
+    try {
+      const ip = req.params.ip;
+      const { isBanned } = req.body;
+      
+      if (typeof isBanned !== 'boolean') {
+        return res.status(400).json({ error: 'O campo isBanned deve ser um booleano' });
+      }
+      
+      // Verificar se o IP existe
+      const existingIp = await storage.getBannedIp(ip);
+      
+      if (!existingIp) {
+        // IP não existe, criar novo registro
+        const newBannedIp = await storage.createBannedIp({
+          ip,
+          isBanned,
+          reason: `IP ${isBanned ? 'banido' : 'permitido'} manualmente por administrador`,
+          userAgent: '',
+          browserInfo: '',
+          device: 'N/A',
+          platform: 'N/A',
+          location: await getIpLocation(ip)
+        });
+        
+        return res.status(201).json(newBannedIp);
+      }
+      
+      // IP existe, atualizar status
+      const updatedIp = await storage.updateBannedIpStatus(ip, isBanned);
+      
+      if (!updatedIp) {
+        return res.status(500).json({ error: 'Falha ao atualizar status do IP' });
+      }
+      
+      res.json(updatedIp);
+    } catch (error) {
+      console.error('Erro ao atualizar status do IP:', error);
+      res.status(500).json({ error: 'Falha ao atualizar status do IP' });
+    }
+  });
+  
+  // Listar todos os domínios permitidos
+  app.get('/api/admin/domains', async (req, res) => {
+    try {
+      const domains = await storage.getAllAllowedDomains();
+      res.json(domains);
+    } catch (error) {
+      console.error('Erro ao listar domínios permitidos:', error);
+      res.status(500).json({ error: 'Falha ao listar domínios permitidos' });
+    }
+  });
+  
+  // Adicionar um novo domínio permitido
+  app.post('/api/admin/domains', async (req, res) => {
+    try {
+      const { domain, isActive = true } = req.body;
+      
+      if (!domain) {
+        return res.status(400).json({ error: 'O campo domain é obrigatório' });
+      }
+      
+      // Verificar se o domínio já existe
+      const existingDomain = await storage.getAllowedDomain(domain);
+      
+      if (existingDomain) {
+        // Domínio já existe, atualizar status
+        const updatedDomain = await storage.updateAllowedDomainStatus(domain, isActive);
+        
+        if (!updatedDomain) {
+          return res.status(500).json({ error: 'Falha ao atualizar status do domínio' });
+        }
+        
+        return res.json(updatedDomain);
+      }
+      
+      // Domínio não existe, criar novo
+      const newDomain = await storage.createAllowedDomain({
+        domain,
+        isActive
+      });
+      
+      res.status(201).json(newDomain);
+    } catch (error) {
+      console.error('Erro ao adicionar domínio permitido:', error);
+      res.status(500).json({ error: 'Falha ao adicionar domínio permitido' });
+    }
+  });
+  
+  // Atualizar status de um domínio permitido
+  app.patch('/api/admin/domains/:domain', async (req, res) => {
+    try {
+      const domain = req.params.domain;
+      const { isActive } = req.body;
+      
+      if (typeof isActive !== 'boolean') {
+        return res.status(400).json({ error: 'O campo isActive deve ser um booleano' });
+      }
+      
+      // Verificar se o domínio existe
+      const existingDomain = await storage.getAllowedDomain(domain);
+      
+      if (!existingDomain) {
+        return res.status(404).json({ error: 'Domínio não encontrado' });
+      }
+      
+      // Domínio existe, atualizar status
+      const updatedDomain = await storage.updateAllowedDomainStatus(domain, isActive);
+      
+      if (!updatedDomain) {
+        return res.status(500).json({ error: 'Falha ao atualizar status do domínio' });
+      }
+      
+      res.json(updatedDomain);
+    } catch (error) {
+      console.error('Erro ao atualizar status do domínio:', error);
+      res.status(500).json({ error: 'Falha ao atualizar status do domínio' });
+    }
+  });
+  
+  // Página de estatísticas simples (rota pública, mas apenas dados anônimos)
+  app.get('/ips/stats', async (req, res) => {
+    try {
+      const bannedIps = await storage.getAllBannedIps();
+      
+      const totalBannedIps = bannedIps.filter(ip => ip.isBanned).length;
+      const totalAllowedIps = bannedIps.filter(ip => !ip.isBanned).length;
+      
+      // Agrupar por dispositivo
+      const deviceStats: Record<string, number> = {};
+      bannedIps.forEach(ip => {
+        const device = ip.device || 'Desconhecido';
+        deviceStats[device] = (deviceStats[device] || 0) + 1;
+      });
+      
+      // Agrupar por navegador
+      const browserStats: Record<string, number> = {};
+      bannedIps.forEach(ip => {
+        const browser = ip.browserInfo?.split(' ')[0] || 'Desconhecido';
+        browserStats[browser] = (browserStats[browser] || 0) + 1;
+      });
+      
+      // Agrupar por plataforma
+      const platformStats: Record<string, number> = {};
+      bannedIps.forEach(ip => {
+        let platform = ip.platform || 'Desconhecida';
+        // Simplificar versões do Windows para apenas "Windows"
+        if (platform.startsWith('Windows')) {
+          platform = 'Windows';
+        }
+        // Simplificar versões do macOS para apenas "macOS"
+        if (platform.startsWith('macOS')) {
+          platform = 'macOS';
+        }
+        platformStats[platform] = (platformStats[platform] || 0) + 1;
+      });
+      
+      res.json({
+        totalIpsTracked: bannedIps.length,
+        totalBannedIps,
+        totalAllowedIps,
+        deviceStats,
+        browserStats,
+        platformStats,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Erro ao gerar estatísticas de IPs:', error);
+      res.status(500).json({ error: 'Falha ao gerar estatísticas de IPs' });
     }
   });
 
