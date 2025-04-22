@@ -113,6 +113,31 @@ try {
       console.log('Arquivos em dist/assets:', assetsFiles.length > 10 
         ? `${assetsFiles.slice(0, 10).join(', ')} e mais ${assetsFiles.length - 10} arquivo(s)`
         : assetsFiles.join(', '));
+        
+      // Criar symlinks ou cópias de arquivos sem hash
+      console.log('Criando aliases para arquivos com hash...');
+      assetsFiles.forEach(file => {
+        const match = file.match(/^([^-]+)(-[A-Za-z0-9]+)(\.[a-zA-Z0-9]+)$/);
+        if (match) {
+          const baseName = match[1];
+          const extension = match[3];
+          const simpleFileName = `${baseName}${extension}`;
+          
+          // Criar uma cópia com nome simplificado
+          try {
+            const source = join(distDir, 'assets', file);
+            const target = join(distDir, 'assets', simpleFileName);
+            
+            // Se o arquivo simplificado não existir, criar uma cópia
+            if (!fs.existsSync(target)) {
+              fs.copyFileSync(source, target);
+              console.log(`Criado alias: ${file} -> ${simpleFileName}`);
+            }
+          } catch (e) {
+            console.warn(`Erro ao criar alias para ${file}:`, e.message);
+          }
+        }
+      });
     }
     
     // Verificar public e index.html
@@ -142,8 +167,33 @@ try {
     if (filesInDist.includes('index.html')) {
       const indexSize = fs.statSync(join(distDir, 'index.html')).size;
       console.log(`Tamanho do index.html na raiz: ${indexSize} bytes`);
+      
+      // Gerar versão modificada do index.html com caminhos sem hash
+      try {
+        const indexContent = fs.readFileSync(join(distDir, 'index.html'), 'utf8');
+        
+        // Substituir referências a arquivos com hash
+        const modifiedContent = indexContent.replace(/(src|href)="(\/assets\/[^"]+)-[A-Za-z0-9]+\.([^"]+)"/g, 
+          (match, attr, path, ext) => `${attr}="${path}.${ext}"`);
+        
+        // Salvar versão modificada apenas se houver diferenças
+        if (modifiedContent !== indexContent) {
+          console.log('Criando index-clean.html com URLs sem hash...');
+          fs.writeFileSync(join(distDir, 'index-clean.html'), modifiedContent);
+        }
+      } catch (e) {
+        console.warn('Erro ao processar index.html:', e.message);
+      }
     } else {
       console.warn('⚠️ index.html não encontrado na raiz de dist');
+    }
+    
+    // Executar script de mapeamento de assets
+    console.log('Executando script de mapeamento de assets...');
+    try {
+      require('./asset-version-map.js');
+    } catch (e) {
+      console.warn('Erro ao executar script de mapeamento de assets:', e.message);
     }
   } catch (e) {
     console.warn('Erro ao listar arquivos finais:', e);

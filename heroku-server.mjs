@@ -206,19 +206,65 @@ function serveStaticFiles() {
   
   // Servir arquivos estáticos considerando todas as possíveis estruturas
   
+  // Carregar mapeamento de assets se existir
+  let assetMap = {};
+  const assetMapPath = join(distDir, 'asset-map.json');
+  if (fs.existsSync(assetMapPath)) {
+    try {
+      assetMap = JSON.parse(fs.readFileSync(assetMapPath, 'utf8'));
+      console.log('✅ Mapeamento de assets carregado com sucesso');
+      console.log(`Encontrados ${Object.keys(assetMap).length} mapeamentos de assets`);
+    } catch (e) {
+      console.warn('⚠️ Erro ao carregar mapeamento de assets:', e.message);
+    }
+  } else {
+    console.log('ℹ️ Arquivo de mapeamento de assets não encontrado');
+  }
+  
   // 1. Primeiro, tentar servir de dist/public se existir
   if (fs.existsSync(publicDir)) {
     console.log(`Servindo arquivos estáticos de: ${publicDir}`);
-    app.use(express.static(publicDir));
+    app.use(express.static(publicDir, { 
+      maxAge: '1d',  // Cache de 1 dia para arquivos estáticos
+      index: false   // Não servir index.html automaticamente (será gerenciado em outra rota)
+    }));
   }
   
   // 2. Servir também diretamente de dist/ como fallback
   console.log(`Servindo arquivos estáticos também de: ${distDir}`);
-  app.use(express.static(distDir));
+  app.use(express.static(distDir, { 
+    maxAge: '1d',    // Cache de 1 dia para arquivos estáticos
+    index: false     // Não servir index.html automaticamente (será gerenciado em outra rota)
+  }));
+  
+  // 2.1 Verificar se existe o index-clean.html (versão com URLs simplificadas)
+  const cleanIndexPath = join(distDir, 'index-clean.html');
+  if (fs.existsSync(cleanIndexPath)) {
+    console.log('✅ Encontrado index-clean.html com URLs sem hash');
+  }
   
   // 3. Rota específica para assets que lida com diferentes formatos de URL
   app.get(['/assets/*', '*/assets/*'], (req, res, next) => {
     console.log(`⏳ Requisição para asset: ${req.path}`);
+    
+    // 1. Verificar primeiro se o caminho existe no mapeamento
+    if (Object.keys(assetMap).length > 0) {
+      // Ver se temos um mapeamento para um asset sem hash
+      if (assetMap[req.path]) {
+        const simplePath = assetMap[req.path];
+        console.log(`✅ Asset encontrado no mapeamento: ${req.path} -> ${simplePath}`);
+        
+        // Obter o caminho sem a barra inicial e servir o arquivo
+        const simpleAssetPath = simplePath.startsWith('/') ? simplePath.substring(1) : simplePath;
+        const fullPath = join(distDir, simpleAssetPath);
+        
+        if (fs.existsSync(fullPath)) {
+          return res.sendFile(fullPath);
+        }
+      }
+    }
+    
+    // 2. Se não encontrou no mapeamento, tentar busca direta
     
     // Remover qualquer prefixo do caminho e extrair o nome do arquivo
     const assetPath = req.path.replace(/^.*assets\//, '');
@@ -229,6 +275,9 @@ function serveStaticFiles() {
     const extension = fileName.split('.').pop();
     
     console.log(`Asset solicitado: ${assetPath} (base: ${baseName}, ext: ${extension})`);
+    
+    // Verificar se estamos buscando um arquivo sem hash, que pode estar com hash no sistema
+    const isNonHashedRequest = !fileName.match(/^([^-]+)-([A-Za-z0-9]+)\.([^.]+)$/);
     
     // Listar todos os caminhos possíveis para o arquivo EXATO
     const possiblePaths = [
@@ -361,8 +410,14 @@ function serveStaticFiles() {
     // Skip para APIs
     if (req.path.startsWith('/api')) return;
     
+    // Preferir a versão sem hash do index se estiver disponível
+    const cleanIndexPath = join(distDir, 'index-clean.html');
+    
     // Testar múltiplas localizações para o index.html
     const possibleIndexPaths = [
+      // Versão com caminhos sem hash (prioridade mais alta)
+      cleanIndexPath,
+      // Versões normais
       join(publicDir, 'index.html'),  // dist/public/index.html
       join(distDir, 'index.html')     // dist/index.html
     ];
@@ -370,8 +425,29 @@ function serveStaticFiles() {
     // Procurar o arquivo index.html nas possíveis localizações
     for (const indexPath of possibleIndexPaths) {
       if (fs.existsSync(indexPath)) {
-        console.log(`Servindo página principal de: ${indexPath}`);
-        return res.sendFile(indexPath);
+        if (indexPath === cleanIndexPath) {
+          console.log(`Servindo página principal otimizada de: ${indexPath}`);
+        } else {
+          console.log(`Servindo página principal de: ${indexPath}`);
+        }
+        
+        try {
+          // Ler o conteúdo do arquivo
+          const indexContent = fs.readFileSync(indexPath, 'utf8');
+          
+          // Verificar se há referências a arquivos com hash
+          const hasHashedAssets = /(src|href)="(\/assets\/[^"]+)-[A-Za-z0-9]+\.([^"]+)"/g.test(indexContent);
+          
+          if (hasHashedAssets) {
+            console.log('Índice contém referências a assets com hash dinâmico');
+          }
+          
+          // Enviar o arquivo
+          return res.sendFile(indexPath);
+        } catch (e) {
+          console.warn(`Erro ao ler/processar o arquivo ${indexPath}:`, e.message);
+          // Continuar e tentar o próximo arquivo
+        }
       }
     }
     
