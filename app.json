@@ -24,6 +24,28 @@
     "NODE_ENV": {
       "description": "Ambiente de execução",
       "value": "production"
+    },
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "Permite instalar devDependencies durante o build",
+      "value": "false"
+    },
+    "HOST": {
+      "description": "Endereço IP para o servidor bind",
+      "value": "0.0.0.0"
+    },
+    "SERVE_STATIC_FROM": {
+      "description": "Diretório onde os arquivos estáticos são servidos",
+      "value": "public"
     }
-  }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "scripts": {
+    "postdeploy": "node fixup-static-dirs.js"
+  },
+  "success_url": "/"
 }

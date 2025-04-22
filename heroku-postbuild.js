@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 console.log('Running Heroku postbuild script...');
+console.log('Node version:', process.version);
+console.log('Timestamp:', new Date().toISOString());
 
 // Função para executar um comando e exibir o log
 function execCommand(command) {
@@ -24,34 +26,38 @@ execCommand('pip install -r heroku-requirements.txt');
 console.log('Building Node.js application...');
 execCommand('npm run build');
 
-// 3. Preparar o diretório public (onde o serveStatic busca arquivos)
-console.log('Ensuring correct static file structure...');
-
-// Criar diretório public se não existir
-const publicDir = path.resolve(process.cwd(), 'public');
-if (!fs.existsSync(publicDir)) {
-  console.log('Creating public directory...');
-  fs.mkdirSync(publicDir, { recursive: true });
-}
-
-// Verificar local onde os arquivos estáticos foram gerados
-const distClientDir = path.resolve(process.cwd(), 'dist/client');
+// 3. Verificar se o build foi bem-sucedido
 const distDir = path.resolve(process.cwd(), 'dist');
-
-if (fs.existsSync(distClientDir) && fs.readdirSync(distClientDir).includes('index.html')) {
-  console.log('Found static files in dist/client, copying to public...');
-  execCommand('cp -r dist/client/* public/');
-} else if (fs.existsSync(distDir) && fs.readdirSync(distDir).includes('index.html')) {
-  console.log('Found static files in dist, copying to public...');
-  execCommand('cp -r dist/* public/');
-} else {
-  console.log('Could not find index.html in expected locations');
-  console.log('Current file structure:');
-  execCommand('find . -type d -not -path "*/node_modules/*" -not -path "*/.git/*" | sort');
+if (!fs.existsSync(distDir)) {
+  console.error('FATAL: dist directory not found after build!');
+  process.exit(1);
 }
 
-// 4. Executar diagnóstico para debug
-console.log('Running diagnostic script...');
-execCommand('node static.js');
+// 4. Executar o script de correção de diretórios estáticos
+console.log('Running static directory fixup script...');
+execCommand('node fixup-static-dirs.js');
+
+// 5. Verificar permissões de arquivos importantes
+console.log('Checking file permissions...');
+execCommand('chmod +x production-loader.js');
+execCommand('chmod +x fixup-static-dirs.js');
+
+// 6. Exibir estrutura de diretórios para debug
+console.log('Directory structure:');
+execCommand('find . -type d -maxdepth 3 -not -path "*/node_modules/*" -not -path "*/.git/*" | sort');
+
+// 7. Verificar conteúdo do diretório public
+const publicDir = path.resolve(process.cwd(), 'public');
+if (fs.existsSync(publicDir)) {
+  console.log('Files in public directory:');
+  execCommand('find public -type f -maxdepth 3 | sort');
+  
+  // Verificar se index.html existe
+  if (fs.existsSync(path.join(publicDir, 'index.html'))) {
+    console.log('SUCCESS: index.html found in public directory!');
+  } else {
+    console.warn('WARNING: index.html not found in public directory!');
+  }
+}
 
 console.log('Heroku postbuild completed successfully!');
