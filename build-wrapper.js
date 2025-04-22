@@ -100,15 +100,50 @@ try {
     }
   }
   
-  // Verificação final
+  // Verificação e otimização da estrutura final
   console.log('Verificando estrutura final dos arquivos na pasta dist...');
   try {
-    const filesInDist = fs.readdirSync(join(__dirname, 'dist'));
+    const distDir = join(__dirname, 'dist');
+    const filesInDist = fs.readdirSync(distDir);
     console.log('Arquivos em dist:', filesInDist);
     
+    // Verificar assets
     if (filesInDist.includes('assets')) {
-      const assetsFiles = fs.readdirSync(join(__dirname, 'dist', 'assets'));
-      console.log('Arquivos em dist/assets:', assetsFiles);
+      const assetsFiles = fs.readdirSync(join(distDir, 'assets'));
+      console.log('Arquivos em dist/assets:', assetsFiles.length > 10 
+        ? `${assetsFiles.slice(0, 10).join(', ')} e mais ${assetsFiles.length - 10} arquivo(s)`
+        : assetsFiles.join(', '));
+    }
+    
+    // Verificar public e index.html
+    if (filesInDist.includes('public')) {
+      const publicFiles = fs.readdirSync(join(distDir, 'public'));
+      console.log('Arquivos em dist/public:', publicFiles);
+      
+      // Verificar o index.html na pasta public
+      const publicIndexPath = join(distDir, 'public', 'index.html');
+      const distIndexPath = join(distDir, 'index.html');
+      
+      if (fs.existsSync(publicIndexPath)) {
+        // Certificar que o index.html também existe na raiz de dist
+        if (!fs.existsSync(distIndexPath)) {
+          console.log('Copiando index.html de dist/public para dist/...');
+          fs.copyFileSync(publicIndexPath, distIndexPath);
+          console.log('✅ index.html copiado para a raiz de dist');
+        }
+        
+        // Verificar o tamanho do index.html
+        const indexSize = fs.statSync(publicIndexPath).size;
+        console.log(`Tamanho do index.html: ${indexSize} bytes`);
+      }
+    }
+    
+    // Verificar index.html
+    if (filesInDist.includes('index.html')) {
+      const indexSize = fs.statSync(join(distDir, 'index.html')).size;
+      console.log(`Tamanho do index.html na raiz: ${indexSize} bytes`);
+    } else {
+      console.warn('⚠️ index.html não encontrado na raiz de dist');
     }
   } catch (e) {
     console.warn('Erro ao listar arquivos finais:', e);

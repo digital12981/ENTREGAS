@@ -218,16 +218,25 @@ function serveStaticFiles() {
   
   // 3. Rota específica para assets que lida com diferentes formatos de URL
   app.get(['/assets/*', '*/assets/*'], (req, res, next) => {
-    console.log(`Requisição para asset: ${req.path}`);
+    console.log(`⏳ Requisição para asset: ${req.path}`);
     
     // Remover qualquer prefixo do caminho e extrair o nome do arquivo
     const assetPath = req.path.replace(/^.*assets\//, '');
     
-    // Listar todos os caminhos possíveis para o arquivo
+    // Extrair nome base e extensão para facilitar a busca
+    const fileName = assetPath.split('/').pop();
+    const baseName = fileName.replace(/(-[A-Za-z0-9]+)?\.[^.]+$/, '');
+    const extension = fileName.split('.').pop();
+    
+    console.log(`Asset solicitado: ${assetPath} (base: ${baseName}, ext: ${extension})`);
+    
+    // Listar todos os caminhos possíveis para o arquivo EXATO
     const possiblePaths = [
       join(distDir, 'assets', assetPath),
       join(publicDir, 'assets', assetPath),
       join(distDir, 'public', 'assets', assetPath),
+      join(distDir, assetPath),
+      join(publicDir, assetPath),
       // Adicionar suporte para subdiretórios
       ...directoryStructure.distAssets?.map(subdir => 
         join(distDir, 'assets', subdir, assetPath)) || [],
@@ -235,38 +244,115 @@ function serveStaticFiles() {
         join(publicDir, 'assets', subdir, assetPath)) || []
     ];
     
-    // Verificar cada caminho e enviar o primeiro arquivo encontrado
+    // 1. Primeiro, tentar encontrar o arquivo exato
     for (const path of possiblePaths) {
       if (fs.existsSync(path)) {
-        console.log(`Asset encontrado em: ${path}`);
+        console.log(`✅ Asset encontrado exatamente em: ${path}`);
         return res.sendFile(path);
       }
     }
     
-    console.log(`⚠️ Asset não encontrado: ${assetPath}`);
+    console.log(`⚠️ Asset exato não encontrado, procurando por alternativas para: ${assetPath}`);
+    
+    // 2. Se não encontrou o arquivo exato, procurar por arquivos semelhantes
+    try {
+      // Padrão para encontrar arquivos como "index-HASH.js" ou "index.js"
+      const patternRegex = new RegExp(`^${baseName}(-[A-Za-z0-9]+)?\\.${extension}$`);
+      
+      // Verificar em dist/assets
+      const assetsDir = join(distDir, 'assets');
+      if (fs.existsSync(assetsDir)) {
+        const files = fs.readdirSync(assetsDir);
+        const matchingFiles = files.filter(file => patternRegex.test(file));
+        
+        if (matchingFiles.length > 0) {
+          const matchPath = join(assetsDir, matchingFiles[0]);
+          console.log(`✅ Asset similar encontrado: ${matchingFiles[0]}`);
+          return res.sendFile(matchPath);
+        }
+      }
+      
+      // Verificar em dist diretamente
+      const files = fs.readdirSync(distDir);
+      const matchingFiles = files.filter(file => patternRegex.test(file));
+      
+      if (matchingFiles.length > 0) {
+        const matchPath = join(distDir, matchingFiles[0]);
+        console.log(`✅ Asset similar encontrado na raiz: ${matchingFiles[0]}`);
+        return res.sendFile(matchPath);
+      }
+      
+      // Verificar em public/assets se existir
+      const publicAssetsDir = join(publicDir, 'assets'); 
+      if (fs.existsSync(publicAssetsDir)) {
+        const files = fs.readdirSync(publicAssetsDir);
+        const matchingFiles = files.filter(file => patternRegex.test(file));
+        
+        if (matchingFiles.length > 0) {
+          const matchPath = join(publicAssetsDir, matchingFiles[0]);
+          console.log(`✅ Asset similar encontrado em public/assets: ${matchingFiles[0]}`);
+          return res.sendFile(matchPath);
+        }
+      }
+    } catch (err) {
+      console.error(`Erro ao procurar por assets similares: ${err.message}`);
+    }
+    
+    console.log(`❌ Asset não encontrado, nenhuma alternativa: ${assetPath}`);
     next();
   });
   
   // 4. Rota específica para lidar com requisições diretas de JS e CSS
-  app.get(['*.js', '*.css'], (req, res, next) => {
-    const filename = req.path.split('/').pop();
-    console.log(`Requisição para arquivo ${filename}`);
-    
-    // Procurar o arquivo em diretórios dist e seus subdiretórios
-    const possibleLocations = [
-      join(distDir, filename),
-      join(publicDir, filename),
-      join(distDir, 'assets', filename),
-      join(publicDir, 'assets', filename)
-    ];
-    
-    for (const location of possibleLocations) {
-      if (fs.existsSync(location)) {
-        console.log(`Arquivo encontrado em: ${location}`);
-        return res.sendFile(location);
-      }
+  app.get('*', (req, res, next) => {
+    // Pular se já for uma rota de API
+    if (req.path.startsWith('/api/')) {
+      return next();
     }
     
+    // Verificar se é uma solicitação para um arquivo estático (com extensão)
+    const fileMatch = req.path.match(/\.([a-zA-Z0-9]+)$/);
+    if (fileMatch) {
+      const ext = fileMatch[1].toLowerCase();
+      const filename = req.path.split('/').pop();
+      
+      // Logar apenas requisições de arquivos específicos para não poluir o console
+      if (['js', 'css', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'woff', 'woff2', 'ttf'].includes(ext)) {
+        console.log(`Requisição para arquivo estático: ${req.path} (${ext})`);
+      }
+      
+      // Lista de potenciais localizações para o arquivo
+      const pathWithoutLeadingSlash = req.path.startsWith('/') ? req.path.substring(1) : req.path;
+      const possibleLocations = [
+        // Caminhos completos
+        join(distDir, pathWithoutLeadingSlash),
+        join(publicDir, pathWithoutLeadingSlash),
+        
+        // Arquivo solto na raiz
+        join(distDir, filename),
+        join(publicDir, filename),
+        
+        // Em assets
+        join(distDir, 'assets', filename),
+        join(publicDir, 'assets', filename)
+      ];
+      
+      // Verificar cada localização
+      for (const location of possibleLocations) {
+        if (fs.existsSync(location)) {
+          // Logar apenas arquivos importantes
+          if (['js', 'css'].includes(ext)) {
+            console.log(`✅ Arquivo encontrado em: ${location}`);
+          }
+          
+          // Enviar arquivo com tipo MIME correto
+          return res.sendFile(location);
+        }
+      }
+      
+      console.log(`❌ Arquivo não encontrado: ${req.path}`);
+    }
+    
+    // Continuar para próxima rota se não for um arquivo estático
     next();
   });
   
@@ -275,15 +361,23 @@ function serveStaticFiles() {
     // Skip para APIs
     if (req.path.startsWith('/api')) return;
     
-    const indexPath = join(publicDir, 'index.html');
+    // Testar múltiplas localizações para o index.html
+    const possibleIndexPaths = [
+      join(publicDir, 'index.html'),  // dist/public/index.html
+      join(distDir, 'index.html')     // dist/index.html
+    ];
     
-    if (fs.existsSync(indexPath)) {
-      console.log(`Servindo página principal de: ${indexPath}`);
-      res.sendFile(indexPath);
-    } else {
-      console.log(`Não foi possível encontrar index.html em ${indexPath}`);
-      res.status(404).send('Página não encontrada');
+    // Procurar o arquivo index.html nas possíveis localizações
+    for (const indexPath of possibleIndexPaths) {
+      if (fs.existsSync(indexPath)) {
+        console.log(`Servindo página principal de: ${indexPath}`);
+        return res.sendFile(indexPath);
+      }
     }
+    
+    // Se não encontrar o index.html em nenhum lugar
+    console.log(`⚠️ Não foi possível encontrar index.html. Procurado em: ${possibleIndexPaths.join(', ')}`);
+    res.status(404).send('Página não encontrada - index.html não encontrado');
   });
 }
 
