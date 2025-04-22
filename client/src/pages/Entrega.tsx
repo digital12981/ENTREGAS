@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Spinner } from '@/components/ui/spinner';
 import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
+import { createPixPayment } from '../lib/payments-api';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -216,47 +217,18 @@ const Entrega: React.FC = () => {
         telefone = parsedUserData.telefone || "";
       }
       
-      // Em produção, use a URL completa do Heroku
-      const apiEndpoint = import.meta.env.PROD 
-        ? 'https://shopee-delivery-api.herokuapp.com/api/payments/pix'
-        : '/api/payments/pix';
-        
-      console.log('Enviando requisição de pagamento para For4Payments via:', apiEndpoint);
+      console.log('Iniciando processamento de pagamento For4Payments');
       
-      // Configurar headers, especialmente para CORS
-      const headers = new Headers({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+      // Usar a função centralizada para processar o pagamento
+      // Processar pagamento e obter resultado
+      const pixData = await createPixPayment({
+        name: dadosUsuario.nome,
+        cpf: dadosUsuario.cpf,
+        email: email,
+        phone: telefone
       });
       
-      // Enviar requisição para API da For4Payments com configuração CORS apropriada
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: headers,
-        mode: 'cors',
-        credentials: 'omit', // Importante para CORS
-        body: JSON.stringify({
-          name: dadosUsuario.nome,
-          cpf: dadosUsuario.cpf,
-          email: email,
-          phone: telefone,
-          amount: 84.70 // Valor fixo do kit de segurança
-        })
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Erro na resposta da API:', response.status, errorText);
-        throw new Error(`Erro ao processar pagamento: ${response.status} ${response.statusText}`);
-      }
-      
-      // Processar resposta da API For4Payments
-      const pixData = await response.json();
-      console.log('Dados de pagamento recebidos da API For4Payments:', pixData);
-      
-      if (!pixData || !pixData.pixCode || !pixData.pixQrCode) {
-        throw new Error("Resposta de pagamento inválida ou incompleta");
-      }
+      console.log('Pagamento processado com sucesso:', pixData);
       
       // Definir os dados do PIX no estado
       setPixInfo(pixData);

@@ -2,19 +2,14 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { setupStaticMiddleware } from "./static-middleware";
+import { setupCors } from "./cors-config";
 import path from "path";
 import fs from "fs";
-import cors from "cors";
 
 const app = express();
 
-// Configuração de CORS para permitir requisições de outras origens
-app.use(cors({
-  // Em desenvolvimento, aceitar qualquer origem
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+// Configuração de CORS para permitir requisições cross-origin
+setupCors(app);
 
 // Configuração para utilizar UTF-8 na aplicação
 app.use(express.json({ limit: '10mb' }));
