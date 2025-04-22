@@ -147,25 +147,29 @@ const CepModal: React.FC<CepModalProps> = ({ isOpen, onClose, onConfirm }) => {
             
             <div className="space-y-2">
               <label htmlFor="cep" className="font-medium text-gray-700">CEP</label>
-              <Input
-                id="cep"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={formattedCep}
-                onChange={handleCepChange}
-                placeholder="00000-000"
-                className="w-full cep-input"
-                style={{ 
-                  borderColor: 'rgba(0,0,0,0.15)',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  fontWeight: '500'
-                }}
-                maxLength={9}
-                autoFocus
-              />
+              <div className="flex justify-center">
+                <Input
+                  id="cep"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={formattedCep}
+                  onChange={handleCepChange}
+                  placeholder="00000-000"
+                  className="cep-input"
+                  style={{ 
+                    borderColor: 'rgba(0,0,0,0.15)',
+                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    height: '55px',
+                    maxWidth: '200px'
+                  }}
+                  maxLength={9}
+                  autoFocus
+                />
+              </div>
             </div>
             
             {isLoading && (
