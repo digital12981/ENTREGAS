@@ -20,6 +20,7 @@ export class EmailService {
   async sendEmail(data: EmailData): Promise<boolean> {
     try {
       console.log(`[EMAIL] Enviando email para ${data.recipient}...`);
+      console.log(`[EMAIL] Conteúdo: ${data.subject}`);
       
       const response = await axios.post(
         this.API_URL, 
@@ -32,10 +33,15 @@ export class EmailService {
         }
       );
       
+      console.log(`[EMAIL] Resposta da API:`, response.data);
       console.log(`[EMAIL] Email enviado com sucesso para ${data.recipient}`);
       return true;
     } catch (error: any) {
       console.error('[EMAIL] Erro ao enviar email:', error.response?.data || error.message);
+      if (error.response) {
+        console.error('[EMAIL] Status do erro:', error.response.status);
+        console.error('[EMAIL] Detalhes da resposta:', error.response.data);
+      }
       return false;
     }
   }
