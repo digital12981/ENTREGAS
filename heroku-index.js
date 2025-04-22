@@ -2,9 +2,12 @@
  * Script de inicialização para Heroku em CommonJS
  * 
  * Este script simples serve como ponto de entrada para a aplicação no Heroku,
- * selecionando automaticamente o método de inicialização mais apropriado:
- * - Tenta primeiro usar o modo ESM principal (heroku-server.mjs)
- * - Cai para o servidor fallback (server-fallback.js) em caso de erro
+ * selecionando automaticamente o método de inicialização mais apropriado.
+ * 
+ * Estratégia de inicialização:
+ * 1. Em produção, vai direto para o servidor de fallback (modo contingência)
+ * 2. Em outros ambientes, tenta inicializar o ESM primeiro
+ * 3. Se falhar, cai para o fallback CommonJS
  */
 
 try {
@@ -12,49 +15,116 @@ try {
   console.log(`📌 Diretório atual: ${process.cwd()}`);
   console.log(`📌 Node.js: ${process.version}`);
 
-  // Primeiro, verificar PORT e outras variáveis de ambiente
+  // Verificar variáveis de ambiente
   const PORT = process.env.PORT || 5000;
+  const NODE_ENV = process.env.NODE_ENV || 'não definido';
   console.log(`📌 Porta configurada: ${PORT}`);
-  console.log(`📌 NODE_ENV: ${process.env.NODE_ENV || 'não definido'}`);
+  console.log(`📌 NODE_ENV: ${NODE_ENV}`);
 
-  // Tentar iniciar o servidor primário (ESM)
-  try {
-    console.log('Tentando iniciar o servidor principal (ESM)...');
-    
-    // Importar dinâmicamente o arquivo ESM
-    const { spawn } = require('child_process');
-    
-    // Executar o script ESM em um processo separado
-    const serverProcess = spawn('node', ['heroku-server.mjs'], {
-      stdio: 'inherit',
-      env: process.env
-    });
-    
-    // Gerenciar eventos do processo filho
-    serverProcess.on('error', (err) => {
-      console.error('❌ Erro ao iniciar heroku-server.mjs:', err.message);
-      console.log('⚠️ Iniciando servidor fallback...');
-      require('./server-fallback.js');
-    });
-    
-    // Se o processo falhar, iniciar o fallback
-    serverProcess.on('exit', (code) => {
-      if (code !== 0) {
-        console.log(`⚠️ Servidor principal encerrou com código ${code}`);
-        console.log('⚠️ Iniciando servidor fallback...');
-        require('./server-fallback.js');
-      }
-    });
-  } catch (err) {
-    // Em caso de falha ao iniciar o ESM, usar o servidor de fallback
-    console.error('❌ Erro ao iniciar servidor ESM:', err.message);
-    console.log('⚠️ Iniciando servidor fallback...');
+  // Em produção, ir direto para o fallback para maximizar disponibilidade
+  if (NODE_ENV === 'production') {
+    console.log('✅ Ambiente de produção detectado. Iniciando no modo contingência...');
     require('./server-fallback.js');
+  } else {
+    // Em outros ambientes, tentar modo ESM primeiro
+    try {
+      console.log('🔄 Tentando iniciar o servidor principal (ESM)...');
+      
+      // Importar e configurar módulos necesssários
+      const fs = require('fs');
+      const path = require('path');
+      const { spawn } = require('child_process');
+      
+      // Verificar se temos o arquivo ESM
+      const esmFile = path.join(process.cwd(), 'heroku-server.mjs');
+      const fallbackFile = path.join(process.cwd(), 'server-fallback.js');
+      
+      if (!fs.existsSync(esmFile)) {
+        console.warn(`⚠️ Arquivo ESM não encontrado: ${esmFile}`);
+        console.log('⚠️ Iniciando servidor fallback diretamente...');
+        require('./server-fallback.js');
+        return;
+      }
+      
+      // Verificar se temos o arquivo de fallback para caso de erro
+      if (!fs.existsSync(fallbackFile)) {
+        console.warn(`⚠️ Arquivo de fallback não encontrado: ${fallbackFile}`);
+      }
+      
+      console.log('✅ Arquivos verificados, iniciando servidor principal...');
+      
+      // Executar o script ESM em um processo separado
+      const serverProcess = spawn('node', ['heroku-server.mjs'], {
+        stdio: 'inherit',
+        env: process.env
+      });
+      
+      // Configurar temporizador para esperar a inicialização
+      let serverStarted = false;
+      const fallbackTimer = setTimeout(() => {
+        if (!serverStarted) {
+          console.warn('⚠️ Timeout ao esperar servidor principal iniciar');
+          console.log('⚠️ Iniciando servidor fallback...');
+          try {
+            require('./server-fallback.js');
+          } catch (fallbackError) {
+            console.error('❌ Erro crítico ao iniciar servidor fallback:', fallbackError);
+            initEmergencyServer();
+          }
+        }
+      }, 10000); // 10 segundos de timeout
+      
+      // Gerenciar eventos do processo filho
+      serverProcess.on('error', (err) => {
+        clearTimeout(fallbackTimer);
+        console.error('❌ Erro ao iniciar heroku-server.mjs:', err.message);
+        console.log('⚠️ Iniciando servidor fallback...');
+        try {
+          require('./server-fallback.js');
+        } catch (fallbackError) {
+          console.error('❌ Erro crítico ao iniciar servidor fallback:', fallbackError);
+          initEmergencyServer();
+        }
+      });
+      
+      // Se o processo falhar, iniciar o fallback
+      serverProcess.on('exit', (code) => {
+        clearTimeout(fallbackTimer);
+        if (code !== 0) {
+          console.log(`⚠️ Servidor principal encerrou com código ${code}`);
+          console.log('⚠️ Iniciando servidor fallback...');
+          try {
+            require('./server-fallback.js');
+          } catch (fallbackError) {
+            console.error('❌ Erro crítico ao iniciar servidor fallback:', fallbackError);
+            initEmergencyServer();
+          }
+        } else {
+          console.log('✅ Servidor principal encerrou normalmente');
+          serverStarted = true;
+        }
+      });
+    } catch (err) {
+      // Em caso de falha ao iniciar o ESM, usar o servidor de fallback
+      console.error('❌ Erro ao iniciar servidor ESM:', err.message);
+      console.log('⚠️ Iniciando servidor fallback...');
+      try {
+        require('./server-fallback.js');
+      } catch (fallbackError) {
+        console.error('❌ Erro crítico ao iniciar servidor fallback:', fallbackError);
+        initEmergencyServer();
+      }
+    }
   }
 } catch (err) {
-  // Última opção: criar um servidor HTTP básico
+  // Erro crítico na inicialização
   console.error('❌ Erro grave:', err.message);
-  console.log('🔄 Iniciando servidor HTTP de emergência...');
+  initEmergencyServer();
+}
+
+// Função para servidor de emergência absoluta
+function initEmergencyServer() {
+  console.log('🔥 Iniciando servidor HTTP de emergência...');
   
   const http = require('http');
   const PORT = process.env.PORT || 5000;
