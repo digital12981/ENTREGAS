@@ -7,6 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/hooks/use-toast';
 import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
+import { initFacebookPixel, trackPurchase } from '@/lib/facebook-pixel';
 
 import pixLogo from '../assets/pix-logo.png';
 import kitEpiImage from '../assets/kit-epi-new.webp';
@@ -16,6 +17,10 @@ interface PaymentInfo {
   pixCode: string;
   pixQrCode: string;
   timeLeft?: number;
+  status?: string;
+  approvedAt?: string;
+  rejectedAt?: string;
+  facebookReported?: boolean;
 }
 
 const Payment: React.FC = () => {
@@ -51,10 +56,13 @@ const Payment: React.FC = () => {
   }, []);
 
   // Buscar informações de pagamento da API
-  const fetchPaymentInfo = async (id: string) => {
+  const fetchPaymentInfo = async (id: string, checkStatus: boolean = false) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/payments/${id}`);
+      
+      // Adicionar parâmetro para verificar status em tempo real da For4Payments
+      const url = `${API_BASE_URL}/api/payments/${id}${checkStatus ? '?check_status=true' : ''}`;
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error('Não foi possível recuperar as informações de pagamento');
@@ -66,15 +74,47 @@ const Payment: React.FC = () => {
         throw new Error(data.error);
       }
       
+      // Atualizar as informações do pagamento com todos os dados disponíveis
       setPaymentInfo({
         id: data.id,
         pixCode: data.pixCode,
-        pixQrCode: data.pixQrCode
+        pixQrCode: data.pixQrCode,
+        status: data.status || 'PENDING',
+        approvedAt: data.approvedAt,
+        rejectedAt: data.rejectedAt,
+        facebookReported: data.facebookReported
       });
       
       // Extrair nome e CPF das informações recuperadas
       if (data.name) setName(data.name);
       if (data.cpf) setCpf(data.cpf);
+      
+      // Se o pagamento foi aprovado, atualizar a UI e relatar ao Facebook Pixel
+      if (data.status === 'APPROVED') {
+        console.log('[PAYMENT] Transação APROVADA!');
+        
+        // Inicializar o Facebook Pixel se ainda não estiver inicializado
+        initFacebookPixel();
+        
+        // Reportar a conversão para o Facebook se ainda não foi reportada
+        if (!data.facebookReported) {
+          console.log('[PIXEL] Reportando conversão para o Facebook Pixel...');
+          trackPurchase(data.id, 84.70);
+          
+          // Enviar solicitação para marcar como reportado no servidor
+          try {
+            await fetch(`${API_BASE_URL}/api/payments/${id}/check-status`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            console.log('[PIXEL] Notificação enviada ao servidor com sucesso');
+          } catch (pixelError) {
+            console.error('[PIXEL] Erro ao notificar servidor sobre relatório de conversão:', pixelError);
+          }
+        }
+      }
       
     } catch (error: any) {
       console.error('Erro ao recuperar informações de pagamento:', error);
@@ -84,24 +124,50 @@ const Payment: React.FC = () => {
     }
   };
 
-  // Configurar o cronômetro
+  // Configurar o cronômetro e verificação periódica de status
   useEffect(() => {
-    if (paymentInfo && timeLeft > 0) {
-      timerRef.current = window.setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000) as unknown as number;
+    // Referência para o intervalo de verificação de status
+    let statusCheckInterval: number | null = null;
+    
+    if (paymentInfo) {
+      // Configurar o cronômetro de contagem regressiva
+      if (timeLeft > 0 && paymentInfo.status !== 'APPROVED' && paymentInfo.status !== 'REJECTED') {
+        timerRef.current = window.setInterval(() => {
+          setTimeLeft(prev => {
+            if (prev <= 1) {
+              if (timerRef.current) clearInterval(timerRef.current);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000) as unknown as number;
+      }
+      
+      // Verificar o status do pagamento periodicamente (a cada 15 segundos)
+      // apenas se o pagamento não estiver aprovado ou rejeitado
+      if (paymentInfo.status !== 'APPROVED' && paymentInfo.status !== 'REJECTED') {
+        console.log('[PAYMENT] Iniciando verificação periódica de status...');
+        statusCheckInterval = window.setInterval(() => {
+          console.log('[PAYMENT] Verificando status do pagamento...');
+          fetchPaymentInfo(paymentInfo.id, true);
+        }, 15000) as unknown as number;
+      } else {
+        console.log(`[PAYMENT] Pagamento com status ${paymentInfo.status}. Parando verificações.`);
+      }
     }
     
+    // Limpar intervalos quando o componente for desmontado ou quando o status mudar
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (statusCheckInterval) clearInterval(statusCheckInterval);
     };
-  }, [paymentInfo, timeLeft]);
+  }, [paymentInfo?.id, paymentInfo?.status, timeLeft]);
+  
+  // Inicializar o Facebook Pixel quando o componente é montado
+  useEffect(() => {
+    // Inicializar o Facebook Pixel apenas uma vez quando o componente é montado
+    initFacebookPixel();
+  }, []);
 
   // Formatar o tempo restante
   const formatTime = (seconds: number): string => {
@@ -202,75 +268,164 @@ const Payment: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Status de pagamento com spinner */}
-                  <div className="flex items-center justify-center gap-2 py-2 bg-[#fff8f6] rounded-md">
-                    <div className="text-[#E83D22] animate-spin">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                      </svg>
-                    </div>
-                    <p className="text-sm text-gray-700 font-medium">
-                      Aguardando pagamento PIX...
-                    </p>
-                  </div>
-                  
-                  {/* QR Code */}
-                  <div className="flex flex-col items-center">
-                    <div className="mb-2">
-                      <img 
-                        src={pixLogo}
-                        alt="PIX Logo"
-                        className="h-8 mb-2 mx-auto"
-                      />
-                    </div>
-                    
-                    <img 
-                      src={paymentInfo?.pixQrCode} 
-                      alt="QR Code PIX" 
-                      className="w-full max-w-[200px] h-auto mx-auto"
-                    />
-                    
-                    {/* Tempo restante */}
-                    <div className="bg-[#fff3e6] border-[#E83D22] border p-2 rounded-md mt-3 w-[80%] mx-auto">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="text-[#E83D22]">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                          </svg>
-                        </div>
-                        <div className="flex flex-col">
-                          <p className="text-sm text-gray-700 font-medium">
-                            PIX expira em <span className="text-[#E83D22] font-bold">{formatTime(timeLeft)}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Código PIX e botão copiar */}
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-700 mb-2 font-medium text-center">
-                      Copie o código PIX e pague no seu aplicativo de banco:
-                    </p>
-                    <div className="relative">
-                      <div 
-                        className="bg-gray-50 p-3 rounded-md border border-gray-200 text-sm text-gray-600 break-all pr-12 max-h-[80px] overflow-y-auto"
-                      >
-                        {paymentInfo?.pixCode}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        className="absolute right-1 top-1/2 transform -translate-y-1/2 text-[#E83D22] hover:text-[#d73920] p-1"
-                        onClick={copiarCodigoPix}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  {/* Status de pagamento dinâmico baseado no status */}
+                  {paymentInfo?.status === 'APPROVED' ? (
+                    <div className="flex items-center justify-center gap-2 py-3 bg-[#e7ffe7] rounded-md border border-green-200">
+                      <div className="text-green-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-700 font-medium">
+                          Pagamento Aprovado!
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Seu cadastro foi atualizado com sucesso.
+                        </p>
+                      </div>
+                    </div>
+                  ) : paymentInfo?.status === 'REJECTED' ? (
+                    <div className="flex items-center justify-center gap-2 py-3 bg-[#ffeeee] rounded-md border border-red-200">
+                      <div className="text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="15" y1="9" x2="9" y2="15"></line>
+                          <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-700 font-medium">
+                          Pagamento Rejeitado
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Por favor, tente novamente ou contate o suporte.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2 py-2 bg-[#fff8f6] rounded-md">
+                      <div className="text-[#E83D22] animate-spin">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-gray-700 font-medium">
+                        Aguardando pagamento PIX...
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* QR Code e demais detalhes de pagamento - mostrados apenas se não estiver aprovado ou rejeitado */}
+                  {(!paymentInfo?.status || paymentInfo?.status === 'PENDING') && (
+                    <>
+                      {/* QR Code */}
+                      <div className="flex flex-col items-center">
+                        <div className="mb-2">
+                          <img 
+                            src={pixLogo}
+                            alt="PIX Logo"
+                            className="h-8 mb-2 mx-auto"
+                          />
+                        </div>
+                        
+                        <img 
+                          src={paymentInfo?.pixQrCode} 
+                          alt="QR Code PIX" 
+                          className="w-full max-w-[200px] h-auto mx-auto"
+                        />
+                        
+                        {/* Tempo restante */}
+                        <div className="bg-[#fff3e6] border-[#E83D22] border p-2 rounded-md mt-3 w-[80%] mx-auto">
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="text-[#E83D22]">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                              </svg>
+                            </div>
+                            <div className="flex flex-col">
+                              <p className="text-sm text-gray-700 font-medium">
+                                PIX expira em <span className="text-[#E83D22] font-bold">{formatTime(timeLeft)}</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Código PIX e botão copiar */}
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-700 mb-2 font-medium text-center">
+                          Copie o código PIX e pague no seu aplicativo de banco:
+                        </p>
+                        <div className="relative">
+                          <div 
+                            className="bg-gray-50 p-3 rounded-md border border-gray-200 text-sm text-gray-600 break-all pr-12 max-h-[80px] overflow-y-auto"
+                          >
+                            {paymentInfo?.pixCode}
+                          </div>
+                          <Button
+                            variant="ghost"
+                            className="absolute right-1 top-1/2 transform -translate-y-1/2 text-[#E83D22] hover:text-[#d73920] p-1"
+                            onClick={copiarCodigoPix}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {/* Se aprovado, mostrar mensagem de sucesso */}
+                  {paymentInfo?.status === 'APPROVED' && (
+                    <div className="flex flex-col items-center justify-center p-6 bg-[#f8fff8] rounded-md border border-green-100 mt-4">
+                      <div className="text-green-500 mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Pagamento Confirmado!</h3>
+                      <p className="text-center text-gray-600 mb-4">
+                        Seu pagamento foi processado com sucesso. Seu cadastro foi atualizado 
+                        e você será contatado em breve para as próximas etapas.
+                      </p>
+                      <Button
+                        onClick={() => setLocation('/')}
+                        className="bg-green-500 hover:bg-green-600 text-white"
+                      >
+                        Voltar para a Página Inicial
                       </Button>
                     </div>
-                  </div>
+                  )}
+                  
+                  {/* Se rejeitado, mostrar mensagem de erro */}
+                  {paymentInfo?.status === 'REJECTED' && (
+                    <div className="flex flex-col items-center justify-center p-6 bg-[#fff8f8] rounded-md border border-red-100 mt-4">
+                      <div className="text-red-500 mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="15" y1="9" x2="9" y2="15"></line>
+                          <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Pagamento Rejeitado</h3>
+                      <p className="text-center text-gray-600 mb-4">
+                        Houve um problema com o seu pagamento. Por favor, tente novamente 
+                        ou entre em contato com o suporte para assistência.
+                      </p>
+                      <Button
+                        onClick={() => setLocation('/')}
+                        className="bg-[#E83D22] hover:bg-[#d73920] text-white"
+                      >
+                        Voltar e Tentar Novamente
+                      </Button>
+                    </div>
+                  )}
                   
                   <div className="mt-4 text-center">
                     <p className="text-xs text-gray-500">

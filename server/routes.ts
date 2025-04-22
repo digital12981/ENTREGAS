@@ -905,6 +905,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Verificar se também devemos obter o status da API For4Payments para atualização
+      const checkLiveStatus = req.query.check_status === 'true';
+      
+      if (checkLiveStatus && process.env.FOR4PAYMENTS_SECRET_KEY) {
+        try {
+          // Importar o serviço de monitoramento de transações
+          const { checkTransactionStatus } = await import('./transaction-monitor');
+          const transactionStatus = await checkTransactionStatus(id);
+          
+          if (transactionStatus) {
+            // Atualizar o status do pagamento no cache
+            paymentData.status = transactionStatus.status;
+            paymentData.approvedAt = transactionStatus.approvedAt;
+            paymentData.rejectedAt = transactionStatus.rejectedAt;
+            
+            // Se a transação foi aprovada, processar a conversão para o Facebook Pixel
+            if (transactionStatus.status === 'APPROVED' && !paymentData.facebookReported) {
+              // Importar o módulo de monitoramento
+              const { reportConversionToFacebook } = await import('./transaction-monitor');
+              const reported = await reportConversionToFacebook(transactionStatus);
+              
+              if (reported) {
+                paymentData.facebookReported = true;
+                console.log(`[FACEBOOK] Conversão reportada com sucesso para o Facebook Pixel: ${id}`);
+              }
+            }
+          }
+        } catch (statusError) {
+          console.error('[MONITOR] Erro ao verificar status ao vivo da transação:', statusError);
+          // Continuar com os dados do cache mesmo se a verificação de status falhar
+        }
+      }
+      
       // Retornar os dados do pagamento
       return res.json({
         id: paymentData.id,
@@ -912,13 +945,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
         pixQrCode: paymentData.pixQrCode,
         name: paymentData.name,
         cpf: paymentData.cpf,
-        email: paymentData.email
+        email: paymentData.email,
+        status: paymentData.status || 'PENDING', // Status padrão se não estiver presente
+        approvedAt: paymentData.approvedAt,
+        rejectedAt: paymentData.rejectedAt,
+        facebookReported: !!paymentData.facebookReported
       });
       
     } catch (error: any) {
       console.error('Erro ao buscar informações de pagamento:', error);
       res.status(500).json({ 
         error: 'Erro ao buscar informações de pagamento', 
+        details: error.message 
+      });
+    }
+  });
+  
+  // Rota para verificar o status de um pagamento na For4Payments e enviar para o Facebook Pixel
+  app.post('/api/payments/:id/check-status', async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'ID de pagamento não fornecido' });
+      }
+      
+      // Verificar se temos a chave API configurada
+      if (!process.env.FOR4PAYMENTS_SECRET_KEY) {
+        return res.status(500).json({ error: 'Chave de API For4Payments não configurada' });
+      }
+      
+      // Importar o módulo de monitoramento
+      const { processTransaction } = await import('./transaction-monitor');
+      
+      // Processar a transação (verificar status e reportar se aprovada)
+      const result = await processTransaction(id);
+      
+      // Atualizar o cache se a transação for processada com sucesso
+      if (result) {
+        const paymentCache = global._paymentCache || {};
+        if (paymentCache[id]) {
+          paymentCache[id].facebookReported = true;
+          paymentCache[id].status = 'APPROVED';
+        }
+      }
+      
+      return res.json({ 
+        success: true, 
+        processed: result,
+        message: result 
+          ? 'Transação aprovada e reportada ao Facebook Pixel' 
+          : 'Transação verificada, mas não foi necessário reportar'
+      });
+    } catch (error: any) {
+      console.error('Erro ao verificar status do pagamento:', error);
+      res.status(500).json({ 
+        error: 'Erro ao verificar status do pagamento', 
         details: error.message 
       });
     }
