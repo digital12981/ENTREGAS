@@ -48,10 +48,13 @@ export function setupAlternativeStatic(app) {
   
   // Verificar múltiplos locais possíveis de arquivos estáticos
   const possiblePaths = [
-    path.resolve(__dirname, 'public'),            // server/public
-    path.resolve(__dirname, '..', 'public'),      // public/ (na raiz)
-    path.resolve(__dirname, '..', 'dist', 'client'), // dist/client
-    path.resolve('/app/public')                   // /app/public (caminho absoluto na Heroku)
+    path.resolve(__dirname, 'public'),                    // server/public
+    path.resolve(__dirname, '..', 'public'),              // public/ (na raiz)
+    path.resolve(__dirname, '..', 'dist', 'client'),      // dist/client
+    path.resolve(__dirname, '..', 'dist', 'public'),      // dist/public
+    path.resolve('/app/public'),                          // /app/public (caminho absoluto na Heroku)
+    path.resolve('/app/dist/public'),                     // /app/dist/public (caminho absoluto na Heroku)
+    path.resolve('/app/dist/client')                      // /app/dist/client (caminho absoluto na Heroku)
   ];
   
   // Copiar arquivos para todos os caminhos possíveis primeiro

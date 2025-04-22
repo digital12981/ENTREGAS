@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Script de inicialização simplificado para Heroku
- * 
- * Este script inicia o servidor de forma direta, sem complicações.
- * Usa a sintaxe ESM compatível com o "type": "module" em package.json.
+ * Script de inicialização da aplicação na Heroku
+ * Este script é responsável por iniciar a aplicação Node.js na Heroku
+ * e garantir que todos os componentes necessários estejam funcionando.
  */
 
 import { spawn } from 'child_process';
@@ -12,229 +11,196 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Obter diretório atual
+// Configuração de caminhos para ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const rootDir = process.cwd();
 
-console.log('🚀 Iniciando aplicação Shopee Entregas no Heroku');
-console.log(`Data/Hora: ${new Date().toISOString()}`);
-console.log(`Versão Node: ${process.version}`);
+// Configurar porta
+const PORT = process.env.PORT || 5000;
+process.env.PORT = PORT.toString();
 
-// Configurar ambiente para produção
-process.env.NODE_ENV = 'production';
+console.log('🚀 Iniciando aplicação na Heroku...');
+console.log(`📌 Diretório atual: ${rootDir}`);
+console.log(`📌 Porta: ${PORT}`);
+console.log(`📌 Ambiente: ${process.env.NODE_ENV || 'não definido'}`);
+console.log(`📌 Timestamp: ${new Date().toISOString()}`);
 
-// Verificar arquivo principal
-const mainFile = path.join(process.cwd(), 'dist', 'index.js');
-if (!fs.existsSync(mainFile)) {
-  console.error('ERRO FATAL: Arquivo principal não encontrado em dist/index.js');
-  console.error('Verifique se o build foi concluído corretamente.');
-  process.exit(1);
-}
+// 1. Verificação de arquivos essenciais
+console.log('\n📋 Verificando arquivos essenciais antes de iniciar...');
 
-// Verificar diretório public para arquivos estáticos e tentar corrigir se necessário
-const publicDir = path.join(process.cwd(), 'public');
-const distDir = path.join(process.cwd(), 'dist');
-const distClientDir = path.join(distDir, 'client');
-
-// Se public não existir ou estiver vazio, tentar copiar os arquivos
-if (!fs.existsSync(publicDir) || !fs.existsSync(path.join(publicDir, 'index.html'))) {
-  console.log('Diretório public não encontrado ou está sem index.html');
-  console.log('Tentando copiar arquivos estáticos...');
-  
-  // Criar diretório public se não existir
-  if (!fs.existsSync(publicDir)) {
-    console.log('Criando diretório public...');
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
-  
-  // Tentar copiar de dist/client
-  if (fs.existsSync(distClientDir) && fs.existsSync(path.join(distClientDir, 'index.html'))) {
-    console.log('Encontrado index.html em dist/client, copiando para public...');
-    try {
-      spawn('cp', ['-r', `${distClientDir}/*`, publicDir], { shell: true, stdio: 'inherit' });
-    } catch (err) {
-      console.error('Erro ao copiar arquivos:', err.message);
-    }
-  } 
-  // Tentar copiar diretamente de dist
-  else if (fs.existsSync(path.join(distDir, 'index.html'))) {
-    console.log('Encontrado index.html em dist, copiando para public...');
-    try {
-      spawn('cp', ['-r', `${distDir}/*`, publicDir], { shell: true, stdio: 'inherit' });
-    } catch (err) {
-      console.error('Erro ao copiar arquivos:', err.message);
-    }
-  }
-  // Se o diretório dist não contiver o index.html, procurar no source do projeto
-  else if (fs.existsSync(path.join(process.cwd(), 'client/index.html'))) {
-    console.log('Encontrado index.html em client/, copiando para public...');
-    try {
-      spawn('cp', ['-r', `${path.join(process.cwd(), 'client')}/*`, publicDir], { shell: true, stdio: 'inherit' });
-    } catch (err) {
-      console.error('Erro ao copiar arquivos:', err.message);
-    }
-  } else {
-    console.warn('AVISO: Não foi possível encontrar index.html em nenhum local conhecido.');
-    console.warn('A interface web pode não funcionar corretamente.');
-  }
-}
-
-// Verificar favicon.ico
-const faviconPath = path.join(publicDir, 'favicon.ico');
-if (!fs.existsSync(faviconPath)) {
-  console.log('favicon.ico não encontrado. Tentando criar...');
+// Verificar existência do diretório dist
+const distDir = path.join(rootDir, 'dist');
+if (!fs.existsSync(distDir)) {
+  console.error('❌ ERRO: Diretório dist não encontrado!');
+  console.log('Tentando criar diretório...');
   try {
-    const faviconScript = path.join(process.cwd(), 'create-favicon.mjs');
-    if (fs.existsSync(faviconScript)) {
-      spawn('node', [faviconScript], { stdio: 'inherit', shell: true });
-    } else {
-      console.warn('Script create-favicon.mjs não encontrado.');
-      
-      // Criar favicon inline se o script não existir
-      console.log('Tentando criar favicon.ico diretamente...');
-      
-      // Dados binários básicos para um favicon simples
-      const faviconData = Buffer.from([
-        0, 0, 1, 0, 1, 0, 16, 16, 0, 0, 1, 0, 24, 0, 104, 4, 
-        0, 0, 22, 0, 0, 0, 40, 0, 0, 0, 16, 0, 0, 0, 32, 0, 
-        0, 0, 1, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 77, 45, 238, 77, 
-        45, 238, 77, 45, 238, 77, 45, 238, 77, 45, 238, 77, 45
-      ]);
-      
-      try {
-        fs.writeFileSync(faviconPath, faviconData);
-        console.log('favicon.ico básico criado com sucesso.');
-      } catch (err) {
-        console.error('Erro ao criar favicon.ico:', err.message);
-      }
-    }
+    fs.mkdirSync(distDir, { recursive: true });
+    console.log('✅ Diretório dist criado com sucesso.');
   } catch (err) {
-    console.error('Erro ao tentar criar favicon.ico:', err.message);
+    console.error(`❌ Falha ao criar diretório dist: ${err.message}`);
   }
 }
 
-// Verificar resultado
-if (fs.existsSync(publicDir)) {
-  if (fs.existsSync(path.join(publicDir, 'index.html'))) {
-    const publicFiles = fs.readdirSync(publicDir);
-    const hasFavicon = fs.existsSync(path.join(publicDir, 'favicon.ico'));
-    const hasAssets = fs.existsSync(path.join(publicDir, 'assets'));
-    
-    console.log(`✅ Diretório public configurado com ${publicFiles.length} arquivos.`);
-    console.log(`  index.html: encontrado`);
-    console.log(`  favicon.ico: ${hasFavicon ? 'encontrado' : 'NÃO ENCONTRADO'}`);
-    console.log(`  diretório assets: ${hasAssets ? 'encontrado' : 'NÃO ENCONTRADO'}`);
-    
-    // Verificar se temos os assets específicos
-    const assetsDir = path.join(publicDir, 'assets');
-    if (hasAssets) {
-      const assetFiles = fs.readdirSync(assetsDir);
-      const hasJs = assetFiles.some(file => file.includes('index-') && file.endsWith('.js'));
-      const hasCss = assetFiles.some(file => file.includes('index-') && file.endsWith('.css'));
-      
-      console.log(`  assets/index*.js: ${hasJs ? 'encontrado' : 'NÃO ENCONTRADO'}`);
-      console.log(`  assets/index*.css: ${hasCss ? 'encontrado' : 'NÃO ENCONTRADO'}`);
-      
-      // Se estamos faltando arquivos importantes, executar o script de extração
-      if (!hasJs || !hasCss) {
-        console.log('Faltam arquivos importantes. Executando script de extração...');
-        const extractScript = path.join(process.cwd(), 'extract-html-and-create-assets.mjs');
-        if (fs.existsSync(extractScript)) {
-          spawn('node', [extractScript], { stdio: 'inherit', shell: true });
-        } else {
-          console.warn('Script extract-html-and-create-assets.mjs não encontrado.');
-        }
-      }
-    } else {
-      console.log('Diretório assets não encontrado. Executando script de extração...');
-      const extractScript = path.join(process.cwd(), 'extract-html-and-create-assets.mjs');
-      if (fs.existsSync(extractScript)) {
-        spawn('node', [extractScript], { stdio: 'inherit', shell: true });
-      } else {
-        console.warn('Script extract-html-and-create-assets.mjs não encontrado.');
-      }
-    }
-  } else {
-    console.warn('⚠️ Diretório public existe, mas não contém index.html.');
-    console.warn('  A interface web pode não funcionar corretamente.');
-    
-    // Executar script de extração
-    console.log('Executando script de extração...');
-    const extractScript = path.join(process.cwd(), 'extract-html-and-create-assets.mjs');
-    if (fs.existsSync(extractScript)) {
-      spawn('node', [extractScript], { stdio: 'inherit', shell: true });
-    } else {
-      console.warn('Script extract-html-and-create-assets.mjs não encontrado.');
-    }
-  }
-} else {
-  console.warn('⚠️ Não foi possível criar o diretório public.');
-  console.warn('  A interface web pode não funcionar corretamente.');
-}
-
-// Verificar se precisamos executar o script de reconstrução
-if (!fs.existsSync(path.join(publicDir, 'index.html'))) {
-  console.log('Executando script de reconstrução...');
-  try {
-    const rebuildScript = path.join(process.cwd(), 'rebuild-static.mjs');
-    if (fs.existsSync(rebuildScript)) {
-      spawn('node', [rebuildScript], { stdio: 'inherit', shell: true });
-    } else {
-      console.warn('Script de reconstrução não encontrado!');
-    }
-  } catch (err) {
-    console.error('Erro ao executar script de reconstrução:', err.message);
-  }
-}
-
-// Verificar se estamos em um ambiente Heroku
-// e definir variáveis de ambiente relevantes
-if (process.env.PORT && !process.env.HEROKU) {
-  console.log('Ambiente Heroku detectado, definindo variável HEROKU=true');
-  process.env.HEROKU = 'true';
-}
-
-// Iniciar o servidor com configurações ESM
-console.log('Iniciando o servidor...');
-
-const args = [
-  // Configurações de módulos ES
-  '--experimental-specifier-resolution=node',
-  
-  // Permitir importações top-level
-  '--no-warnings',
-  
-  // Arquivo principal
-  mainFile
+// Arquivos críticos para o funcionamento da aplicação
+const criticalFiles = [
+  'dist/server/index.js',
+  'package.json'
 ];
 
-console.log(`Comando: node ${args.join(' ')}`);
-
-// Criar processo filho para o servidor
-const serverProcess = spawn('node', args, {
-  stdio: 'inherit',
-  env: process.env
+let canProceed = true;
+criticalFiles.forEach(file => {
+  const filePath = path.join(rootDir, file);
+  if (!fs.existsSync(filePath)) {
+    console.error(`❌ ERRO: Arquivo crítico não encontrado: ${file}`);
+    canProceed = false;
+  } else {
+    console.log(`✅ Arquivo crítico encontrado: ${file}`);
+  }
 });
 
-// Manipular eventos do processo
-serverProcess.on('error', (error) => {
-  console.error('Erro ao iniciar servidor:', error);
+if (!canProceed) {
+  console.error('\n❌ FALHA: Não é possível iniciar a aplicação devido a arquivos críticos ausentes.');
+  process.exit(1);
+}
+
+// 2. Verificação dos arquivos estáticos
+console.log('\n📊 Verificando arquivos estáticos...');
+
+// Diretórios onde os arquivos estáticos podem estar
+const staticDirs = [
+  path.join(rootDir, 'public'),
+  path.join(rootDir, 'dist', 'public'),
+  path.join(rootDir, 'dist', 'client'),
+  path.join(rootDir, 'dist', 'server', 'public')
+];
+
+let hasIndexHtml = false;
+let hasAssets = false;
+
+for (const dir of staticDirs) {
+  const exists = fs.existsSync(dir);
+  const isDir = exists ? fs.statSync(dir).isDirectory() : false;
+  
+  if (exists && isDir) {
+    console.log(`✅ Diretório estático encontrado: ${path.relative(rootDir, dir)}`);
+    
+    // Verificar index.html
+    const indexPath = path.join(dir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      hasIndexHtml = true;
+      console.log(`  - index.html encontrado (${fs.statSync(indexPath).size} bytes)`);
+    }
+    
+    // Verificar diretório assets
+    const assetsDir = path.join(dir, 'assets');
+    if (fs.existsSync(assetsDir) && fs.statSync(assetsDir).isDirectory()) {
+      hasAssets = true;
+      const files = fs.readdirSync(assetsDir);
+      const jsFiles = files.filter(f => f.endsWith('.js'));
+      const cssFiles = files.filter(f => f.endsWith('.css'));
+      
+      console.log(`  - diretório assets encontrado com ${jsFiles.length} JS e ${cssFiles.length} CSS`);
+    }
+  }
+}
+
+if (!hasIndexHtml) {
+  console.warn('⚠️ AVISO: Nenhum arquivo index.html encontrado nos diretórios estáticos!');
+}
+
+if (!hasAssets) {
+  console.warn('⚠️ AVISO: Nenhum diretório assets encontrado nos diretórios estáticos!');
+}
+
+// 3. Tentar corrigir problemas de arquivos estáticos
+console.log('\n🔧 Executando scripts de correção de arquivos estáticos...');
+
+try {
+  const fixScripts = [
+    'node rebuild-static.mjs',
+    'node fix-static-paths.mjs',
+    'node copy-static-files.mjs'
+  ];
+  
+  for (const cmd of fixScripts) {
+    try {
+      console.log(`Executando: ${cmd}`);
+      const execSync = (await import('child_process')).execSync;
+      execSync(cmd, { stdio: 'inherit' });
+    } catch (err) {
+      console.warn(`⚠️ AVISO: Falha ao executar ${cmd}: ${err.message}`);
+    }
+  }
+} catch (err) {
+  console.warn(`⚠️ AVISO: Falha ao executar scripts de correção: ${err.message}`);
+}
+
+// 4. Iniciar o servidor Node.js
+console.log('\n🚀 Iniciando servidor Node.js...');
+
+// Registrar manipuladores de eventos para processo
+process.on('SIGTERM', () => {
+  console.log('Recebido SIGTERM. Encerrando servidor...');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('Recebido SIGINT. Encerrando servidor...');
+  process.exit(0);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error(`Exceção não tratada: ${err.message}`);
+  console.error(err.stack);
   process.exit(1);
 });
 
-serverProcess.on('exit', (code) => {
-  console.log(`Servidor encerrado com código: ${code}`);
-  process.exit(code);
+// Opções de comando para iniciar o servidor
+let serverCmd = 'node';
+let serverArgs = ['dist/server/index.js'];
+
+// Verificar se estamos em desenvolvimento ou produção
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Ambiente de desenvolvimento detectado.');
+  
+  // Tentar usar tsx para desenvolvimento se disponível
+  try {
+    const execSync = (await import('child_process')).execSync;
+    execSync('which tsx', { stdio: 'ignore' });
+    
+    console.log('Usando tsx para desenvolvimento...');
+    serverCmd = 'tsx';
+    serverArgs = ['server/index.ts'];
+  } catch (err) {
+    console.log('tsx não encontrado, usando node...');
+  }
+}
+
+console.log(`Comando de servidor: ${serverCmd} ${serverArgs.join(' ')}`);
+
+// Iniciar o servidor como processo filho
+const server = spawn(serverCmd, serverArgs, {
+  stdio: 'inherit',
+  env: {
+    ...process.env,
+    PORT: PORT.toString()
+  }
 });
 
-// Manipular sinais do sistema
-process.on('SIGINT', () => {
-  console.log('Recebido SIGINT, encerrando...');
-  serverProcess.kill('SIGINT');
+console.log(`Servidor iniciado com PID ${server.pid}`);
+
+server.on('error', (err) => {
+  console.error(`❌ Erro ao iniciar o servidor: ${err.message}`);
+  process.exit(1);
 });
 
-process.on('SIGTERM', () => {
-  console.log('Recebido SIGTERM, encerrando...');
-  serverProcess.kill('SIGTERM');
+server.on('exit', (code, signal) => {
+  if (code !== 0) {
+    console.error(`❌ Servidor encerrado com código ${code} e sinal ${signal}`);
+    process.exit(code || 1);
+  } else {
+    console.log(`✅ Servidor encerrado normalmente.`);
+    process.exit(0);
+  }
 });

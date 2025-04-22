@@ -1,237 +1,211 @@
 #!/usr/bin/env node
 
 /**
- * Script para reconstruir e copiar arquivos estáticos do frontend
- * diretamente para o diretório public na Heroku
+ * Script para reconstruir a estrutura de arquivos estáticos
+ * 
+ * Este script verifica e reconstrói os diretórios e arquivos estáticos
+ * necessários para a aplicação funcionar corretamente no ambiente de produção.
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { spawn, execSync } from 'child_process';
+import { execSync } from 'child_process';
 
 // Configurar caminhos
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = process.cwd();
-const clientDir = path.join(rootDir, 'client');
-const publicDir = path.join(rootDir, 'public');
 
-console.log('🔨 Reconstruindo arquivos estáticos para Heroku');
-console.log(`Data/Hora: ${new Date().toISOString()}`);
-console.log(`Diretório raiz: ${rootDir}`);
+console.log('🔄 Reconstruindo estrutura de arquivos estáticos...');
 
-// Verificar existência dos diretórios
-if (!fs.existsSync(clientDir)) {
-  console.error('❌ Diretório client/ não encontrado!');
-  process.exit(1);
-}
+// Lista de diretórios que devem existir
+const requiredDirs = [
+  path.join(rootDir, 'public'),
+  path.join(rootDir, 'dist'),
+  path.join(rootDir, 'dist', 'public'),
+  path.join(rootDir, 'dist', 'client'),
+  path.join(rootDir, 'public', 'assets'),
+  path.join(rootDir, 'dist', 'public', 'assets'),
+  path.join(rootDir, 'dist', 'client', 'assets')
+];
 
-// Criar diretório public se não existir
-if (!fs.existsSync(publicDir)) {
-  console.log('Criando diretório public/...');
-  fs.mkdirSync(publicDir, { recursive: true });
-}
-
-// Função para executar comando e registrar saída
-function execCmd(cmd, args = [], options = {}) {
-  console.log(`Executando: ${cmd} ${args.join(' ')}`);
-  
-  try {
-    const output = execSync(`${cmd} ${args.join(' ')}`, {
-      stdio: 'inherit',
-      ...options
-    });
-    return { success: true, output };
-  } catch (error) {
-    console.error(`❌ Erro ao executar comando: ${error.message}`);
-    return { success: false, error };
-  }
-}
-
-// Função para copiar diretório recursivamente
-function copyDir(src, dest) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-  
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-  
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-    
-    if (entry.isDirectory()) {
-      copyDir(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
-
-// Abordagem 1: Copiar diretamente os arquivos do cliente para public
-console.log('\n📦 Método 1: Copiar arquivos do cliente diretamente');
-const clientSrcDir = path.join(clientDir, 'src');
-const clientPublicDir = path.join(clientDir, 'public');
-const clientIndexHtml = path.join(clientDir, 'index.html');
-
-// Copiar index.html
-if (fs.existsSync(clientIndexHtml)) {
-  console.log('Copiando index.html do cliente...');
-  fs.copyFileSync(clientIndexHtml, path.join(publicDir, 'index.html'));
-}
-
-// Copiar diretório public do cliente (se existir)
-if (fs.existsSync(clientPublicDir)) {
-  console.log('Copiando diretório public/ do cliente...');
-  copyDir(clientPublicDir, publicDir);
-}
-
-// Copiar diretório src do cliente
-if (fs.existsSync(clientSrcDir)) {
-  console.log('Copiando diretório src/ do cliente...');
-  copyDir(clientSrcDir, path.join(publicDir, 'src'));
-}
-
-// Abordagem 2: Tentar fazer build dos arquivos estáticos
-console.log('\n📦 Método 2: Construir arquivos estáticos via script inline');
-
-// Criar arquivo package.json temporário para o build estático
-const tempPackageJson = {
-  name: "static-build",
-  version: "1.0.0",
-  scripts: {
-    "build": "vite build --outDir ../public"
-  },
-  dependencies: {},
-  devDependencies: {}
-};
-
-const tempPackagePath = path.join(clientDir, 'temp-package.json');
-fs.writeFileSync(tempPackagePath, JSON.stringify(tempPackageJson, null, 2));
-
-// Copiar vite.config.js modificado
-const viteConfigContent = `
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    outDir: '../public',
-    emptyOutDir: true
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@contexts': path.resolve(__dirname, './src/contexts'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@lib': path.resolve(__dirname, './src/lib'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@shared': path.resolve(__dirname, '../shared'),
-    }
+// Garantir que todos os diretórios existam
+requiredDirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    console.log(`Criando diretório ${dir}...`);
+    fs.mkdirSync(dir, { recursive: true });
   }
 });
-`;
 
-const tempViteConfigPath = path.join(clientDir, 'temp-vite.config.js');
-fs.writeFileSync(tempViteConfigPath, viteConfigContent);
-
-// Tentar fazer o build do frontend diretamente
-console.log('Navegando para o diretório client/...');
-process.chdir(clientDir);
-
-console.log('Tentando build do frontend...');
-execCmd('npx', ['vite', 'build', '--config', 'temp-vite.config.js', '--outDir', '../public']);
-
-// Limpar arquivos temporários
-try {
-  fs.unlinkSync(tempPackagePath);
-  fs.unlinkSync(tempViteConfigPath);
-} catch (err) {
-  console.warn('Aviso: Não foi possível remover arquivos temporários');
-}
-
-// Voltar para o diretório raiz
-process.chdir(rootDir);
-
-// Abordagem 3: Copiar arquivos de dist (se existirem)
-console.log('\n📦 Método 3: Copiar de dist/ ou dist/client/');
-const distDir = path.join(rootDir, 'dist');
-const distClientDir = path.join(distDir, 'client');
-
-if (fs.existsSync(distClientDir) && fs.existsSync(path.join(distClientDir, 'index.html'))) {
-  console.log('Encontrado index.html em dist/client/, copiando...');
-  copyDir(distClientDir, publicDir);
-} else if (fs.existsSync(distDir) && fs.existsSync(path.join(distDir, 'index.html'))) {
-  console.log('Encontrado index.html em dist/, copiando...');
-  
-  // Copiar apenas os arquivos estáticos, não o código do servidor
-  const entries = fs.readdirSync(distDir, { withFileTypes: true });
-  for (const entry of entries) {
-    // Ignorar arquivos do servidor
-    if (['index.js', 'server'].includes(entry.name)) continue;
-    
-    const srcPath = path.join(distDir, entry.name);
-    const destPath = path.join(publicDir, entry.name);
-    
-    if (entry.isDirectory()) {
-      copyDir(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
+// Função para copiar arquivos entre diretórios
+function copyFileIfExists(source, dest) {
+  if (fs.existsSync(source)) {
+    try {
+      fs.copyFileSync(source, dest);
+      console.log(`Arquivo copiado: ${path.basename(source)} -> ${path.relative(rootDir, dest)}`);
+      return true;
+    } catch (error) {
+      console.error(`Erro ao copiar ${source} para ${dest}: ${error.message}`);
+      return false;
     }
   }
+  return false;
 }
 
-// Verificar o resultado final
-console.log('\n📋 Verificando resultado');
-if (fs.existsSync(publicDir)) {
-  const publicFiles = fs.readdirSync(publicDir);
-  console.log(`Diretório public/ contém ${publicFiles.length} arquivos/diretórios:`);
-  console.log(publicFiles.join(', '));
+// Verificar index.html em client/index.html e copiar para outros diretórios
+const clientIndexHtml = path.join(rootDir, 'client', 'index.html');
+if (fs.existsSync(clientIndexHtml)) {
+  console.log(`Encontrado index.html em ${clientIndexHtml}`);
   
-  if (fs.existsSync(path.join(publicDir, 'index.html'))) {
-    console.log('✅ index.html encontrado em public/');
+  // Copiar para diretórios de produção
+  const destDirs = [
+    path.join(rootDir, 'public'),
+    path.join(rootDir, 'dist', 'public'),
+    path.join(rootDir, 'dist', 'client')
+  ];
+  
+  destDirs.forEach(dir => {
+    const destFile = path.join(dir, 'index.html');
+    copyFileIfExists(clientIndexHtml, destFile);
+  });
+} else {
+  console.warn('⚠️ Não foi encontrado index.html em client/index.html');
+}
+
+// Verificar assets em client/dist/assets e copiar para outros diretórios
+const clientDistAssets = path.join(rootDir, 'client', 'dist', 'assets');
+if (fs.existsSync(clientDistAssets) && fs.statSync(clientDistAssets).isDirectory()) {
+  console.log(`Encontrado diretório de assets em ${clientDistAssets}`);
+  
+  try {
+    const files = fs.readdirSync(clientDistAssets);
+    const jsFiles = files.filter(f => f.endsWith('.js'));
+    const cssFiles = files.filter(f => f.endsWith('.css'));
     
-    // Verificar se há arquivos de assets (scripts, css, etc)
-    const hasAssets = publicFiles.some(file => 
-      file === 'assets' || 
-      file.endsWith('.js') || 
-      file.endsWith('.css'));
+    console.log(`Encontrados ${jsFiles.length} arquivos JS e ${cssFiles.length} arquivos CSS`);
     
-    if (hasAssets) {
-      console.log('✅ Arquivos de assets encontrados');
-    } else {
-      console.warn('⚠️ Nenhum arquivo de assets encontrado!');
-      
-      // Tentar criar assets básicos
-      console.log('Tentando criar assets básicos...');
-      const basicAssetsScript = path.join(rootDir, 'create-basic-assets.mjs');
-      if (fs.existsSync(basicAssetsScript)) {
-        execCmd('node', [basicAssetsScript]);
-        console.log('✅ Assets básicos criados com sucesso.');
-      } else {
-        console.warn('❌ Script create-basic-assets.mjs não encontrado.');
+    // Diretórios de destino para os assets
+    const destAssetsDirs = [
+      path.join(rootDir, 'public', 'assets'),
+      path.join(rootDir, 'dist', 'public', 'assets'),
+      path.join(rootDir, 'dist', 'client', 'assets')
+    ];
+    
+    // Copiar todos os arquivos para cada diretório de destino
+    destAssetsDirs.forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
       }
-    }
-  } else {
-    console.error('❌ index.html NÃO foi encontrado em public/');
-    
-    // Tentar criar assets básicos com index.html
-    console.log('Tentando criar arquivos básicos incluindo index.html...');
-    const basicAssetsScript = path.join(rootDir, 'create-basic-assets.mjs');
-    if (fs.existsSync(basicAssetsScript)) {
-      execCmd('node', [basicAssetsScript]);
-      console.log('✅ Assets básicos e index.html criados.');
-    } else {
-      console.warn('❌ Script create-basic-assets.mjs não encontrado.');
-    }
+      
+      files.forEach(file => {
+        const srcFile = path.join(clientDistAssets, file);
+        const destFile = path.join(dir, file);
+        copyFileIfExists(srcFile, destFile);
+      });
+    });
+  } catch (err) {
+    console.error(`Erro ao copiar assets: ${err.message}`);
   }
 } else {
-  console.error('❌ Diretório public/ não existe após tentativas de reconstrução!');
+  console.log('Diretório client/dist/assets não encontrado.');
+  
+  // Tentar executar o build para criar os assets
+  if (fs.existsSync(path.join(rootDir, 'client'))) {
+    console.log('Tentando executar o build para criar os assets...');
+    
+    try {
+      const originalDir = process.cwd();
+      process.chdir(rootDir);
+      
+      // Forçar apenas build do cliente
+      execSync('npm run build:client', { stdio: 'inherit' });
+      
+      // Voltar para o diretório original
+      process.chdir(originalDir);
+      
+      console.log('Build concluído com sucesso.');
+    } catch (err) {
+      console.error(`Erro ao executar build: ${err.message}`);
+    }
+  }
 }
 
-console.log('\n📋 Reconstrução de arquivos estáticos concluída.');
+// Criar favicon.ico se não existir
+const faviconPaths = [
+  path.join(rootDir, 'public', 'favicon.ico'),
+  path.join(rootDir, 'dist', 'public', 'favicon.ico'),
+  path.join(rootDir, 'dist', 'client', 'favicon.ico')
+];
+
+// Verificar se já existe favicon em algum dos diretórios
+let foundFavicon = false;
+for (const faviconPath of faviconPaths) {
+  if (fs.existsSync(faviconPath)) {
+    foundFavicon = true;
+    
+    // Copiar para outros diretórios
+    faviconPaths.forEach(destPath => {
+      if (destPath !== faviconPath) {
+        copyFileIfExists(faviconPath, destPath);
+      }
+    });
+    
+    break;
+  }
+}
+
+// Se não encontrou favicon, tentar criar um básico
+if (!foundFavicon) {
+  console.log('Favicon não encontrado. Verificando ícone gerado...');
+  
+  const generatedIcon = path.join(rootDir, 'generated-icon.png');
+  if (fs.existsSync(generatedIcon)) {
+    console.log('Usando ícone gerado como favicon...');
+    
+    faviconPaths.forEach(destPath => {
+      copyFileIfExists(generatedIcon, destPath);
+    });
+  } else {
+    console.warn('⚠️ Não foi possível encontrar favicon ou ícone gerado.');
+  }
+}
+
+// Verificar se existe algum diretório client/static e copiar seu conteúdo
+const clientStatic = path.join(rootDir, 'client', 'static');
+if (fs.existsSync(clientStatic) && fs.statSync(clientStatic).isDirectory()) {
+  console.log(`Encontrado diretório estático em ${clientStatic}`);
+  
+  try {
+    const files = fs.readdirSync(clientStatic);
+    console.log(`Encontrados ${files.length} arquivos estáticos`);
+    
+    // Diretórios de destino para arquivos estáticos
+    const destDirs = [
+      path.join(rootDir, 'public'),
+      path.join(rootDir, 'dist', 'public'),
+      path.join(rootDir, 'dist', 'client')
+    ];
+    
+    // Copiar todos os arquivos para cada diretório de destino
+    destDirs.forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      files.forEach(file => {
+        const srcFile = path.join(clientStatic, file);
+        const destFile = path.join(dir, file);
+        
+        // Se for um arquivo (não um diretório)
+        if (fs.statSync(srcFile).isFile()) {
+          copyFileIfExists(srcFile, destFile);
+        }
+      });
+    });
+  } catch (err) {
+    console.error(`Erro ao copiar arquivos estáticos: ${err.message}`);
+  }
+}
+
+console.log('✅ Reconstrução de arquivos estáticos concluída!');

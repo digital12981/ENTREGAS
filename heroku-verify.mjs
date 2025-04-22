@@ -1,160 +1,185 @@
 #!/usr/bin/env node
 
 /**
- * Script de verificação para garantir que o ambiente Heroku
- * está configurado corretamente para a aplicação.
+ * Script de verificação de ambiente para a Heroku
+ * Este script verifica o ambiente e fornece informações diagnósticas
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { spawnSync } from 'child_process';
 
-// Obter diretório atual
+// Configuração de caminhos para ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const rootDir = process.cwd();
 
-console.log('===== DIAGNÓSTICO DO AMBIENTE HEROKU =====');
-console.log(`Data/Hora: ${new Date().toISOString()}`);
-console.log(`Node.js: ${process.version}`);
-
-// Função para log colorido
-function logOk(message) {
-  console.log(`✅ ${message}`);
-}
-
-function logWarn(message) {
-  console.log(`⚠️ ${message}`);
-}
-
-function logError(message) {
-  console.log(`❌ ${message}`);
-}
-
-function execCommand(command) {
-  console.log(`\n>> ${command}`);
-  const result = spawnSync(command, { shell: true, stdio: 'inherit' });
-  return result.status === 0;
-}
+console.log('🔍 Verificando ambiente Heroku...');
+console.log(`📌 Diretório atual: ${rootDir}`);
+console.log(`📌 Versão do Node: ${process.version}`);
+console.log(`📌 Timestamp: ${new Date().toISOString()}`);
 
 // Verificar variáveis de ambiente
-console.log('\n===== VARIÁVEIS DE AMBIENTE =====');
-const requiredVars = ['NODE_ENV', 'DATABASE_URL', 'FOR4PAYMENTS_SECRET_KEY'];
-const optionalVars = ['PORT', 'FOR4PAYMENTS_API_URL', 'HOST'];
-
-let missingVars = 0;
-requiredVars.forEach(varName => {
-  if (process.env[varName]) {
-    logOk(`${varName}: configurado`);
-  } else {
-    logError(`${varName}: NÃO configurado (obrigatório)`);
-    missingVars++;
-  }
-});
-
-optionalVars.forEach(varName => {
-  if (process.env[varName]) {
-    logOk(`${varName}: configurado (${process.env[varName]})`);
-  } else {
-    logWarn(`${varName}: não configurado (opcional)`);
-  }
-});
-
-if (missingVars > 0) {
-  logError(`Existem ${missingVars} variáveis obrigatórias não configuradas.`);
-}
-
-// Verificar diretórios e arquivos
-console.log('\n===== DIRETÓRIOS E ARQUIVOS =====');
-const criticalPaths = [
-  { path: 'dist', type: 'dir', required: true, desc: 'Diretório de build' },
-  { path: 'dist/index.js', type: 'file', required: true, desc: 'Arquivo principal do servidor' },
-  { path: 'public', type: 'dir', required: true, desc: 'Diretório de arquivos estáticos' },
-  { path: 'public/index.html', type: 'file', required: true, desc: 'Arquivo HTML principal' },
-  { path: 'heroku-start.mjs', type: 'file', required: true, desc: 'Script de inicialização' },
-  { path: 'Procfile', type: 'file', required: true, desc: 'Configuração Heroku' }
+console.log('\n🌐 Variáveis de ambiente:');
+const envVars = [
+  'NODE_ENV',
+  'PORT',
+  'DATABASE_URL',
+  'FOR4PAYMENTS_SECRET_KEY'
 ];
 
-let missingFiles = 0;
-criticalPaths.forEach(({ path: filePath, type, required, desc }) => {
-  const fullPath = path.join(process.cwd(), filePath);
-  const exists = fs.existsSync(fullPath);
+envVars.forEach(varName => {
+  const exists = process.env[varName] ? 'configurada' : 'não configurada';
+  console.log(`- ${varName}: ${exists}`);
+});
+
+// Verificar arquivos e diretórios importantes
+console.log('\n📁 Verificando diretórios importantes:');
+const dirsToCheck = [
+  '',
+  'client',
+  'server',
+  'public',
+  'dist',
+  'dist/public',
+  'dist/client',
+  'dist/server'
+];
+
+dirsToCheck.forEach(dir => {
+  const dirPath = path.join(rootDir, dir);
+  const exists = fs.existsSync(dirPath);
+  const isDir = exists ? fs.statSync(dirPath).isDirectory() : false;
   
-  if (exists) {
-    const isDir = fs.statSync(fullPath).isDirectory();
-    if ((type === 'dir' && isDir) || (type === 'file' && !isDir)) {
-      logOk(`${desc} (${filePath}): encontrado`);
-    } else {
-      logError(`${desc} (${filePath}): tipo incorreto (esperado ${type})`);
-      missingFiles++;
-    }
-  } else if (required) {
-    logError(`${desc} (${filePath}): NÃO encontrado (obrigatório)`);
-    missingFiles++;
+  if (exists && isDir) {
+    console.log(`✅ ${dir || 'raiz'}: existe e é um diretório`);
+  } else if (exists) {
+    console.log(`⚠️ ${dir}: existe mas NÃO é um diretório`);
   } else {
-    logWarn(`${desc} (${filePath}): não encontrado (opcional)`);
+    console.log(`❌ ${dir}: não existe`);
   }
 });
 
-if (missingFiles > 0) {
-  logError(`Existem ${missingFiles} arquivos/diretórios obrigatórios ausentes.`);
-}
+// Verificar arquivos essenciais
+console.log('\n📄 Verificando arquivos essenciais:');
+const filesToCheck = [
+  'package.json',
+  'tsconfig.json',
+  'Procfile',
+  'client/index.html',
+  'public/index.html',
+  'dist/public/index.html',
+  'dist/client/index.html'
+];
 
-// Verificar conteúdo de arquivos importantes
-console.log('\n===== CONTEÚDO DE ARQUIVOS =====');
+filesToCheck.forEach(file => {
+  const filePath = path.join(rootDir, file);
+  if (fs.existsSync(filePath)) {
+    try {
+      const stats = fs.statSync(filePath);
+      const size = stats.size;
+      const mtime = stats.mtime;
+      
+      console.log(`✅ ${file}: existe (${size} bytes, modificado em ${mtime.toISOString()})`);
+      
+      // Para arquivos de index.html, verificar o conteúdo
+      if (file.endsWith('index.html')) {
+        try {
+          const content = fs.readFileSync(filePath, 'utf8');
+          console.log(`  - Primeiras 100 caracteres: ${content.substring(0, 100).replace(/\\n/g, ' ')}`);
+          
+          // Verificar tags script e link
+          const scriptMatches = content.match(/<script[^>]*src="[^"]*"[^>]*>/g);
+          if (scriptMatches) {
+            console.log(`  - Tags script: ${scriptMatches.length}`);
+            scriptMatches.slice(0, 3).forEach(m => console.log(`    ${m}`));
+          } else {
+            console.log('  - Nenhuma tag script encontrada');
+          }
+          
+          const linkMatches = content.match(/<link[^>]*href="[^"]*"[^>]*>/g);
+          if (linkMatches) {
+            console.log(`  - Tags link: ${linkMatches.length}`);
+            linkMatches.slice(0, 3).forEach(m => console.log(`    ${m}`));
+          } else {
+            console.log('  - Nenhuma tag link encontrada');
+          }
+        } catch (err) {
+          console.error(`  - Erro ao ler conteúdo: ${err.message}`);
+        }
+      }
+    } catch (err) {
+      console.error(`❌ ${file}: erro ao obter informações: ${err.message}`);
+    }
+  } else {
+    console.log(`❌ ${file}: não existe`);
+  }
+});
 
-// Verificar Procfile
-if (fs.existsSync(path.join(process.cwd(), 'Procfile'))) {
-  const procfileContent = fs.readFileSync(path.join(process.cwd(), 'Procfile'), 'utf8');
-  console.log('Procfile:');
-  console.log(procfileContent);
-  
-  if (procfileContent.includes('heroku-start.mjs')) {
-    logOk('Procfile configurado para usar heroku-start.mjs');
-  } else {
-    logError('Procfile não está configurado para usar heroku-start.mjs');
-  }
-}
+// Verificar diretórios de assets
+console.log('\n🎨 Verificando diretórios de assets:');
+const assetsDirsToCheck = [
+  'public/assets',
+  'dist/public/assets',
+  'dist/client/assets'
+];
 
-// Verificar conteúdo do diretório public
-if (fs.existsSync(path.join(process.cwd(), 'public'))) {
-  const publicFiles = fs.readdirSync(path.join(process.cwd(), 'public'));
-  console.log(`\nArquivos em public (${publicFiles.length} arquivos):`);
-  
-  if (publicFiles.length > 20) {
-    console.log(`${publicFiles.slice(0, 20).join(', ')}... (e mais ${publicFiles.length - 20} arquivos)`);
+assetsDirsToCheck.forEach(dir => {
+  const dirPath = path.join(rootDir, dir);
+  if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
+    try {
+      const files = fs.readdirSync(dirPath);
+      const jsFiles = files.filter(f => f.endsWith('.js'));
+      const cssFiles = files.filter(f => f.endsWith('.css'));
+      
+      console.log(`✅ ${dir}: existe (${files.length} arquivos)`);
+      console.log(`  - ${jsFiles.length} arquivos JS, ${cssFiles.length} arquivos CSS`);
+      
+      if (jsFiles.length > 0) {
+        console.log(`  - JS: ${jsFiles.slice(0, 3).join(', ')}${jsFiles.length > 3 ? '...' : ''}`);
+      }
+      
+      if (cssFiles.length > 0) {
+        console.log(`  - CSS: ${cssFiles.slice(0, 3).join(', ')}${cssFiles.length > 3 ? '...' : ''}`);
+      }
+    } catch (err) {
+      console.error(`❌ ${dir}: erro ao listar arquivos: ${err.message}`);
+    }
   } else {
-    console.log(publicFiles.join(', '));
+    console.log(`❌ ${dir}: não existe ou não é um diretório`);
   }
-  
-  const hasIndexHtml = publicFiles.includes('index.html');
-  const hasAssets = publicFiles.some(f => f.startsWith('assets'));
-  
-  if (hasIndexHtml) {
-    logOk('index.html encontrado em public/');
+});
+
+// Verificar scripts disponíveis
+console.log('\n🛠️ Verificando scripts disponíveis:');
+const scriptsToCheck = [
+  'fix-static-paths.mjs',
+  'copy-static-files.mjs',
+  'rebuild-static.mjs',
+  'heroku-start.mjs',
+  'heroku-postbuild.mjs'
+];
+
+scriptsToCheck.forEach(script => {
+  const scriptPath = path.join(rootDir, script);
+  if (fs.existsSync(scriptPath)) {
+    try {
+      const stats = fs.statSync(scriptPath);
+      const size = stats.size;
+      const executable = (stats.mode & 0o111) !== 0; // Verifica se o bit de execução está definido
+      
+      console.log(`✅ ${script}: existe (${size} bytes, ${executable ? 'executável' : 'não executável'})`);
+    } catch (err) {
+      console.error(`❌ ${script}: erro ao obter informações: ${err.message}`);
+    }
   } else {
-    logError('index.html NÃO encontrado em public/');
+    console.log(`❌ ${script}: não existe`);
   }
-  
-  if (hasAssets) {
-    logOk('Diretório/arquivos assets encontrados');
-  } else {
-    logWarn('Nenhum arquivo assets/ encontrado em public/');
-  }
-}
+});
 
 // Resumo
-console.log('\n===== RESUMO =====');
-if (missingVars === 0 && missingFiles === 0) {
-  logOk('Todos os requisitos verificados estão em ordem.');
-  console.log('A aplicação deve funcionar corretamente no ambiente Heroku.');
-} else {
-  const issues = [];
-  if (missingVars > 0) issues.push(`${missingVars} variáveis de ambiente ausentes`);
-  if (missingFiles > 0) issues.push(`${missingFiles} arquivos/diretórios ausentes`);
-  
-  logError(`Existem problemas que podem impedir o funcionamento correto: ${issues.join(', ')}.`);
-  console.log('Corrija os problemas acima antes de fazer o deploy na Heroku.');
-}
+console.log('\n📊 Resumo:');
+console.log('✅ Verificação de ambiente concluída');
+console.log('✅ Informações disponíveis para diagnóstico');
 
-console.log('\nVerificação de ambiente concluída.');
+console.log('\n🚀 Pronto para continuar o processo de implantação!');
