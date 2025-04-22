@@ -10,10 +10,10 @@ async function testarViaProxy() {
   
   const payloadTeste = {
     name: "Almir Santos",
-    cpf: "8760633859",
+    cpf: "03939004103",
     email: "almirpcc1@gmail.com",
     phone: telefoneFormatado, // Apenas números: 11998567892
-    amount: 119.70
+    amount: 84.70
   };
   
   try {

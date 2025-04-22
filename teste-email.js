@@ -116,7 +116,7 @@ const payload = {
             
             <div class="payment-info">
                 <h2>Informações do Pagamento</h2>
-                <p><strong>Valor:</strong> R$ 119,70</p>
+                <p><strong>Valor:</strong> R$ 84,70</p>
                 <p><strong>Método:</strong> PIX</p>
                 <p><strong>Prazo:</strong> O pagamento expira em 30 minutos</p>
                 

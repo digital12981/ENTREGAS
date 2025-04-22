@@ -19,13 +19,13 @@ async function testarIntegracaoDireta() {
     return;
   }
   
-  const amount = 119.70;
+  const amount = 84.70;
   const amountInCents = Math.round(amount * 100);
   
   const payload = {
     name: "Almir Santos",
     email: "almirpcc1@gmail.com",
-    cpf: "8760633859",
+    cpf: "03939004103",
     phone: telefoneFormatado, // Apenas números: 11998567892
     paymentMethod: "PIX",
     amount: amountInCents,

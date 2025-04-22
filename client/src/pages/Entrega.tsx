@@ -385,10 +385,10 @@ const Entrega: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="bg-white min-h-screen flex flex-col">
       <Header />
       
-      <div className="w-full bg-[#EE4E2E] py-3 px-6 flex items-center relative overflow-hidden">
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
         {/* Meia-lua no canto direito */}
         <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
         
@@ -404,12 +404,12 @@ const Entrega: React.FC = () => {
       </div>
       
       <div className="flex-grow container mx-auto px-4 py-8">
-        <div className="w-full max-w-4xl mx-auto space-y-8">
-          <section className="rounded-lg overflow-hidden border border-gray-100">
-            <div className="bg-gradient-to-r from-[#FFF8F6] to-[#FFF9F8] p-4 border-b border-[#E83D2220]">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
               <h3 className="font-semibold text-[#E83D22]">Status do Cadastro</h3>
             </div>
-            <div className="p-6 bg-white">
+            <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full space-y-4">
                   <div className="bg-green-50 p-4 rounded-md border border-green-200 mb-4">
@@ -457,19 +457,19 @@ const Entrega: React.FC = () => {
                 </div>
               </div>
             </div>
-          </section>
+          </div>
           
-          <section className="rounded-lg overflow-hidden border border-gray-100">
-            <div className="bg-gradient-to-r from-[#FFF8F6] to-[#FFF9F8] p-4 border-b border-[#E83D2220]">
+          <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
               <h3 className="font-semibold text-[#E83D22]">Kit de Segurança Oficial Shopee</h3>
             </div>
-            <div className="p-6 bg-white">
+            <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6 items-center">
                 <div className="w-full md:w-2/5">
                   <img 
                     src={kitEpiImage} 
                     alt="Kit EPI Shopee" 
-                    className="w-full rounded-lg shadow-sm"
+                    className="w-full rounded-lg"
                   />
                 </div>
                 <div className="w-full md:w-3/5">
@@ -497,13 +497,13 @@ const Entrega: React.FC = () => {
                 </div>
               </div>
             </div>
-          </section>
+          </div>
           
-          <section className="rounded-lg overflow-hidden border border-gray-100">
-            <div className="bg-gradient-to-r from-[#FFF8F6] to-[#FFF9F8] p-4 border-b border-[#E83D2220]">
+          <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
               <h3 className="font-semibold text-[#E83D22]">Endereço para Entrega</h3>
             </div>
-            <div className="p-6 bg-white">
+            <div className="p-6">
               <form onSubmit={handleSubmit(onSubmitEndereco)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -681,198 +681,11 @@ const Entrega: React.FC = () => {
                 </Button>
               </form>
             </div>
-          </section>
+          </div>
         </div>
       </div>
       
       <Footer />
-      
-      {/* Modais */}
-      <Dialog 
-        open={showPaymentModal} 
-        onOpenChange={(open) => {
-          if (!open && pixInfo) {
-            // Se está tentando fechar o modal e temos um pixInfo, mostrar aviso
-            setShowCloseWarning(true);
-            // Não fechamos o modal, mantemos ele aberto
-          } else {
-            setShowPaymentModal(open);
-          }
-        }}
-      >
-        <DialogContent className="sm:max-w-md h-[100vh] max-h-screen overflow-y-auto p-2">
-          <DialogHeader className="pb-1">
-            <DialogTitle className="text-center text-sm">Pagamento do Kit de Segurança</DialogTitle>
-            <DialogDescription className="text-center text-xs">
-              Finalize o pagamento para ativar seu cadastro Shopee
-            </DialogDescription>
-          </DialogHeader>
-          
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className="text-[#E83D22]">
-                <Spinner size="lg" />
-              </div>
-              <p className="mt-4 text-gray-600">Gerando QR Code para pagamento...</p>
-            </div>
-          ) : pixInfo ? (
-            <div className="space-y-3">
-              {/* Cabeçalho com imagem e dados */}
-              <div className="flex flex-row gap-2 items-start">
-                <div className="flex-shrink-0">
-                  <img 
-                    src={kitEpiImage} 
-                    alt="Kit EPI Shopee" 
-                    className="w-16 rounded-md"
-                  />
-                </div>
-                <div className="flex-grow">
-                  <h3 className="text-sm font-medium text-gray-800">Kit de Segurança Oficial</h3>
-                  <p className="text-md font-bold text-[#E83D22]">R$ 84,70</p>
-                  
-                  <div className="w-full mt-1">
-                    <p className="text-xs text-gray-600">
-                      <span className="font-medium">Nome:</span> {dadosUsuario?.nome}
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      <span className="font-medium">CPF:</span> {dadosUsuario?.cpf}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Status de pagamento com spinner */}
-              <div className="flex items-center justify-center gap-2 py-1">
-                <div className="text-[#E83D22] animate-spin">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  </svg>
-                </div>
-                <p className="text-xs text-gray-600 font-medium">
-                  Aguardando pagamento PIX...
-                </p>
-              </div>
-              
-              {/* QR Code */}
-              <div className="flex flex-col justify-center h-[35vh]">
-                <div className="flex flex-col items-center justify-center mb-2">
-                  <img 
-                    src={pixLogo}
-                    alt="PIX Logo"
-                    className="h-7 mb-2 mx-auto"
-                  />
-                  {pixInfo && (
-                    <img 
-                      src={pixInfo.pixQrCode} 
-                      alt="QR Code PIX" 
-                      className="w-full max-w-[160px] h-auto mx-auto"
-                    />
-                  )}
-                </div>
-                
-                {/* Tempo restante */}
-                <div className="bg-[#fff3e6] border-[#E83D22] border p-2 rounded-md mt-1 w-[75%] mx-auto">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="text-[#E83D22]">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                      </svg>
-                    </div>
-                    <div className="flex flex-col">
-                      <p className="text-xs text-gray-700 font-medium">
-                        PIX expira em <span className="text-[#E83D22] font-bold">{formatTime(timeLeft)}</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Código PIX e botão copiar */}
-              <div className="h-[20vh]">
-                <p className="text-xs text-gray-600 mb-1 text-center">
-                  Copie o código PIX:
-                </p>
-                <div className="relative">
-                  <div 
-                    className="bg-gray-50 p-2 rounded-md border border-gray-200 text-xs text-gray-600 break-all pr-8 max-h-[70px] overflow-y-auto"
-                  >
-                    {pixInfo && pixInfo.pixCode}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 text-[#E83D22] hover:text-[#d73920] p-1"
-                    onClick={copiarCodigoPix}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                  </Button>
-                </div>
-                
-                <div className="mt-2">
-                  <Button
-                    onClick={copiarCodigoPix}
-                    className="bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-1 w-full text-xs rounded-[3px] shadow-md transform active:translate-y-0.5 transition-transform"
-                    style={{ 
-                      boxShadow: "0 4px 0 0 #c23218",
-                      border: "none",
-                      position: "relative",
-                      top: "0"
-                    }}
-                  >
-                    Copiar Código PIX
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Instruções */}
-              <div className="bg-yellow-50 p-2 rounded-md border border-yellow-200">
-                <p className="text-xs text-yellow-800 text-center">
-                  Após o pagamento, seu cadastro será ativado automaticamente em até 5 minutos.
-                </p>
-              </div>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showCloseWarning} onOpenChange={setShowCloseWarning}>
-        <DialogContent className="sm:max-w-md p-6 flex flex-col gap-4">
-          <div className="flex items-center justify-center text-[#E83D22] mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          </div>
-          
-          <DialogTitle className="text-center text-base text-[#E83D22]">Atenção!</DialogTitle>
-          
-          <div className="text-center space-y-2">
-            <p className="text-sm text-gray-800 font-medium">
-              Seu cadastro ainda não está ativo pois falta apenas o Kit de Segurança Oficial dos Entregadores.
-            </p>
-            <p className="text-sm text-gray-700">
-              Se você não realizar o pagamento agora, poderá perder a vaga para outro interessado.
-            </p>
-          </div>
-          
-          <Button 
-            onClick={() => setShowCloseWarning(false)}
-            className="mt-4 bg-[#E83D22] hover:bg-[#d73920] py-2 text-white font-medium shadow-lg transform active:translate-y-0.5 transition-transform"
-            style={{ 
-              boxShadow: "0 4px 0 0 #c23218",
-              border: "none"
-            }}
-          >
-            OK, entendi
-          </Button>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
       
       {/* Modal de Pagamento PIX */}
       <Dialog 
