@@ -10,6 +10,30 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Base tag para garantir carregamento correto de assets -->
+    <base href="/">
+    
+    <!-- Runtime path fix apenas em ambiente de produção -->
+    <script>
+      // Em produção, verifica falhas de carregamento e tenta corrigir caminhos
+      if (window.location.hostname !== 'localhost' && !window.location.hostname.includes('replit')) {
+        window.addEventListener('error', function(e) {
+          if (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK') {
+            const src = e.target.src || e.target.href;
+            if (src && src.startsWith('/assets/')) {
+              // Tenta recarregar com caminho relativo
+              const newSrc = '.' + src;
+              if (e.target.tagName === 'SCRIPT') {
+                e.target.src = newSrc;
+              } else {
+                e.target.href = newSrc;
+              }
+            }
+          }
+        }, true);
+      }
+    </script>
+    
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script>
       // Only include the Replit banner in development environment
