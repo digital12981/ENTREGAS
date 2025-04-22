@@ -47,7 +47,7 @@ export async function createPixPayment(data: PaymentRequest): Promise<PaymentRes
   
   // Chamar via backend Heroku (método padrão ou fallback)
   const apiUrl = import.meta.env.PROD
-    ? 'https://shopee-delivery-api.herokuapp.com/api/payments/pix'
+    ? 'https://disparador-f065362693d3.herokuapp.com/api/payments/pix'
     : '/api/payments/pix';
     
   console.log(`URL da API de pagamentos (via Heroku): ${apiUrl}`);

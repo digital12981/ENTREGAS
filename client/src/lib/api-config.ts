@@ -11,7 +11,7 @@ export const API_URLS = {
   
   // Em produção, a API é servida pelo Heroku
   // Importante: Usamos https:// para evitar problemas de conexão segura
-  production: 'https://shopee-delivery-api.herokuapp.com'  // URL atualizada do backend no Heroku
+  production: 'https://disparador-f065362693d3.herokuapp.com'  // URL atualizada do backend no Heroku
 };
 
 // URL base da API dependendo do ambiente
