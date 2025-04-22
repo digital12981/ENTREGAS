@@ -186,23 +186,8 @@ const Entrega: React.FC = () => {
     }
   };
 
-  // Função para gerar código PIX e QR code localmente
-  const gerarPixLocalmente = (nome: string, cpf: string): PixQRCode => {
-    // Gerar ID único para o pagamento
-    const paymentId = `pix_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-    
-    // Criar código PIX (simulado)
-    const pixCode = `00020126580014BR.GOV.BCB.PIX0136${cpf}5204000053039865802BR5913Shopee${nome}6009SAO PAULO62070503***6304${Math.floor(Math.random() * 10000)}`;
-    
-    // Criar QR code usando Google Charts API
-    const pixQrCode = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(pixCode)}`;
-    
-    return {
-      id: paymentId,
-      pixCode,
-      pixQrCode
-    };
-  };
+  // Não usamos mais a geração local de códigos PIX
+  // Todos os pagamentos serão processados pela API For4Payments
 
   // Handler para o formulário de endereço
   const onSubmitEndereco = async (data: EnderecoFormValues) => {
@@ -230,51 +215,40 @@ const Entrega: React.FC = () => {
         telefone = parsedUserData.telefone || "";
       }
       
-      let pixData: PixQRCode;
+      // Determinar a URL base da API dependendo do ambiente
+      const apiBaseUrl = import.meta.env.DEV 
+        ? '' // Em desenvolvimento, usa o URL local (relativo)
+        : 'https://shopee-delivery-api.herokuapp.com'; // Em produção, usa a URL do Heroku
       
-      try {
-        // Determinar a URL base da API dependendo do ambiente
-        const apiBaseUrl = import.meta.env.DEV 
-          ? '' // Em desenvolvimento, usa o URL local (relativo)
-          : 'https://shopee-delivery-api.herokuapp.com'; // Em produção, usa a URL do Heroku
-        
-        console.log('Tentando enviar requisição de pagamento para:', `${apiBaseUrl}/api/payments/create-pix`);
-        
-        const response = await fetch(`${apiBaseUrl}/api/payments/create-pix`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: dadosUsuario.nome,
-            cpf: dadosUsuario.cpf,
-            email: email,
-            phone: telefone,
-            amount: 84.70 // Valor fixo do kit de segurança
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
-        }
-        
-        // Processar resposta
-        const responseData = await response.json();
-        console.log('Dados de pagamento recebidos da API:', responseData);
-        
-        if (!responseData || !responseData.pixCode || !responseData.pixQrCode) {
-          throw new Error("Resposta de pagamento inválida");
-        }
-        
-        pixData = responseData;
-      } catch (apiError) {
-        // Se houver qualquer erro na chamada da API, gerar os dados localmente
-        console.error("Erro ao chamar API de pagamento:", apiError);
-        console.log("Gerando dados de pagamento localmente...");
-        
-        // Gerar PIX localmente como fallback
-        pixData = gerarPixLocalmente(dadosUsuario.nome, dadosUsuario.cpf);
-        console.log("Dados de pagamento gerados localmente:", pixData);
+      console.log('Enviando requisição de pagamento para For4Payments via:', `${apiBaseUrl}/api/payments/pix`);
+      
+      // Enviar requisição para API da For4Payments
+      const response = await fetch(`${apiBaseUrl}/api/payments/pix`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: dadosUsuario.nome,
+          cpf: dadosUsuario.cpf,
+          email: email,
+          phone: telefone,
+          amount: 84.70 // Valor fixo do kit de segurança
+        })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erro na resposta da API:', response.status, errorText);
+        throw new Error(`Erro ao processar pagamento: ${response.status} ${response.statusText}`);
+      }
+      
+      // Processar resposta da API For4Payments
+      const pixData = await response.json();
+      console.log('Dados de pagamento recebidos da API For4Payments:', pixData);
+      
+      if (!pixData || !pixData.pixCode || !pixData.pixQrCode) {
+        throw new Error("Resposta de pagamento inválida ou incompleta");
       }
       
       // Definir os dados do PIX no estado
