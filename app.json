@@ -1,0 +1,29 @@
+{
+  "name": "Shopee Entregas",
+  "description": "Plataforma de recrutamento de entregadores Shopee",
+  "repository": "https://github.com/user/repo",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["node", "express", "static", "python", "flask", "heroku"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "FOR4PAYMENTS_SECRET_KEY": {
+      "description": "Chave secreta da API For4Payments",
+      "required": true
+    },
+    "FOR4PAYMENTS_API_URL": {
+      "description": "URL do serviço Flask For4Payments (ex: https://seu-app.herokuapp.com/api/for4payments)",
+      "required": false
+    },
+    "NODE_ENV": {
+      "description": "Ambiente de execução",
+      "value": "production"
+    }
+  }
+}
