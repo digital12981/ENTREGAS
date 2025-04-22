@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopee Entregas - Portal do Entregador</title>
+  <style>
+    :root {
+      --primary-color: #ee4d2d;
+      --primary-dark: #d03a1b;
+      --text-color: #333;
+      --light-bg: #f8f9fa;
+      --border-radius: 8px;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .hero-section {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      box-shadow: var(--card-shadow);
+      background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('https://i.imgur.com/rLOHFJI.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .hero-section h2 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .hero-section p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      color: #555;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem 2rem;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+    }
+    
+    .cta-button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .benefits-section {
+      margin-bottom: 3rem;
+    }
+    
+    .benefits-section h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+    
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .benefit-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+    }
+    
+    .benefit-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .benefit-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+    
+    .benefit-card p {
+      color: #666;
+    }
+    
+    .regions-section {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 3rem;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .regions-section h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+    
+    .regions-section p {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #666;
+    }
+    
+    .regions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .region-card {
+      background-color: var(--light-bg);
+      border-radius: 4px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .region-name {
+      font-weight: bold;
+    }
+    
+    .region-vacancies {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .cep-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .cep-modal.active {
+      display: flex;
+    }
+    
+    .cep-modal-content {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .cep-modal-header {
+      margin-bottom: 1.5rem;
+    }
+    
+    .cep-modal-header h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .cep-form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .cep-form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    
+    .cep-form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .cep-modal-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .cep-modal-actions button {
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .btn-secondary {
+      background-color: #f1f1f1;
+      border: none;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e1e1e1;
+    }
+    
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    
+    footer p {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links a {
+      color: #ddd;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 2rem 1rem;
+      }
+      
+      .hero-section h2 {
+        font-size: 2rem;
+      }
+      
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .regions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shopee Entregas</h1>
+    <p>Portal do Entregador Parceiro</p>
+  </header>
+  
+  <main>
+    <section class="hero-section">
+      <h2>Seja um Entregador Parceiro</h2>
+      <p>Junte-se à maior plataforma de comércio eletrônico da região. Tenha flexibilidade de horários e aumente sua renda!</p>
+      <button class="cta-button" id="cta-cadastro">Quero Me Cadastrar</button>
+    </section>
+    
+    <section class="benefits-section">
+      <h2>Vantagens de Ser um Entregador Shopee</h2>
+      <div class="benefits-grid" id="benefits-container">
+        <!-- Os benefícios serão inseridos aqui via JavaScript -->
+        <div class="benefit-card">
+          <h3>Carregando...</h3>
+          <p>Buscando informações...</p>
+        </div>
+      </div>
+    </section>
+    
+    <section class="regions-section">
+      <h2>Regiões com Vagas Abertas</h2>
+      <p>Temos vagas disponíveis em diversas regiões do Brasil. Confira onde você pode começar:</p>
+      <div class="regions-grid" id="regions-container">
+        <!-- As regiões serão inseridas aqui via JavaScript -->
+        <div class="region-card">
+          <span class="region-name">Carregando regiões...</span>
+          <span class="region-vacancies">...</span>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <div class="cep-modal" id="cep-modal">
+    <div class="cep-modal-content">
+      <div class="cep-modal-header">
+        <h3>Confirme seu CEP</h3>
+        <p>Precisamos verificar sua localização para continuar com o cadastro.</p>
+      </div>
+      <form id="cep-form">
+        <div class="cep-form-group">
+          <label for="cep-input">CEP:</label>
+          <input type="text" id="cep-input" placeholder="Digite seu CEP (apenas números)" maxlength="8" required>
+        </div>
+        <div class="cep-form-group">
+          <label for="city-input">Cidade:</label>
+          <input type="text" id="city-input" readonly>
+        </div>
+        <div class="cep-form-group">
+          <label for="state-input">Estado:</label>
+          <input type="text" id="state-input" readonly>
+        </div>
+        <div class="cep-modal-actions">
+          <button type="button" class="btn-secondary" id="cep-cancel">Cancelar</button>
+          <button type="submit" class="cta-button" id="cep-confirm" disabled>Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <footer>
+    <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
+    <div class="footer-links">
+      <a href="#">Termos de Uso</a>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Contato</a>
+    </div>
+  </footer>
+
+  <script>
+    // Dados fake para regiões (vão ser substituídos pela chamada da API)
+    const regionsData = [
+      { name: 'São Paulo', abbr: 'SP', vacancies: 26 },
+      { name: 'Rio de Janeiro', abbr: 'RJ', vacancies: 18 },
+      { name: 'Minas Gerais', abbr: 'MG', vacancies: 12 },
+      { name: 'Bahia', abbr: 'BA', vacancies: 9 },
+      { name: 'Paraná', abbr: 'PR', vacancies: 8 }
+    ];
+    
+    // Dados fake para benefícios (vão ser substituídos pela chamada da API)
+    const benefitsData = [
+      { id: 1, title: 'Horários Flexíveis', description: 'Faça entregas no seu próprio horário e organize seu tempo como preferir.' },
+      { id: 2, title: 'Ganhos Semanais', description: 'Receba seus pagamentos toda semana, sem atrasos ou burocracias.' },
+      { id: 3, title: 'Suporte 24/7', description: 'Conte com nossa equipe de atendimento a qualquer hora do dia ou da noite.' },
+      { id: 4, title: 'Seguro Proteção', description: 'Trabalhe com tranquilidade sabendo que está protegido durante suas entregas.' }
+    ];
+    
+    // Elementos do DOM
+    const ctaCadastroBtn = document.getElementById('cta-cadastro');
+    const cepModal = document.getElementById('cep-modal');
+    const cepForm = document.getElementById('cep-form');
+    const cepInput = document.getElementById('cep-input');
+    const cityInput = document.getElementById('city-input');
+    const stateInput = document.getElementById('state-input');
+    const cepConfirmBtn = document.getElementById('cep-confirm');
+    const cepCancelBtn = document.getElementById('cep-cancel');
+    const benefitsContainer = document.getElementById('benefits-container');
+    const regionsContainer = document.getElementById('regions-container');
+    
+    // Carregar dados das regiões
+    function loadRegions() {
+      fetch('/api/regions')
+        .then(response => response.json())
+        .then(data => {
+          renderRegions(data);
+        })
+        .catch(error => {
+          console.error('Erro ao carregar regiões:', error);
+          renderRegions(regionsData); // Usar dados fake em caso de erro
+        });
+    }
+    
+    // Renderizar regiões na tela
+    function renderRegions(regions) {
+      regionsContainer.innerHTML = '';
+      
+      regions.forEach(region => {
+        const regionElement = document.createElement('div');
+        regionElement.className = 'region-card';
+        regionElement.innerHTML = `
+          <span class="region-name">${region.name}</span>
+          <span class="region-vacancies">${region.vacancies} vagas</span>
+        `;
+        regionsContainer.appendChild(regionElement);
+      });
+    }
+    
+    // Carregar dados dos benefícios
+    function loadBenefits() {
+      fetch('/api/benefits')
+        .then(response => response.json())
+        .then(data => {
+          renderBenefits(data);
+        })
+        .catch(error => {
+          console.error('Erro ao carregar benefícios:', error);
+          renderBenefits(benefitsData); // Usar dados fake em caso de erro
+        });
+    }
+    
+    // Renderizar benefícios na tela
+    function renderBenefits(benefits) {
+      benefitsContainer.innerHTML = '';
+      
+      benefits.forEach(benefit => {
+        const benefitElement = document.createElement('div');
+        benefitElement.className = 'benefit-card';
+        benefitElement.innerHTML = `
+          <h3>${benefit.title}</h3>
+          <p>${benefit.description}</p>
+        `;
+        benefitsContainer.appendChild(benefitElement);
+      });
+    }
+    
+    // Manipular click no botão CTA
+    ctaCadastroBtn.addEventListener('click', () => {
+      cepModal.classList.add('active');
+    });
+    
+    // Manipular click no botão Cancelar do modal
+    cepCancelBtn.addEventListener('click', () => {
+      cepModal.classList.remove('active');
+      cepForm.reset();
+      cityInput.value = '';
+      stateInput.value = '';
+      cepConfirmBtn.disabled = true;
+    });
+    
+    // Validar CEP e buscar informações
+    cepInput.addEventListener('input', (e) => {
+      const cep = e.target.value.replace(/\D/g, '');
+      
+      if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.erro) {
+              cityInput.value = data.localidade;
+              stateInput.value = data.uf;
+              cepConfirmBtn.disabled = false;
+            } else {
+              cityInput.value = '';
+              stateInput.value = '';
+              cepConfirmBtn.disabled = true;
+              alert('CEP não encontrado. Verifique o número informado.');
+            }
+          })
+          .catch(error => {
+            console.error('Erro ao consultar CEP:', error);
+            alert('Erro ao consultar CEP. Tente novamente mais tarde.');
+          });
+      } else {
+        cityInput.value = '';
+        stateInput.value = '';
+        cepConfirmBtn.disabled = true;
+      }
+    });
+    
+    // Manipular envio do formulário de CEP
+    cepForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Salvar dados no localStorage
+      const cepData = {
+        cep: cepInput.value,
+        city: cityInput.value,
+        state: stateInput.value
+      };
+      
+      localStorage.setItem('cep', cepInput.value);
+      localStorage.setItem('cepData', JSON.stringify(cepData));
+      
+      // Fechar modal e redirecionar para página de cadastro
+      cepModal.classList.remove('active');
+      window.location.href = '/cadastro';
+    });
+    
+    // Inicializar página
+    document.addEventListener('DOMContentLoaded', () => {
+      loadRegions();
+      loadBenefits();
+      
+      // Verificar se já existe um CEP salvo
+      const savedCep = localStorage.getItem('cep');
+      if (savedCep) {
+        console.log('CEP recuperado do localStorage:', savedCep);
+      }
+      
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        console.log('Dados do usuário recuperados:', JSON.parse(userData));
+      }
+    });
+  </script>
+</body>
+</html>

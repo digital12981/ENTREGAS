@@ -208,15 +208,97 @@ try {
     }
   });
   
-  // ===== SPA ROUTING =====
+  // ===== ROTAS DE PÁGINAS ESTÁTICAS =====
   
-  // Rota SPA - Serve o index.html para todas as rotas não-API
+  // Verifica e serve páginas estáticas HTML
+  // Rotas específicas
+  app.get('/', (req, res) => {
+    const htmlPath = path.join(rootDir, 'static_html', 'index.html');
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    fallbackToIndex(res);
+  });
+  
+  app.get('/cadastro', (req, res) => {
+    const htmlPath = path.join(rootDir, 'static_html', 'cadastro.html');
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    fallbackToIndex(res);
+  });
+  
+  app.get('/municipios', (req, res) => {
+    const htmlPath = path.join(rootDir, 'static_html', 'municipios.html');
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    fallbackToIndex(res);
+  });
+  
+  app.get('/recebedor', (req, res) => {
+    const htmlPath = path.join(rootDir, 'static_html', 'recebedor.html');
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    fallbackToIndex(res);
+  });
+  
+  app.get('/entrega', (req, res) => {
+    const htmlPath = path.join(rootDir, 'static_html', 'entrega.html');
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    fallbackToIndex(res);
+  });
+  
+  app.get('/finalizacao', (req, res) => {
+    const htmlPath = path.join(rootDir, 'static_html', 'finalizacao.html');
+    if (fs.existsSync(htmlPath)) {
+      return res.sendFile(htmlPath);
+    }
+    fallbackToIndex(res);
+  });
+  
+  // API de municípios por estado
+  app.get('/api/municipalities/:state', (req, res) => {
+    const state = req.params.state;
+    // Dados fake para testes
+    const fakeMunicipalities = {
+      'SP': ['São Paulo', 'Campinas', 'Guarulhos', 'Santos', 'Ribeirão Preto', 'São José dos Campos', 'Sorocaba'],
+      'RJ': ['Rio de Janeiro', 'Niterói', 'São Gonçalo', 'Duque de Caxias', 'Nova Iguaçu', 'Petrópolis'],
+      'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Betim', 'Montes Claros'],
+      'BA': ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Camaçari', 'Itabuna', 'Juazeiro'],
+      'PR': ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel', 'São José dos Pinhais'],
+      'RS': ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Canoas', 'Santa Maria', 'Gravataí'],
+      'PE': ['Recife', 'Jaboatão dos Guararapes', 'Olinda', 'Caruaru', 'Petrolina', 'Paulista'],
+      'CE': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú', 'Sobral', 'Crato'],
+      'PA': ['Belém', 'Ananindeua', 'Santarém', 'Marabá', 'Castanhal', 'Parauapebas'],
+      'SC': ['Florianópolis', 'Joinville', 'Blumenau', 'São José', 'Criciúma', 'Chapecó'],
+      'DF': ['Brasília', 'Ceilândia', 'Taguatinga', 'Planaltina', 'Gama', 'Guará']
+    };
+    
+    const municipalities = fakeMunicipalities[state] || ['Cidade 1', 'Cidade 2', 'Cidade 3'];
+    res.json(municipalities);
+  });
+  
+  // Rota fallback para outras páginas
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ error: 'API endpoint não encontrado' });
     }
+    fallbackToIndex(res);
+  });
+  
+  // Função para fallback para index.html
+  function fallbackToIndex(res) {
+    // Tentar encontrar e servir o index.html estático
+    const staticHtmlPath = path.join(rootDir, 'static_html', 'index.html');
+    if (fs.existsSync(staticHtmlPath)) {
+      return res.sendFile(staticHtmlPath);
+    }
     
-    // Tentar encontrar e servir o index.html
+    // Tentar encontrar e servir index.html de outros diretórios
     for (const dir of possibleDirs) {
       const indexPath = path.join(dir, 'index.html');
       if (fs.existsSync(indexPath)) {
@@ -224,10 +306,10 @@ try {
       }
     }
     
-    // Se não encontrou o index.html, mostrar uma página incorporada
+    // Se não encontrou nenhum index.html, mostrar uma página incorporada
     const html = getEmbeddedHtml();
     res.status(200).send(html);
-  });
+  }
 
   // Iniciar o servidor
   const server = app.listen(PORT, '0.0.0.0', () => {
