@@ -15,12 +15,22 @@ function execCommand(command) {
   }
 }
 
-// 1. Instalação do Python e dependências
-console.log('Installing Python dependencies...');
-execCommand('pip install -r heroku-requirements.txt');
+// Verificar variáveis de ambiente
+console.log('Checking environment variables...');
+console.log(`NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+console.log(`PORT: ${process.env.PORT || 'not set'}`);
+console.log(`DATABASE_URL: ${process.env.DATABASE_URL ? 'configured' : 'not configured'}`);
+console.log(`FOR4PAYMENTS_SECRET_KEY: ${process.env.FOR4PAYMENTS_SECRET_KEY ? 'configured' : 'not configured'}`);
 
-// 2. Construir o aplicativo Node.js
+// Construir o aplicativo Node.js (ignorando dependências Python)
 console.log('Building Node.js application...');
 execCommand('npm run build');
+
+// Criar um arquivo de validação para confirmar build bem-sucedido
+fs.writeFileSync('dist/build-info.json', JSON.stringify({
+  buildTime: new Date().toISOString(),
+  nodeVersion: process.version,
+  environment: process.env.NODE_ENV || 'unknown'
+}));
 
 console.log('Heroku postbuild completed successfully!');

@@ -23,6 +23,16 @@ heroku config:set FOR4PAYMENTS_SECRET_KEY=seu-token-aqui
 
 Importante: Configure `NPM_CONFIG_PRODUCTION=false` para permitir a instalação de devDependencies necessárias para o build.
 
+### 3. Forçar Versão do Node.js
+
+É importante usar uma versão específica do Node.js:
+
+```
+heroku config:set NODE_VERSION=18.18.2
+```
+
+Esta versão é mais estável e compatível com o projeto.
+
 ### 3. Verificar Procfile
 
 Certifique-se de que o arquivo `Procfile` contém apenas:
