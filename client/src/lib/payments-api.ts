@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './api-config';
+import { createPixPaymentDirect } from './for4payments-direct';
 
 // Interface para os dados da solicitação de pagamento
 interface PaymentRequest {
@@ -20,18 +21,36 @@ interface PaymentResponse {
 
 /**
  * Cria uma solicitação de pagamento PIX através da API For4Payments
- * Esta função gerencia a comunicação com o backend no Heroku
+ * Esta função escolhe automaticamente a melhor estratégia:
+ * 1. Se FOR4PAYMENTS_SECRET_KEY estiver disponível na Netlify - Chama direto a API
+ * 2. Caso contrário - Usa o backend no Heroku como intermediário
  */
 export async function createPixPayment(data: PaymentRequest): Promise<PaymentResponse> {
-  // Em produção, use a URL completa do Heroku
+  console.log(`Ambiente de execução: ${import.meta.env.PROD ? 'PRODUÇÃO' : 'DESENVOLVIMENTO'}`);
+  
+  // Verificar se a chave da For4Payments está disponível no frontend
+  // (Isso acontecerá se a variável estiver configurada no Netlify)
+  const hasFor4PaymentKey = !!import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
+  
+  // Em produção, se tiver a chave, chama diretamente a API For4Payments
+  if (import.meta.env.PROD && hasFor4PaymentKey) {
+    console.log('Usando chamada direta para For4Payments API');
+    
+    try {
+      // Usar a implementação direta
+      return await createPixPaymentDirect(data);
+    } catch (error: any) {
+      console.error('Falha na chamada direta, tentando via Heroku:', error.message);
+      // Em caso de erro, tenta via backend Heroku
+    }
+  }
+  
+  // Chamar via backend Heroku (método padrão ou fallback)
   const apiUrl = import.meta.env.PROD
     ? 'https://shopee-delivery-api.herokuapp.com/api/payments/pix'
     : '/api/payments/pix';
     
-  console.log(`Ambiente de execução: ${import.meta.env.PROD ? 'PRODUÇÃO' : 'DESENVOLVIMENTO'}`);
-  console.log(`URL da API de pagamentos: ${apiUrl}`);
-    
-  console.log(`Enviando requisição de pagamento para: ${apiUrl}`);
+  console.log(`URL da API de pagamentos (via Heroku): ${apiUrl}`);
   console.log('Dados de pagamento:', {
     name: data.name,
     cpf: data.cpf.substring(0, 3) + '***' + data.cpf.substring(data.cpf.length - 2),
