@@ -47,9 +47,11 @@ const Finalizacao: React.FC = () => {
     }
   });
   
-  // Função para aceitar os termos de uso
-  const handleTermsAccept = () => {
-    setValue('termoUso', true, { shouldValidate: true });
+  // Função para alternar o estado do checkbox dos termos de uso
+  const handleTermsToggle = () => {
+    // Obter o valor atual e alterniar para o oposto
+    const currentValue = watch('termoUso');
+    setValue('termoUso', !currentValue, { shouldValidate: true });
   };
 
   // Função para selecionar o tamanho do calçado
@@ -238,13 +240,12 @@ const Finalizacao: React.FC = () => {
                     id="termoUso" 
                     {...register('termoUso')}
                     className={errors.termoUso ? 'border-red-500' : 'border-[#E83D22] data-[state=checked]:bg-[#E83D22] data-[state=checked]:text-white'}
-                    onClick={handleTermsAccept}
+                    onCheckedChange={() => handleTermsToggle()}
                   />
-                  <div className="grid gap-1.5 leading-none">
+                  <div className="grid gap-1.5 leading-none" onClick={() => handleTermsToggle()}>
                     <label
                       htmlFor="termoUso"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                      onClick={handleTermsAccept}
                     >
                       Concordo com os termos de uso e política de segurança da Shopee
                     </label>
