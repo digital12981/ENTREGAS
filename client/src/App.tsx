@@ -9,6 +9,7 @@ import Municipios from "@/pages/Municipios";
 import Recebedor from "@/pages/Recebedor";
 import Finalizacao from "@/pages/Finalizacao";
 import Entrega from "@/pages/Entrega";
+import Dashboard from "@/pages/Dashboard";
 import { useAppContext } from "@/contexts/AppContext";
 import { useDesktopProtection } from "@/hooks/use-desktop-protection";
 
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/recebedor" component={Recebedor} />
       <Route path="/finalizacao" component={Finalizacao} />
       <Route path="/entrega" component={Entrega} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );

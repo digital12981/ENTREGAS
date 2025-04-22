@@ -12,6 +12,7 @@ import {
 } from "@shared/schema";
 import axios from "axios";
 import MobileDetect from "mobile-detect";
+import { WebSocketServer, WebSocket } from 'ws';
 
 // Importar spawn do child_process para executar scripts Python
 import { spawn } from 'child_process';
