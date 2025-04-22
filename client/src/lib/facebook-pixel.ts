@@ -147,7 +147,7 @@ export async function checkPaymentStatus(paymentId: string, apiKey: string): Pro
     // Se aprovado, rastrear imediatamente
     if (data && data.status === 'APPROVED') {
       console.log('[PIXEL] Pagamento APROVADO! Rastreando evento...');
-      const amount = data.amount ? parseFloat(data.amount) : 84.70;
+      const amount = data.amount ? parseFloat(data.amount) : 119.70;
       trackPurchase(paymentId, amount);
       return { success: true, data };
     }
