@@ -10,13 +10,18 @@ Este projeto pode ser implantado de duas maneiras diferentes:
 
 Para implantar o aplicativo completo no Heroku:
 
-1. Certifique-se de que o Procfile está configurado como:
+1. Use o Procfile.fullstack:
+   ```bash
+   cp Procfile.fullstack Procfile
+   ```
+   
+   Ou manualmente configure o Procfile como:
    ```
    web: NODE_ENV=production node static-server.js
    ```
 
 2. Faça deploy para o Heroku normalmente:
-   ```
+   ```bash
    git push heroku main
    ```
 
@@ -24,20 +29,29 @@ Para implantar o aplicativo completo no Heroku:
 
 Esta é a opção recomendada para melhor performance:
 
-#### Frontend (Netlify)
+#### Frontend (Netlify ou Vercel)
 
-1. Configure o repositório no Netlify
-2. Netlify usará o arquivo `netlify.toml` já existente
-3. Configure a variável de ambiente no Netlify:
-   - `API_URL`: URL da sua API no Heroku (ex: https://sua-app.herokuapp.com)
+1. Configure o repositório no Netlify/Vercel
+2. Netlify usará o arquivo `netlify.toml` já existente (ou `vercel.json` para Vercel)
+3. Configure a variável de ambiente no serviço:
+   - `API_URL`: URL da sua API no Heroku (ex: https://sua-app-api.herokuapp.com)
 
 #### Backend (Heroku)
 
-1. Altere o Procfile para usar apenas o backend:
+1. Use o Procfile.api-only:
+   ```bash
+   cp Procfile.api-only Procfile
    ```
-   web: NODE_ENV=production node backend-server.js
+   
+   Ou manualmente configure o Procfile para usar apenas o backend:
    ```
-2. Faça deploy para o Heroku
+   web: NODE_ENV=production node api-server.js
+   ```
+   
+2. Faça deploy para o Heroku:
+   ```bash
+   git push heroku main
+   ```
 
 ## Solução de Problemas
 
