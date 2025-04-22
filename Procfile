@@ -1,1 +1,1 @@
-web: node fallback-simple-heroku.js
+web: NODE_ENV=production node api-server.js
