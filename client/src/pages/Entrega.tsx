@@ -16,6 +16,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
 import { createPixPayment } from '../lib/payments-api';
+import { initFacebookPixel, trackEvent } from '../lib/facebook-pixel';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -60,6 +61,11 @@ type EnderecoFormValues = z.infer<typeof enderecoSchema>;
 const Entrega: React.FC = () => {
   // Aplica o scroll para o topo quando o componente é montado
   useScrollTop();
+  
+  // Inicializar o Facebook Pixel
+  useEffect(() => {
+    initFacebookPixel();
+  }, []);
   
   const [endereco, setEndereco] = useState<EnderecoUsuario | null>(null);
   const [dadosUsuario, setDadosUsuario] = useState<DadosUsuario | null>(null);
