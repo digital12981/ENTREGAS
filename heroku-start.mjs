@@ -79,11 +79,50 @@ if (!fs.existsSync(publicDir) || !fs.existsSync(path.join(publicDir, 'index.html
   }
 }
 
+// Verificar favicon.ico
+const faviconPath = path.join(publicDir, 'favicon.ico');
+if (!fs.existsSync(faviconPath)) {
+  console.log('favicon.ico não encontrado. Tentando criar...');
+  try {
+    const faviconScript = path.join(process.cwd(), 'create-favicon.mjs');
+    if (fs.existsSync(faviconScript)) {
+      spawn('node', [faviconScript], { stdio: 'inherit', shell: true });
+    } else {
+      console.warn('Script create-favicon.mjs não encontrado.');
+      
+      // Criar favicon inline se o script não existir
+      console.log('Tentando criar favicon.ico diretamente...');
+      
+      // Dados binários básicos para um favicon simples
+      const faviconData = Buffer.from([
+        0, 0, 1, 0, 1, 0, 16, 16, 0, 0, 1, 0, 24, 0, 104, 4, 
+        0, 0, 22, 0, 0, 0, 40, 0, 0, 0, 16, 0, 0, 0, 32, 0, 
+        0, 0, 1, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 77, 45, 238, 77, 
+        45, 238, 77, 45, 238, 77, 45, 238, 77, 45, 238, 77, 45
+      ]);
+      
+      try {
+        fs.writeFileSync(faviconPath, faviconData);
+        console.log('favicon.ico básico criado com sucesso.');
+      } catch (err) {
+        console.error('Erro ao criar favicon.ico:', err.message);
+      }
+    }
+  } catch (err) {
+    console.error('Erro ao tentar criar favicon.ico:', err.message);
+  }
+}
+
 // Verificar resultado
 if (fs.existsSync(publicDir)) {
   if (fs.existsSync(path.join(publicDir, 'index.html'))) {
     const publicFiles = fs.readdirSync(publicDir);
-    console.log(`✅ Diretório public configurado corretamente com ${publicFiles.length} arquivos.`);
+    const hasFavicon = fs.existsSync(path.join(publicDir, 'favicon.ico'));
+    
+    console.log(`✅ Diretório public configurado com ${publicFiles.length} arquivos.`);
+    console.log(`  index.html: encontrado`);
+    console.log(`  favicon.ico: ${hasFavicon ? 'encontrado' : 'NÃO ENCONTRADO'}`);
   } else {
     console.warn('⚠️ Diretório public existe, mas não contém index.html.');
     console.warn('  A interface web pode não funcionar corretamente.');

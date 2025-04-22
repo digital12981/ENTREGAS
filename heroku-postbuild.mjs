@@ -71,6 +71,20 @@ try {
   }
 }
 
+// 5. Criar favicon.ico se não existir
+console.log('Verificando favicon.ico...');
+const faviconPath = path.resolve(process.cwd(), 'public/favicon.ico');
+if (!fs.existsSync(faviconPath)) {
+  console.log('Criando favicon.ico...');
+  try {
+    execCommand('node create-favicon.mjs');
+  } catch (err) {
+    console.error('Erro ao criar favicon.ico:', err);
+  }
+} else {
+  console.log('favicon.ico já existe.');
+}
+
 // 6. Verificar permissões de arquivos importantes
 console.log('Checking file permissions...');
 execCommand('chmod +x production-loader.mjs');
