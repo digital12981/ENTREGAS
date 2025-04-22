@@ -8,28 +8,42 @@ const __dirname = dirname(__filename);
 
 try {
   console.log('🏗️ Iniciando build...');
-  execSync('npm run build', { stdio: 'inherit' });
-  console.log('✅ Build completado com sucesso');
   
-  // Run the post-build steps
-  console.log('Running post-build steps...');
+  // Execute o build
+  execSync('vite build', { stdio: 'inherit' });
+  console.log('✅ Build do frontend concluído');
   
-  // Ensure the server directory exists in dist
+  // Compilar o servidor diretamente para dist/server
+  console.log('Compilando arquivos do servidor...');
+  
+  // Criar diretório dist/server
   const serverDir = join(__dirname, 'dist', 'server');
   if (!fs.existsSync(serverDir)) {
     fs.mkdirSync(serverDir, { recursive: true });
-    console.log('✅ Created server directory in dist folder');
+    console.log('✅ Criado diretório server em dist');
   }
   
-  // Check if the dist/index.js file exists
-  const indexPath = join(__dirname, 'dist', 'index.js');
-  if (fs.existsSync(indexPath)) {
-    console.log('✅ Found index.js in dist folder');
+  // Compilar os arquivos TypeScript do servidor diretamente para dist/server
+  execSync('esbuild server/**/*.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server', 
+    { stdio: 'inherit' });
+  console.log('✅ Arquivos do servidor compilados');
+  
+  // Verificar se os arquivos foram criados corretamente
+  const routesPath = join(__dirname, 'dist', 'server', 'routes.js');
+  if (fs.existsSync(routesPath)) {
+    console.log('✅ Arquivo routes.js encontrado');
   } else {
-    throw new Error('index.js not found in dist folder. Build may have failed.');
+    throw new Error('routes.js não foi encontrado em dist/server. Build falhou.');
   }
   
-  console.log('✅ All build steps completed successfully');
+  const vitePath = join(__dirname, 'dist', 'server', 'vite.js');
+  if (fs.existsSync(vitePath)) {
+    console.log('✅ Arquivo vite.js encontrado');
+  } else {
+    throw new Error('vite.js não foi encontrado em dist/server. Build falhou.');
+  }
+  
+  console.log('✅ Build concluído com sucesso');
 } catch (error) {
   console.error('❌ Erro durante o build:', error);
   process.exit(1);
