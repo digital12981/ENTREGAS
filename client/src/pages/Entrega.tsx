@@ -212,17 +212,25 @@ const Entrega: React.FC = () => {
         telefone = parsedUserData.telefone || "";
       }
       
-      // Chamar API para processar pagamento usando for4payments.py
-      const response = await fetch('/api/payments/pix-python', {
+      // Chamar API para processar pagamento
+      // Determinar a URL base da API dependendo do ambiente
+      const apiBaseUrl = import.meta.env.DEV 
+        ? '' // Em desenvolvimento, usa o URL local (relativo)
+        : 'https://shopee-delivery-api.herokuapp.com'; // Em produção, usa a URL do Heroku
+      
+      console.log('Enviando requisição de pagamento para:', `${apiBaseUrl}/api/payments/create-pix`);
+      
+      const response = await fetch(`${apiBaseUrl}/api/payments/create-pix`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          nome: dadosUsuario.nome,
+          name: dadosUsuario.nome,
           cpf: dadosUsuario.cpf,
           email: email,
-          telefone: telefone
+          phone: telefone,
+          amount: 84.70 // Valor fixo do kit de segurança
         })
       });
       
@@ -233,6 +241,12 @@ const Entrega: React.FC = () => {
       
       // Processar resposta e mostrar QR Code
       const pixData = await response.json();
+      console.log('Dados de pagamento recebidos:', pixData);
+      
+      if (!pixData || !pixData.pixCode || !pixData.pixQrCode) {
+        throw new Error("Resposta de pagamento inválida");
+      }
+      
       setPixInfo(pixData);
       
     } catch (error: any) {

