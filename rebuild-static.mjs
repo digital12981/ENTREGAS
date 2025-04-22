@@ -206,9 +206,29 @@ if (fs.existsSync(publicDir)) {
       console.log('✅ Arquivos de assets encontrados');
     } else {
       console.warn('⚠️ Nenhum arquivo de assets encontrado!');
+      
+      // Tentar criar assets básicos
+      console.log('Tentando criar assets básicos...');
+      const basicAssetsScript = path.join(rootDir, 'create-basic-assets.mjs');
+      if (fs.existsSync(basicAssetsScript)) {
+        execCmd('node', [basicAssetsScript]);
+        console.log('✅ Assets básicos criados com sucesso.');
+      } else {
+        console.warn('❌ Script create-basic-assets.mjs não encontrado.');
+      }
     }
   } else {
     console.error('❌ index.html NÃO foi encontrado em public/');
+    
+    // Tentar criar assets básicos com index.html
+    console.log('Tentando criar arquivos básicos incluindo index.html...');
+    const basicAssetsScript = path.join(rootDir, 'create-basic-assets.mjs');
+    if (fs.existsSync(basicAssetsScript)) {
+      execCmd('node', [basicAssetsScript]);
+      console.log('✅ Assets básicos e index.html criados.');
+    } else {
+      console.warn('❌ Script create-basic-assets.mjs não encontrado.');
+    }
   }
 } else {
   console.error('❌ Diretório public/ não existe após tentativas de reconstrução!');

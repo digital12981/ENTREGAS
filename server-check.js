@@ -4,201 +4,194 @@
  * Uso: node server-check.js
  */
 
+// Importar módulos necessários
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const os = require('os');
 
-// Função helper para log estilizado
+// Funções de utilitário para log
 function logHeader(message) {
-  console.log('\n\x1b[1m\x1b[36m' + message + '\x1b[0m');
-  console.log('-'.repeat(message.length));
+  console.log(`\n===== ${message} =====`);
 }
 
 function logError(message) {
-  console.error('\x1b[31m✖ ' + message + '\x1b[0m');
+  console.log(`❌ ${message}`);
 }
 
 function logSuccess(message) {
-  console.log('\x1b[32m✓ ' + message + '\x1b[0m');
+  console.log(`✅ ${message}`);
 }
 
 function logWarning(message) {
-  console.log('\x1b[33m⚠ ' + message + '\x1b[0m');
+  console.log(`⚠️ ${message}`);
 }
 
 function logInfo(message) {
-  console.log('\x1b[36mi ' + message + '\x1b[0m');
+  console.log(`ℹ️ ${message}`);
 }
 
-// Iniciar verificação
-logHeader('VERIFICAÇÃO DE SERVIDOR');
-console.log('Timestamp: ' + new Date().toISOString());
+// Iniciar diagnóstico
+console.log('DIAGNÓSTICO DO SERVIDOR SHOPEE ENTREGAS');
+console.log('=======================================');
+console.log(`Data/Hora: ${new Date().toISOString()}`);
+console.log(`Hostname: ${os.hostname()}`);
+console.log(`Plataforma: ${os.platform()} ${os.release()}`);
+console.log(`Node.js: ${process.version}`);
+console.log(`Diretório atual: ${process.cwd()}`);
 
-// 1. Verificar Node.js e ambiente
-logHeader('AMBIENTE');
-console.log('Node version: ' + process.version);
-console.log('Environment: ' + (process.env.NODE_ENV || 'não definido'));
-console.log('Current directory: ' + process.cwd());
-
-// 2. Verificar variáveis de ambiente críticas
+// Verificar variáveis de ambiente
 logHeader('VARIÁVEIS DE AMBIENTE');
-const requiredEnvVars = ['DATABASE_URL', 'FOR4PAYMENTS_SECRET_KEY'];
-const optionalEnvVars = ['PORT', 'FOR4PAYMENTS_API_URL'];
+const requiredVars = ['NODE_ENV', 'DATABASE_URL', 'FOR4PAYMENTS_SECRET_KEY'];
+const optionalVars = ['PORT', 'FOR4PAYMENTS_API_URL', 'HOST'];
 
-let envErrors = 0;
-requiredEnvVars.forEach(varName => {
-  if (!process.env[varName]) {
-    logError(`${varName} não está definida (obrigatória)`);
-    envErrors++;
+let missingVars = 0;
+requiredVars.forEach(varName => {
+  if (process.env[varName]) {
+    logSuccess(`${varName}: ${varName === 'DATABASE_URL' || varName === 'FOR4PAYMENTS_SECRET_KEY' ? 'configurado (valor oculto)' : process.env[varName]}`);
   } else {
-    logSuccess(`${varName} está configurada`);
+    logError(`${varName}: não configurado (obrigatório)`);
+    missingVars++;
   }
 });
 
-optionalEnvVars.forEach(varName => {
-  if (!process.env[varName]) {
-    logWarning(`${varName} não está definida (opcional)`);
+optionalVars.forEach(varName => {
+  if (process.env[varName]) {
+    logInfo(`${varName}: ${process.env[varName]}`);
   } else {
-    logInfo(`${varName} está configurada`);
+    logWarning(`${varName}: não configurado (opcional)`);
   }
 });
 
-if (envErrors > 0) {
-  logError(`Encontradas ${envErrors} variáveis de ambiente obrigatórias ausentes.`);
-} else {
-  logSuccess('Todas as variáveis de ambiente obrigatórias estão configuradas.');
-}
+// Verificar estrutura de diretórios
+logHeader('ESTRUTURA DE DIRETÓRIOS');
+const rootDir = process.cwd();
+const distDir = path.join(rootDir, 'dist');
+const publicDir = path.join(rootDir, 'public');
+const clientDir = path.join(rootDir, 'client');
+const serverDir = path.join(rootDir, 'server');
 
-// 3. Verificar estrutura de diretórios
-logHeader('ESTRUTURA DE ARQUIVOS');
-const criticalPaths = [
-  { path: 'dist', description: 'Diretório de build (dist)' },
-  { path: 'dist/index.js', description: 'Arquivo principal do servidor (dist/index.js)' },
-  { path: 'public', description: 'Diretório de arquivos estáticos (public)' },
-  { path: 'public/index.html', description: 'Arquivo HTML principal (public/index.html)' },
+const directoriesToCheck = [
+  { path: distDir, name: 'dist' },
+  { path: publicDir, name: 'public' },
+  { path: clientDir, name: 'client' },
+  { path: serverDir, name: 'server' },
+  { path: path.join(publicDir, 'assets'), name: 'public/assets' }
 ];
 
-let fileErrors = 0;
-criticalPaths.forEach(({ path: filePath, description }) => {
-  const fullPath = path.join(process.cwd(), filePath);
-  if (!fs.existsSync(fullPath)) {
-    logError(`${description} não encontrado: ${filePath}`);
-    fileErrors++;
+directoriesToCheck.forEach(({ path: dirPath, name }) => {
+  if (fs.existsSync(dirPath)) {
+    try {
+      const stats = fs.statSync(dirPath);
+      if (stats.isDirectory()) {
+        const files = fs.readdirSync(dirPath);
+        logSuccess(`${name}/: diretório encontrado com ${files.length} arquivos`);
+        
+        // Mostrar alguns arquivos do diretório
+        if (files.length > 0) {
+          const sampleFiles = files.slice(0, 5);
+          logInfo(`  Exemplos: ${sampleFiles.join(', ')}${files.length > 5 ? ', ...' : ''}`);
+        }
+      } else {
+        logError(`${name}: existe mas não é um diretório`);
+      }
+    } catch (err) {
+      logError(`${name}: erro ao verificar diretório: ${err.message}`);
+    }
   } else {
-    logSuccess(`${description} encontrado`);
+    logError(`${name}/: diretório não encontrado`);
   }
 });
 
-// 4. Verificar conteúdo do public
-logHeader('ARQUIVOS ESTÁTICOS');
-const publicDir = path.join(process.cwd(), 'public');
-if (fs.existsSync(publicDir)) {
-  try {
-    const files = fs.readdirSync(publicDir);
-    if (files.length === 0) {
-      logError('Diretório public está vazio');
-    } else {
-      logSuccess(`Diretório public contém ${files.length} arquivos`);
-      
-      // Verificar arquivos críticos
-      const hasIndexHtml = files.includes('index.html');
-      const hasAssets = files.some(f => f.startsWith('assets'));
-      
-      if (hasIndexHtml) {
-        logSuccess('index.html encontrado em public/');
-      } else {
-        logError('index.html não encontrado em public/');
-      }
-      
-      if (hasAssets) {
-        logSuccess('Diretório/arquivos de assets encontrados');
-      } else {
-        logWarning('Nenhum assets/ encontrado em public/');
-      }
-      
-      console.log('\nArquivos em public/:');
-      console.log(files.join(', '));
-    }
-  } catch (err) {
-    logError(`Erro ao listar arquivos em public/: ${err.message}`);
-  }
-} else {
-  logError('Diretório public/ não existe');
-}
+// Verificar arquivos críticos
+logHeader('ARQUIVOS CRÍTICOS');
+const criticalFiles = [
+  { path: path.join(distDir, 'index.js'), name: 'dist/index.js', desc: 'Entrada do servidor' },
+  { path: path.join(publicDir, 'index.html'), name: 'public/index.html', desc: 'Entrada do frontend' },
+  { path: path.join(publicDir, 'favicon.ico'), name: 'public/favicon.ico', desc: 'Favicon' },
+  { path: 'Procfile', name: 'Procfile', desc: 'Configuração do Heroku' },
+  { path: 'heroku-start.mjs', name: 'heroku-start.mjs', desc: 'Script de inicialização' },
+  { path: 'copy-static-files.mjs', name: 'copy-static-files.mjs', desc: 'Copiador de arquivos estáticos' },
+  { path: 'create-basic-assets.mjs', name: 'create-basic-assets.mjs', desc: 'Gerador de assets básicos' },
+  { path: path.join(publicDir, 'assets', 'basic.css'), name: 'public/assets/basic.css', desc: 'CSS básico' },
+  { path: path.join(publicDir, 'assets', 'basic.js'), name: 'public/assets/basic.js', desc: 'JS básico' }
+];
 
-// 5. Verificação de scripts de build
-logHeader('SCRIPTS DE BUILD');
-try {
-  const packageJson = require('./package.json');
-  if (packageJson.scripts) {
-    if (packageJson.scripts.build) {
-      logSuccess(`Script de build configurado: ${packageJson.scripts.build}`);
-    } else {
-      logError('Script de build não encontrado em package.json');
-    }
-    
-    if (packageJson.scripts.start) {
-      logSuccess(`Script de start configurado: ${packageJson.scripts.start}`);
-    } else {
-      logError('Script de start não encontrado em package.json');
-    }
-    
-    if (packageJson.scripts['heroku-postbuild']) {
-      logSuccess('Script heroku-postbuild configurado');
-    } else {
-      logWarning('Script heroku-postbuild não encontrado (usando heroku-postbuild.js por fora)');
+criticalFiles.forEach(({ path: filePath, name, desc }) => {
+  if (fs.existsSync(filePath)) {
+    try {
+      const stats = fs.statSync(filePath);
+      if (stats.isFile()) {
+        logSuccess(`${name}: encontrado (${stats.size} bytes) - ${desc}`);
+      } else {
+        logError(`${name}: existe mas não é um arquivo - ${desc}`);
+      }
+    } catch (err) {
+      logError(`${name}: erro ao verificar arquivo: ${err.message} - ${desc}`);
     }
   } else {
-    logError('Nenhum script encontrado em package.json');
+    logError(`${name}: não encontrado - ${desc}`);
+  }
+});
+
+// Verificar conteúdo do Procfile
+logHeader('CONTEÚDO DO PROCFILE');
+if (fs.existsSync('Procfile')) {
+  const procfileContent = fs.readFileSync('Procfile', 'utf8');
+  console.log(procfileContent);
+} else {
+  logError('Procfile não encontrado');
+}
+
+// Verificar se o servidor pode iniciar
+logHeader('VERIFICAÇÃO DE INICIALIZAÇÃO DO SERVIDOR');
+try {
+  if (fs.existsSync(path.join(distDir, 'index.js'))) {
+    logInfo('Verificando dependências do servidor...');
+    
+    const hasFavicon = fs.existsSync(path.join(publicDir, 'favicon.ico'));
+    const hasIndexHtml = fs.existsSync(path.join(publicDir, 'index.html'));
+    const hasAssets = fs.existsSync(path.join(publicDir, 'assets'));
+    
+    if (hasIndexHtml && hasFavicon && hasAssets) {
+      logSuccess('Todos os arquivos estáticos necessários estão presentes');
+    } else {
+      if (!hasIndexHtml) logError('index.html está faltando');
+      if (!hasFavicon) logError('favicon.ico está faltando');
+      if (!hasAssets) logError('diretório assets/ está faltando');
+    }
+    
+    const serverReadyMessage = hasIndexHtml && hasFavicon ? 
+      'O servidor parece pronto para iniciar' : 
+      'O servidor pode iniciar, mas a interface web pode não funcionar corretamente';
+    
+    logInfo(serverReadyMessage);
+  } else {
+    logError('O arquivo principal do servidor (dist/index.js) não foi encontrado');
+    logError('O servidor não poderá iniciar sem este arquivo');
   }
 } catch (err) {
-  logError(`Erro ao ler package.json: ${err.message}`);
+  logError(`Erro ao verificar inicialização do servidor: ${err.message}`);
 }
 
-// 6. Verificações de implantação Heroku
-logHeader('CONFIGURAÇÃO HEROKU');
-if (fs.existsSync('./Procfile')) {
-  logSuccess('Procfile encontrado');
-  
-  try {
-    const procContent = fs.readFileSync('./Procfile', 'utf8');
-    console.log('\nConteúdo do Procfile:');
-    console.log(procContent);
-    
-    if (procContent.includes('npm run start')) {
-      logInfo('Procfile usa "npm run start" (padrão)');
-    } else if (procContent.includes('node start-heroku.js')) {
-      logInfo('Procfile usa script personalizado start-heroku.js');
-      
-      if (fs.existsSync('./start-heroku.js')) {
-        logSuccess('Script start-heroku.js encontrado');
-      } else {
-        logError('Script start-heroku.js referenciado no Procfile, mas não encontrado');
-      }
-    }
-  } catch (err) {
-    logError(`Erro ao ler Procfile: ${err.message}`);
-  }
-} else {
-  logError('Procfile não encontrado (obrigatório para Heroku)');
+// Sugerir correções
+logHeader('SUGESTÕES DE CORREÇÃO');
+if (missingVars > 0) {
+  logWarning(`Configure as ${missingVars} variáveis de ambiente faltantes`);
 }
 
-// 7. Resumo e conclusão
+if (!fs.existsSync(path.join(publicDir, 'index.html'))) {
+  logWarning('Execute o script create-basic-assets.mjs para gerar arquivos estáticos básicos');
+  logInfo('  Comando: node create-basic-assets.mjs');
+}
+
+if (!fs.existsSync(path.join(distDir, 'index.js'))) {
+  logWarning('Reconstrua o servidor se estiver faltando dist/index.js');
+  logInfo('  Comando: npm run build');
+}
+
+// Finalizar diagnóstico
 logHeader('RESUMO');
-if (envErrors > 0 || fileErrors > 0) {
-  logError(`Encontrados ${envErrors} erros em variáveis de ambiente e ${fileErrors} erros em arquivos/diretórios.`);
-  logError('A aplicação pode não iniciar corretamente no Heroku devido aos problemas acima.');
-  
-  console.log('\nPara corrigir:');
-  if (envErrors > 0) {
-    console.log('1. Configure as variáveis de ambiente faltantes no painel do Heroku.');
-  }
-  
-  if (fileErrors > 0) {
-    console.log('2. Certifique-se de que o processo de build está criando os arquivos necessários.');
-    console.log('   - Verifique o script heroku-postbuild.js');
-    console.log('   - Verifique se os arquivos estáticos são copiados para o diretório public/');
-  }
-} else {
-  logSuccess('Nenhum erro crítico detectado. A configuração do servidor parece correta.');
-}
+console.log('O diagnóstico do servidor foi concluído.');
+console.log('Revise os problemas reportados acima e aplique as correções sugeridas conforme necessário.');
+console.log('\nData/hora do fim do diagnóstico:', new Date().toISOString());

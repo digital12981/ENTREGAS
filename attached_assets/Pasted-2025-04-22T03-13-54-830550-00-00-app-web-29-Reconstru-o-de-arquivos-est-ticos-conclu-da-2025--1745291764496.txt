@@ -1,0 +1,1003 @@
+2025-04-22T03:13:54.830550+00:00 app[web.29]: 📋 Reconstrução de arquivos estáticos concluída.
+2025-04-22T03:14:19.000000+00:00 app[api]: Build started by user eduardobianodesouzamaciel@gmail.com
+2025-04-22T03:15:00.652798+00:00 app[api]: Running release v77 commands by user eduardobianodesouzamaciel@gmail.com
+2025-04-22T03:15:00.652798+00:00 app[api]: Deploy 68fa90a7 by user eduardobianodesouzamaciel@gmail.com
+2025-04-22T03:15:01.365606+00:00 app[api]: Starting process with command `/bin/sh -c 'if curl $HEROKU_RELEASE_LOG_STREAM --silent --connect-timeout 10 --retry 3 --retry-delay 1 >/tmp/log-stream; then
+2025-04-22T03:15:01.365606+00:00 app[api]:   chmod u+x /tmp/log-stream
+2025-04-22T03:15:01.365606+00:00 app[api]:   /tmp/log-stream /bin/sh -c '"'"'node rebuild-static.mjs'"'"'
+2025-04-22T03:15:01.365606+00:00 app[api]: else
+2025-04-22T03:15:01.365606+00:00 app[api]:   node rebuild-static.mjs
+2025-04-22T03:15:01.365606+00:00 app[api]: fi'` by user eduardobianodesouzamaciel@gmail.com
+2025-04-22T03:15:09.219814+00:00 heroku[release.6569]: Starting process with command `/bin/sh -c 'if curl https://heroku-release-output.s3.amazonaws.com/log-stream?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAZSXS6CXKUD5IMVTI%2F20250422%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250422T031501Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=552ef77cc843f76581efa98bb09d15b3167c4efb77c348db0394302968f554a3 --silent --connect-timeout 10 --retry 3 --retry-delay 1 >/tmp/log-stream; then
+2025-04-22T03:15:09.282670+00:00 heroku[router]: at=info method=GET path="/" host=www.shopee-entregas.com request_id=cc99ba93-98b1-4fad-934e-9d12ca431462 fwd="201.87.251.220" dyno=web.8 connect=0ms service=6ms status=304 bytes=237 protocol=https
+2025-04-22T03:15:09.455270+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=www.shopee-entregas.com request_id=9f1746c7-38c1-485b-8c14-86fa1fe170c6 fwd="201.87.251.220" dyno=web.29 connect=0ms service=7ms status=304 bytes=237 protocol=https
+2025-04-22T03:15:09.802628+00:00 heroku[release.6569]: State changed from starting to up
+2025-04-22T03:15:09.937689+00:00 app[release.6569]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:09.938310+00:00 app[release.6569]: Data/Hora: 2025-04-22T03:15:09.938Z
+2025-04-22T03:15:09.938393+00:00 app[release.6569]: Diretório raiz: /app
+2025-04-22T03:15:09.938487+00:00 app[release.6569]: Criando diretório public/...
+2025-04-22T03:15:09.938635+00:00 app[release.6569]: 
+2025-04-22T03:15:09.938636+00:00 app[release.6569]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:09.938859+00:00 app[release.6569]: Copiando index.html do cliente...
+2025-04-22T03:15:09.939216+00:00 app[release.6569]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:09.948865+00:00 app[release.6569]: 
+2025-04-22T03:15:09.948866+00:00 app[release.6569]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:09.949127+00:00 app[release.6569]: Navegando para o diretório client/...
+2025-04-22T03:15:09.949372+00:00 app[release.6569]: Tentando build do frontend...
+2025-04-22T03:15:09.949504+00:00 app[release.6569]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:10.035952+00:00 app[release.6569]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:10.539500+00:00 app[release.6569]: vite v5.4.14 building for production...
+2025-04-22T03:15:10.593738+00:00 app[release.6569]: transforming...
+2025-04-22T03:15:10.798589+00:00 heroku[router]: at=info method=GET path="/" host=www.shopee-entregas.com request_id=70661f73-85a7-45dd-b175-be0594fd1554 fwd="201.87.251.220" dyno=web.6 connect=0ms service=8ms status=304 bytes=237 protocol=https
+2025-04-22T03:15:10.866630+00:00 app[release.6569]: Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2025-04-22T03:15:10.866660+00:00 app[release.6569]:   npx update-browserslist-db@latest
+2025-04-22T03:15:10.866662+00:00 app[release.6569]:   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2025-04-22T03:15:10.903690+00:00 app[release.6569]: 
+2025-04-22T03:15:10.903696+00:00 app[release.6569]: warn - The `content` option in your Tailwind CSS configuration is missing or empty.
+2025-04-22T03:15:10.903716+00:00 app[release.6569]: warn - Configure your content sources or your generated CSS will be missing styles.
+2025-04-22T03:15:10.903842+00:00 app[release.6569]: warn - https://tailwindcss.com/docs/content-configuration
+2025-04-22T03:15:10.997174+00:00 app[release.6569]: ✓ 26 modules transformed.
+2025-04-22T03:15:11.002717+00:00 app[release.6569]: x Build failed in 438ms
+2025-04-22T03:15:11.002910+00:00 app[release.6569]: error during build:
+2025-04-22T03:15:11.002914+00:00 app[release.6569]: [vite:css] [postcss] /app/client/src/index.css:1:1: The `border-border` class does not exist. If `border-border` is a custom class, make sure it is defined within a `@layer` directive.
+2025-04-22T03:15:11.002915+00:00 app[release.6569]: file: /app/client/src/index.css:1:0
+2025-04-22T03:15:11.002915+00:00 app[release.6569]:     at Input.error (/app/node_modules/postcss/lib/input.js:106:16)
+2025-04-22T03:15:11.002916+00:00 app[release.6569]:     at AtRule.error (/app/node_modules/postcss/lib/node.js:115:32)
+2025-04-22T03:15:11.002916+00:00 app[release.6569]:     at processApply (/app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+2025-04-22T03:15:11.002917+00:00 app[release.6569]:     at /app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+2025-04-22T03:15:11.002917+00:00 app[release.6569]:     at /app/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+2025-04-22T03:15:11.002917+00:00 app[release.6569]:     at async plugins (/app/node_modules/tailwindcss/lib/plugin.js:38:17)
+2025-04-22T03:15:11.002918+00:00 app[release.6569]:     at async LazyResult.runAsync (/app/node_modules/postcss/lib/lazy-result.js:261:11)
+2025-04-22T03:15:11.002918+00:00 app[release.6569]:     at async compileCSS (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:36898:21)
+2025-04-22T03:15:11.002919+00:00 app[release.6569]:     at async Object.transform (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:36171:11)
+2025-04-22T03:15:11.002919+00:00 app[release.6569]:     at async transform (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19640:16)
+2025-04-22T03:15:11.016325+00:00 app[release.6569]: npm notice
+2025-04-22T03:15:11.016327+00:00 app[release.6569]: npm notice New major version of npm available! 10.9.2 -> 11.3.0
+2025-04-22T03:15:11.016328+00:00 app[release.6569]: npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+2025-04-22T03:15:11.016328+00:00 app[release.6569]: npm notice To update run: npm install -g npm@11.3.0
+2025-04-22T03:15:11.016328+00:00 app[release.6569]: npm notice
+2025-04-22T03:15:11.040712+00:00 app[release.6569]: ❌ Erro ao executar comando: Command failed: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:11.040820+00:00 app[release.6569]: 
+2025-04-22T03:15:11.040821+00:00 app[release.6569]: 📦 Método 3: Copiar de dist/ ou dist/client/
+2025-04-22T03:15:11.040952+00:00 app[release.6569]: 
+2025-04-22T03:15:11.040954+00:00 app[release.6569]: 📋 Verificando resultado
+2025-04-22T03:15:11.040987+00:00 app[release.6569]: Diretório public/ contém 2 arquivos/diretórios:
+2025-04-22T03:15:11.040989+00:00 app[release.6569]: index.html, src
+2025-04-22T03:15:11.041015+00:00 app[release.6569]: ✅ index.html encontrado em public/
+2025-04-22T03:15:11.041084+00:00 app[release.6569]: ⚠️ Nenhum arquivo de assets encontrado!
+2025-04-22T03:15:11.041110+00:00 app[release.6569]: 
+2025-04-22T03:15:11.041110+00:00 app[release.6569]: 📋 Reconstrução de arquivos estáticos concluída.
+2025-04-22T03:15:11.093432+00:00 heroku[release.6569]: Process exited with status 0
+2025-04-22T03:15:10.973538+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=www.shopee-entregas.com request_id=cc18ac1f-e823-4999-879e-15d1f72af70a fwd="201.87.251.220" dyno=web.49 connect=0ms service=8ms status=304 bytes=237 protocol=https
+2025-04-22T03:15:11.127044+00:00 heroku[release.6569]: State changed from up to complete
+2025-04-22T03:15:11.802648+00:00 heroku[web.30]: Restarting
+2025-04-22T03:15:11.854366+00:00 heroku[web.30]: State changed from up to starting
+2025-04-22T03:15:11.919606+00:00 heroku[web.29]: Restarting
+2025-04-22T03:15:11.922332+00:00 heroku[web.29]: State changed from up to starting
+2025-04-22T03:15:11.930250+00:00 heroku[web.40]: Restarting
+2025-04-22T03:15:11.932982+00:00 heroku[web.40]: State changed from up to starting
+2025-04-22T03:15:11.940796+00:00 heroku[web.33]: Restarting
+2025-04-22T03:15:11.944523+00:00 heroku[web.33]: State changed from up to starting
+2025-04-22T03:15:11.955021+00:00 heroku[web.19]: Restarting
+2025-04-22T03:15:11.957757+00:00 heroku[web.19]: State changed from up to starting
+2025-04-22T03:15:11.967798+00:00 heroku[web.28]: Restarting
+2025-04-22T03:15:11.971570+00:00 heroku[web.28]: State changed from up to starting
+2025-04-22T03:15:11.980067+00:00 heroku[web.26]: Restarting
+2025-04-22T03:15:11.982569+00:00 heroku[web.26]: State changed from up to starting
+2025-04-22T03:15:11.992065+00:00 heroku[web.38]: Restarting
+2025-04-22T03:15:11.994863+00:00 heroku[web.38]: State changed from up to starting
+2025-04-22T03:15:12.002694+00:00 heroku[web.4]: Restarting
+2025-04-22T03:15:12.005206+00:00 heroku[web.4]: State changed from up to starting
+2025-04-22T03:15:12.013094+00:00 heroku[web.1]: Restarting
+2025-04-22T03:15:12.016051+00:00 heroku[web.1]: State changed from up to starting
+2025-04-22T03:15:12.023844+00:00 heroku[web.51]: Restarting
+2025-04-22T03:15:12.026364+00:00 heroku[web.51]: State changed from up to starting
+2025-04-22T03:15:12.040550+00:00 heroku[web.20]: Restarting
+2025-04-22T03:15:12.045607+00:00 heroku[web.20]: State changed from up to starting
+2025-04-22T03:15:12.053687+00:00 heroku[web.32]: Restarting
+2025-04-22T03:15:12.056403+00:00 heroku[web.32]: State changed from up to starting
+2025-04-22T03:15:12.064119+00:00 heroku[web.49]: Restarting
+2025-04-22T03:15:12.066784+00:00 heroku[web.49]: State changed from up to starting
+2025-04-22T03:15:12.074633+00:00 heroku[web.3]: Restarting
+2025-04-22T03:15:12.077212+00:00 heroku[web.3]: State changed from up to starting
+2025-04-22T03:15:12.084809+00:00 heroku[web.5]: Restarting
+2025-04-22T03:15:12.087785+00:00 heroku[web.5]: State changed from up to starting
+2025-04-22T03:15:12.095917+00:00 heroku[web.43]: Restarting
+2025-04-22T03:15:12.098763+00:00 heroku[web.43]: State changed from up to starting
+2025-04-22T03:15:12.106764+00:00 heroku[web.13]: Restarting
+2025-04-22T03:15:12.109390+00:00 heroku[web.13]: State changed from up to starting
+2025-04-22T03:15:12.118677+00:00 heroku[web.9]: Restarting
+2025-04-22T03:15:12.121174+00:00 heroku[web.9]: State changed from up to starting
+2025-04-22T03:15:12.129000+00:00 heroku[web.35]: Restarting
+2025-04-22T03:15:12.131636+00:00 heroku[web.35]: State changed from up to starting
+2025-04-22T03:15:12.141066+00:00 heroku[web.31]: Restarting
+2025-04-22T03:15:12.143626+00:00 heroku[web.31]: State changed from up to starting
+2025-04-22T03:15:12.151498+00:00 heroku[web.6]: Restarting
+2025-04-22T03:15:12.154223+00:00 heroku[web.6]: State changed from up to starting
+2025-04-22T03:15:12.162632+00:00 heroku[web.16]: Restarting
+2025-04-22T03:15:12.165220+00:00 heroku[web.16]: State changed from up to starting
+2025-04-22T03:15:12.173433+00:00 heroku[web.21]: Restarting
+2025-04-22T03:15:12.176032+00:00 heroku[web.21]: State changed from up to starting
+2025-04-22T03:15:12.184373+00:00 heroku[web.34]: Restarting
+2025-04-22T03:15:12.186940+00:00 heroku[web.34]: State changed from up to starting
+2025-04-22T03:15:12.195809+00:00 heroku[web.48]: Restarting
+2025-04-22T03:15:12.198455+00:00 heroku[web.48]: State changed from up to starting
+2025-04-22T03:15:12.206268+00:00 heroku[web.39]: Restarting
+2025-04-22T03:15:12.208840+00:00 heroku[web.39]: State changed from up to starting
+2025-04-22T03:15:12.218016+00:00 heroku[web.50]: Restarting
+2025-04-22T03:15:12.220621+00:00 heroku[web.50]: State changed from up to starting
+2025-04-22T03:15:12.231480+00:00 heroku[web.17]: Restarting
+2025-04-22T03:15:12.235457+00:00 heroku[web.17]: State changed from up to starting
+2025-04-22T03:15:12.243407+00:00 heroku[web.36]: Restarting
+2025-04-22T03:15:12.246188+00:00 heroku[web.36]: State changed from up to starting
+2025-04-22T03:15:12.254137+00:00 heroku[web.46]: Restarting
+2025-04-22T03:15:12.256693+00:00 heroku[web.46]: State changed from up to starting
+2025-04-22T03:15:12.264382+00:00 heroku[web.25]: Restarting
+2025-04-22T03:15:12.267112+00:00 heroku[web.25]: State changed from up to starting
+2025-04-22T03:15:12.274961+00:00 heroku[web.2]: Restarting
+2025-04-22T03:15:12.277628+00:00 heroku[web.2]: State changed from up to starting
+2025-04-22T03:15:12.285472+00:00 heroku[web.42]: Restarting
+2025-04-22T03:15:12.290718+00:00 heroku[web.42]: State changed from up to starting
+2025-04-22T03:15:12.299353+00:00 heroku[web.22]: Restarting
+2025-04-22T03:15:12.301961+00:00 heroku[web.22]: State changed from up to starting
+2025-04-22T03:15:12.315191+00:00 heroku[web.10]: Restarting
+2025-04-22T03:15:12.317813+00:00 heroku[web.10]: State changed from up to starting
+2025-04-22T03:15:12.327784+00:00 heroku[web.23]: Restarting
+2025-04-22T03:15:12.330662+00:00 heroku[web.23]: State changed from up to starting
+2025-04-22T03:15:12.338773+00:00 heroku[web.44]: Restarting
+2025-04-22T03:15:12.341354+00:00 heroku[web.44]: State changed from up to starting
+2025-04-22T03:15:12.349790+00:00 heroku[web.45]: Restarting
+2025-04-22T03:15:12.352472+00:00 heroku[web.45]: State changed from up to starting
+2025-04-22T03:15:12.360644+00:00 heroku[web.24]: Restarting
+2025-04-22T03:15:12.363298+00:00 heroku[web.24]: State changed from up to starting
+2025-04-22T03:15:12.371583+00:00 heroku[web.14]: Restarting
+2025-04-22T03:15:12.374257+00:00 heroku[web.14]: State changed from up to starting
+2025-04-22T03:15:12.382820+00:00 heroku[web.11]: Restarting
+2025-04-22T03:15:12.385591+00:00 heroku[web.11]: State changed from up to starting
+2025-04-22T03:15:12.395006+00:00 heroku[web.8]: Restarting
+2025-04-22T03:15:12.398039+00:00 heroku[web.8]: State changed from up to starting
+2025-04-22T03:15:12.407531+00:00 heroku[web.27]: Restarting
+2025-04-22T03:15:12.410448+00:00 heroku[web.27]: State changed from up to starting
+2025-04-22T03:15:12.419548+00:00 heroku[web.37]: Restarting
+2025-04-22T03:15:12.422501+00:00 heroku[web.37]: State changed from up to starting
+2025-04-22T03:15:12.431233+00:00 heroku[web.53]: Restarting
+2025-04-22T03:15:12.434286+00:00 heroku[web.53]: State changed from up to starting
+2025-04-22T03:15:12.443340+00:00 heroku[web.47]: Restarting
+2025-04-22T03:15:12.446320+00:00 heroku[web.47]: State changed from up to starting
+2025-04-22T03:15:12.455097+00:00 heroku[web.18]: Restarting
+2025-04-22T03:15:12.458240+00:00 heroku[web.18]: State changed from up to starting
+2025-04-22T03:15:12.466763+00:00 heroku[web.41]: Restarting
+2025-04-22T03:15:12.469708+00:00 heroku[web.41]: State changed from up to starting
+2025-04-22T03:15:11.525691+00:00 app[api]: Release v77 created by user eduardobianodesouzamaciel@gmail.com
+2025-04-22T03:15:12.480731+00:00 heroku[web.7]: Restarting
+2025-04-22T03:15:12.483362+00:00 heroku[web.7]: State changed from up to starting
+2025-04-22T03:15:12.492100+00:00 heroku[web.12]: Restarting
+2025-04-22T03:15:12.494854+00:00 heroku[web.12]: State changed from up to starting
+2025-04-22T03:15:12.504858+00:00 heroku[web.15]: Restarting
+2025-04-22T03:15:12.512261+00:00 heroku[web.15]: State changed from up to starting
+2025-04-22T03:15:12.526195+00:00 heroku[web.52]: Restarting
+2025-04-22T03:15:12.529801+00:00 heroku[web.52]: State changed from up to starting
+2025-04-22T03:15:13.081915+00:00 heroku[web.40]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.126585+00:00 heroku[web.19]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.095883+00:00 app[web.40]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.099818+00:00 app[web.40]: Servidor encerrado com código: null
+2025-04-22T03:15:13.149105+00:00 heroku[web.40]: Process exited with status 0
+2025-04-22T03:15:13.167169+00:00 heroku[web.26]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.242360+00:00 heroku[web.9]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.147546+00:00 app[web.19]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.152458+00:00 app[web.19]: Servidor encerrado com código: null
+2025-04-22T03:15:13.203328+00:00 heroku[web.19]: Process exited with status 0
+2025-04-22T03:15:13.206723+00:00 heroku[web.29]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.220950+00:00 heroku[web.28]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.184390+00:00 app[web.26]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.191439+00:00 app[web.26]: Servidor encerrado com código: null
+2025-04-22T03:15:13.233526+00:00 heroku[web.30]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.239427+00:00 heroku[web.26]: Process exited with status 0
+2025-04-22T03:15:13.236647+00:00 app[web.28]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.242331+00:00 app[web.28]: Servidor encerrado com código: null
+2025-04-22T03:15:13.281220+00:00 heroku[web.28]: Process exited with status 0
+2025-04-22T03:15:13.297391+00:00 heroku[web.21]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.225836+00:00 app[web.29]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.232283+00:00 app[web.29]: Servidor encerrado com código: null
+2025-04-22T03:15:13.289908+00:00 heroku[web.29]: Process exited with status 0
+2025-04-22T03:15:13.290372+00:00 heroku[web.51]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.291738+00:00 heroku[web.4]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.296964+00:00 heroku[web.33]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.257060+00:00 app[web.9]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.264190+00:00 app[web.9]: Servidor encerrado com código: null
+2025-04-22T03:15:13.260663+00:00 app[web.30]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.267030+00:00 app[web.30]: Servidor encerrado com código: null
+2025-04-22T03:15:13.312029+00:00 heroku[web.9]: Process exited with status 0
+2025-04-22T03:15:13.313257+00:00 heroku[web.30]: Process exited with status 0
+2025-04-22T03:15:13.322614+00:00 heroku[web.32]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.327074+00:00 heroku[web.31]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.332558+00:00 heroku[web.3]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.351014+00:00 heroku[web.1]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.311740+00:00 app[web.21]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.316882+00:00 app[web.21]: Servidor encerrado com código: null
+2025-04-22T03:15:13.360201+00:00 heroku[web.21]: Process exited with status 0
+2025-04-22T03:15:13.308331+00:00 app[web.51]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.315972+00:00 app[web.51]: Servidor encerrado com código: null
+2025-04-22T03:15:13.369439+00:00 heroku[web.46]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.421082+00:00 heroku[web.43]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.370603+00:00 heroku[web.34]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.372023+00:00 heroku[web.51]: Process exited with status 0
+2025-04-22T03:15:13.321911+00:00 app[web.33]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.328409+00:00 app[web.33]: Servidor encerrado com código: null
+2025-04-22T03:15:13.377371+00:00 heroku[web.42]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.379345+00:00 heroku[web.33]: Process exited with status 0
+2025-04-22T03:15:13.319440+00:00 app[web.4]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.327481+00:00 app[web.4]: Servidor encerrado com código: null
+2025-04-22T03:15:13.390473+00:00 heroku[web.25]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.465461+00:00 heroku[web.27]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.381335+00:00 heroku[web.36]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.401408+00:00 heroku[web.17]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.343693+00:00 app[web.31]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.350060+00:00 app[web.31]: Servidor encerrado com código: null
+2025-04-22T03:15:13.394126+00:00 heroku[web.50]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.391728+00:00 heroku[web.4]: Process exited with status 0
+2025-04-22T03:15:13.473071+00:00 heroku[web.10]: Process exited with status 0
+2025-04-22T03:15:13.396267+00:00 heroku[web.31]: Process exited with status 0
+2025-04-22T03:15:13.401321+00:00 heroku[web.10]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.346028+00:00 app[web.32]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.352853+00:00 app[web.32]: Servidor encerrado com código: null
+2025-04-22T03:15:13.452456+00:00 heroku[web.25]: Process exited with status 0
+2025-04-22T03:15:13.405578+00:00 heroku[web.6]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.408762+00:00 heroku[web.5]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.352136+00:00 app[web.3]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.359342+00:00 app[web.3]: Servidor encerrado com código: null
+2025-04-22T03:15:13.409740+00:00 heroku[web.32]: Process exited with status 0
+2025-04-22T03:15:13.415295+00:00 heroku[web.3]: Process exited with status 0
+2025-04-22T03:15:13.424121+00:00 heroku[web.20]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.370557+00:00 app[web.1]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.380206+00:00 app[web.1]: Servidor encerrado com código: null
+2025-04-22T03:15:13.426443+00:00 heroku[web.49]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.433153+00:00 heroku[web.14]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.416518+00:00 app[web.10]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.423352+00:00 app[web.10]: Servidor encerrado com código: null
+2025-04-22T03:15:13.430260+00:00 heroku[web.13]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.431324+00:00 heroku[web.1]: Process exited with status 0
+2025-04-22T03:15:13.426470+00:00 app[web.6]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.431996+00:00 app[web.6]: Servidor encerrado com código: null
+2025-04-22T03:15:13.386195+00:00 app[web.46]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.391991+00:00 app[web.46]: Servidor encerrado com código: null
+2025-04-22T03:15:13.390070+00:00 app[web.34]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.400834+00:00 app[web.34]: Servidor encerrado com código: null
+2025-04-22T03:15:13.441232+00:00 heroku[web.46]: Process exited with status 0
+2025-04-22T03:15:13.437865+00:00 heroku[web.48]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.542602+00:00 heroku[web.15]: Process exited with status 0
+2025-04-22T03:15:13.405732+00:00 app[web.25]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.413264+00:00 app[web.25]: Servidor encerrado com código: null
+2025-04-22T03:15:13.451022+00:00 app[web.49]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.457722+00:00 app[web.49]: Servidor encerrado com código: null
+2025-04-22T03:15:13.441827+00:00 heroku[web.44]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.413845+00:00 app[web.50]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.419089+00:00 app[web.50]: Servidor encerrado com código: null
+2025-04-22T03:15:13.446779+00:00 heroku[web.34]: Process exited with status 0
+2025-04-22T03:15:13.448098+00:00 heroku[web.8]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.456161+00:00 heroku[web.42]: Process exited with status 0
+2025-04-22T03:15:13.397880+00:00 app[web.42]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.403947+00:00 app[web.42]: Servidor encerrado com código: null
+2025-04-22T03:15:13.458711+00:00 heroku[web.37]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.457838+00:00 heroku[web.50]: Process exited with status 0
+2025-04-22T03:15:13.464545+00:00 heroku[web.39]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.464548+00:00 heroku[web.16]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.419853+00:00 app[web.17]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.426559+00:00 app[web.17]: Servidor encerrado com código: null
+2025-04-22T03:15:13.407213+00:00 app[web.36]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.418543+00:00 app[web.36]: Servidor encerrado com código: null
+2025-04-22T03:15:13.503081+00:00 heroku[web.47]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.470778+00:00 heroku[web.2]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.474795+00:00 heroku[web.17]: Process exited with status 0
+2025-04-22T03:15:13.481414+00:00 heroku[web.15]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.477697+00:00 heroku[web.38]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.480511+00:00 heroku[web.23]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.477679+00:00 heroku[web.36]: Process exited with status 0
+2025-04-22T03:15:13.444470+00:00 app[web.20]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.450825+00:00 app[web.20]: Servidor encerrado com código: null
+2025-04-22T03:15:13.444279+00:00 app[web.43]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.450229+00:00 app[web.43]: Servidor encerrado com código: null
+2025-04-22T03:15:13.492320+00:00 heroku[web.24]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.426252+00:00 app[web.5]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.434035+00:00 app[web.5]: Servidor encerrado com código: null
+2025-04-22T03:15:13.494084+00:00 heroku[web.45]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.489639+00:00 heroku[web.6]: Process exited with status 0
+2025-04-22T03:15:13.494246+00:00 heroku[web.20]: Process exited with status 0
+2025-04-22T03:15:13.450344+00:00 app[web.13]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.457150+00:00 app[web.13]: Servidor encerrado com código: null
+2025-04-22T03:15:13.533541+00:00 heroku[web.52]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.495415+00:00 heroku[web.5]: Process exited with status 0
+2025-04-22T03:15:13.501580+00:00 heroku[web.49]: Process exited with status 0
+2025-04-22T03:15:13.504419+00:00 heroku[web.13]: Process exited with status 0
+2025-04-22T03:15:13.516371+00:00 heroku[web.8]: Process exited with status 0
+2025-04-22T03:15:13.449025+00:00 app[web.14]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.455263+00:00 app[web.14]: Servidor encerrado com código: null
+2025-04-22T03:15:13.499139+00:00 heroku[web.43]: Process exited with status 0
+2025-04-22T03:15:13.465290+00:00 app[web.8]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.471349+00:00 app[web.8]: Servidor encerrado com código: null
+2025-04-22T03:15:13.465891+00:00 app[web.48]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.477047+00:00 app[web.48]: Servidor encerrado com código: null
+2025-04-22T03:15:13.479602+00:00 app[web.27]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.485048+00:00 app[web.27]: Servidor encerrado com código: null
+2025-04-22T03:15:13.511674+00:00 heroku[web.14]: Process exited with status 0
+2025-04-22T03:15:13.512256+00:00 heroku[web.35]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.550107+00:00 app[web.52]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.557366+00:00 app[web.52]: Servidor encerrado com código: null
+2025-04-22T03:15:13.464923+00:00 app[web.44]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.470949+00:00 app[web.44]: Servidor encerrado com código: null
+2025-04-22T03:15:13.519006+00:00 heroku[web.27]: Process exited with status 0
+2025-04-22T03:15:13.519201+00:00 heroku[web.44]: Process exited with status 0
+2025-04-22T03:15:13.524629+00:00 heroku[web.7]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.526279+00:00 heroku[web.18]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.559240+00:00 heroku[web.45]: Process exited with status 0
+2025-04-22T03:15:13.532227+00:00 heroku[web.53]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.532603+00:00 heroku[web.48]: Process exited with status 0
+2025-04-22T03:15:13.484355+00:00 app[web.39]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.490594+00:00 app[web.39]: Servidor encerrado com código: null
+2025-04-22T03:15:13.495894+00:00 app[web.15]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.502327+00:00 app[web.15]: Servidor encerrado com código: null
+2025-04-22T03:15:13.536880+00:00 heroku[web.11]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.539302+00:00 heroku[web.12]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.484584+00:00 app[web.16]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.492916+00:00 app[web.16]: Servidor encerrado com código: null
+2025-04-22T03:15:13.501177+00:00 app[web.23]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.506666+00:00 app[web.23]: Servidor encerrado com código: null
+2025-04-22T03:15:13.543341+00:00 heroku[web.16]: Process exited with status 0
+2025-04-22T03:15:13.500781+00:00 app[web.38]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.506808+00:00 app[web.38]: Servidor encerrado com código: null
+2025-04-22T03:15:13.547252+00:00 heroku[web.23]: Process exited with status 0
+2025-04-22T03:15:13.542496+00:00 heroku[web.39]: Process exited with status 0
+2025-04-22T03:15:13.546014+00:00 heroku[web.41]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.495284+00:00 app[web.2]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.499463+00:00 app[web.2]: Servidor encerrado com código: null
+2025-04-22T03:15:13.553816+00:00 app[web.12]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.560614+00:00 app[web.12]: Servidor encerrado com código: null
+2025-04-22T03:15:13.476785+00:00 app[web.37]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.484591+00:00 app[web.37]: Servidor encerrado com código: null
+2025-04-22T03:15:13.511794+00:00 app[web.45]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.517931+00:00 app[web.45]: Servidor encerrado com código: null
+2025-04-22T03:15:13.552030+00:00 heroku[web.37]: Process exited with status 0
+2025-04-22T03:15:13.553756+00:00 heroku[web.2]: Process exited with status 0
+2025-04-22T03:15:13.552475+00:00 heroku[web.38]: Process exited with status 0
+2025-04-22T03:15:13.644961+00:00 heroku[web.22]: Stopping all processes with SIGTERM
+2025-04-22T03:15:13.520260+00:00 app[web.47]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.525726+00:00 app[web.47]: Servidor encerrado com código: null
+2025-04-22T03:15:13.514741+00:00 app[web.24]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.520780+00:00 app[web.24]: Servidor encerrado com código: null
+2025-04-22T03:15:13.570414+00:00 heroku[web.47]: Process exited with status 0
+2025-04-22T03:15:13.571457+00:00 heroku[web.24]: Process exited with status 0
+2025-04-22T03:15:13.543771+00:00 app[web.18]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.550295+00:00 app[web.18]: Servidor encerrado com código: null
+2025-04-22T03:15:13.590532+00:00 heroku[web.7]: Process exited with status 0
+2025-04-22T03:15:13.595005+00:00 heroku[web.18]: Process exited with status 0
+2025-04-22T03:15:13.541648+00:00 app[web.7]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.548041+00:00 app[web.7]: Servidor encerrado com código: null
+2025-04-22T03:15:13.550858+00:00 app[web.53]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.557202+00:00 app[web.53]: Servidor encerrado com código: null
+2025-04-22T03:15:13.547824+00:00 app[web.35]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.550693+00:00 app[web.35]: Servidor encerrado com código: null
+2025-04-22T03:15:13.602896+00:00 heroku[web.12]: Process exited with status 0
+2025-04-22T03:15:13.603421+00:00 heroku[web.52]: Process exited with status 0
+2025-04-22T03:15:13.606321+00:00 heroku[web.53]: Process exited with status 0
+2025-04-22T03:15:13.556168+00:00 app[web.11]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.564194+00:00 app[web.11]: Servidor encerrado com código: null
+2025-04-22T03:15:13.612819+00:00 heroku[web.11]: Process exited with status 0
+2025-04-22T03:15:13.610785+00:00 heroku[web.35]: Process exited with status 0
+2025-04-22T03:15:13.567514+00:00 app[web.41]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.572652+00:00 app[web.41]: Servidor encerrado com código: null
+2025-04-22T03:15:13.627176+00:00 heroku[web.41]: Process exited with status 0
+2025-04-22T03:15:13.671389+00:00 app[web.22]: Recebido SIGTERM, encerrando...
+2025-04-22T03:15:13.678155+00:00 app[web.22]: Servidor encerrado com código: null
+2025-04-22T03:15:13.717564+00:00 heroku[web.22]: Process exited with status 0
+2025-04-22T03:15:14.000000+00:00 app[api]: Build succeeded
+2025-04-22T03:15:20.297895+00:00 heroku[web.50]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.458992+00:00 heroku[web.33]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.549499+00:00 heroku[web.53]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.598411+00:00 heroku[web.3]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.634151+00:00 heroku[web.19]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.653443+00:00 heroku[web.8]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.665040+00:00 heroku[web.2]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.697711+00:00 heroku[web.6]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.678610+00:00 heroku[web.32]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.689297+00:00 heroku[web.35]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.706266+00:00 heroku[web.44]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.727179+00:00 heroku[web.7]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.764192+00:00 heroku[web.18]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.779736+00:00 heroku[web.16]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.792695+00:00 heroku[web.27]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.789659+00:00 heroku[web.37]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.808406+00:00 heroku[web.24]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.828738+00:00 heroku[web.45]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.928735+00:00 heroku[web.30]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.852607+00:00 heroku[web.14]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.853759+00:00 heroku[web.49]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.856032+00:00 heroku[web.47]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.862570+00:00 heroku[web.31]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.864605+00:00 heroku[web.4]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.908421+00:00 heroku[web.22]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.925442+00:00 heroku[web.23]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.932374+00:00 heroku[web.15]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.972028+00:00 heroku[web.36]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.008035+00:00 heroku[web.46]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.006366+00:00 heroku[web.11]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.048863+00:00 heroku[web.12]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.080035+00:00 heroku[web.38]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.090466+00:00 heroku[web.29]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.093351+00:00 heroku[web.10]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.120269+00:00 heroku[web.13]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.875536+00:00 app[web.50]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:20.876031+00:00 app[web.50]: Data/Hora: 2025-04-22T03:15:20.875Z
+2025-04-22T03:15:20.876074+00:00 app[web.50]: Versão Node: v22.14.0
+2025-04-22T03:15:20.876170+00:00 app[web.50]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:20.876198+00:00 app[web.50]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:20.876327+00:00 app[web.50]: Criando diretório public...
+2025-04-22T03:15:20.876557+00:00 app[web.50]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:20.878561+00:00 app[web.50]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:20.879530+00:00 app[web.50]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:20.879866+00:00 app[web.50]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:20.879931+00:00 app[web.50]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:20.879959+00:00 app[web.50]: Iniciando o servidor...
+2025-04-22T03:15:20.879985+00:00 app[web.50]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:20.905504+00:00 app[web.50]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:20.905796+00:00 app[web.50]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:20.905924+00:00 app[web.50]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.149676+00:00 heroku[web.17]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.153647+00:00 heroku[web.34]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.171470+00:00 heroku[web.21]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:20.989198+00:00 app[web.33]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:20.989526+00:00 app[web.33]: Data/Hora: 2025-04-22T03:15:20.989Z
+2025-04-22T03:15:20.989554+00:00 app[web.33]: Versão Node: v22.14.0
+2025-04-22T03:15:20.989621+00:00 app[web.33]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:20.989639+00:00 app[web.33]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:20.989730+00:00 app[web.33]: Criando diretório public...
+2025-04-22T03:15:20.989903+00:00 app[web.33]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:20.991434+00:00 app[web.33]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:20.992261+00:00 app[web.33]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:20.992583+00:00 app[web.33]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:20.992644+00:00 app[web.33]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:20.992665+00:00 app[web.33]: Iniciando o servidor...
+2025-04-22T03:15:20.992678+00:00 app[web.33]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.020167+00:00 app[web.33]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.020168+00:00 app[web.33]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.020169+00:00 app[web.33]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.299901+00:00 heroku[web.43]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.312464+00:00 heroku[web.26]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.064231+00:00 app[web.53]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.064723+00:00 app[web.53]: Data/Hora: 2025-04-22T03:15:21.064Z
+2025-04-22T03:15:21.064769+00:00 app[web.53]: Versão Node: v22.14.0
+2025-04-22T03:15:21.064881+00:00 app[web.53]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.064914+00:00 app[web.53]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.065025+00:00 app[web.53]: Criando diretório public...
+2025-04-22T03:15:21.065215+00:00 app[web.53]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.067371+00:00 app[web.53]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.068347+00:00 app[web.53]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.068700+00:00 app[web.53]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.068793+00:00 app[web.53]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.068846+00:00 app[web.53]: Iniciando o servidor...
+2025-04-22T03:15:21.068878+00:00 app[web.53]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.109378+00:00 app[web.53]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.109792+00:00 app[web.53]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.109982+00:00 app[web.53]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.154912+00:00 app[web.8]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.155248+00:00 app[web.8]: Data/Hora: 2025-04-22T03:15:21.155Z
+2025-04-22T03:15:21.155282+00:00 app[web.8]: Versão Node: v22.14.0
+2025-04-22T03:15:21.155342+00:00 app[web.8]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.155361+00:00 app[web.8]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.155465+00:00 app[web.8]: Criando diretório public...
+2025-04-22T03:15:21.155632+00:00 app[web.8]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.157152+00:00 app[web.8]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.157953+00:00 app[web.8]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.158177+00:00 app[web.8]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.158218+00:00 app[web.8]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.158238+00:00 app[web.8]: Iniciando o servidor...
+2025-04-22T03:15:21.158259+00:00 app[web.8]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.182568+00:00 app[web.8]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.182813+00:00 app[web.8]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.182934+00:00 app[web.8]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.174413+00:00 app[web.2]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.174799+00:00 app[web.2]: Data/Hora: 2025-04-22T03:15:21.174Z
+2025-04-22T03:15:21.174842+00:00 app[web.2]: Versão Node: v22.14.0
+2025-04-22T03:15:21.174945+00:00 app[web.2]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.174967+00:00 app[web.2]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.175082+00:00 app[web.2]: Criando diretório public...
+2025-04-22T03:15:21.175289+00:00 app[web.2]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.177304+00:00 app[web.2]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.178389+00:00 app[web.2]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.178687+00:00 app[web.2]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.178754+00:00 app[web.2]: Executando script de reconstrução...
+2025-04-22T03:15:21.179553+00:00 app[web.2]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.179588+00:00 app[web.2]: Iniciando o servidor...
+2025-04-22T03:15:21.179623+00:00 app[web.2]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.209307+00:00 app[web.2]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.209831+00:00 app[web.2]: Data/Hora: 2025-04-22T03:15:21.209Z
+2025-04-22T03:15:21.209884+00:00 app[web.2]: Diretório raiz: /app
+2025-04-22T03:15:21.209958+00:00 app[web.2]: 
+2025-04-22T03:15:21.209958+00:00 app[web.2]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.210043+00:00 app[web.2]: Copiando index.html do cliente...
+2025-04-22T03:15:21.210355+00:00 app[web.2]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.214048+00:00 app[web.2]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.214621+00:00 app[web.2]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.214870+00:00 app[web.2]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.220415+00:00 app[web.2]: 
+2025-04-22T03:15:21.220416+00:00 app[web.2]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.220624+00:00 app[web.2]: Navegando para o diretório client/...
+2025-04-22T03:15:21.220664+00:00 app[web.2]: Tentando build do frontend...
+2025-04-22T03:15:21.223426+00:00 app[web.2]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.342847+00:00 app[web.2]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.206323+00:00 app[web.32]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.206751+00:00 app[web.32]: Data/Hora: 2025-04-22T03:15:21.206Z
+2025-04-22T03:15:21.206789+00:00 app[web.32]: Versão Node: v22.14.0
+2025-04-22T03:15:21.206881+00:00 app[web.32]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.206882+00:00 app[web.32]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.206961+00:00 app[web.32]: Criando diretório public...
+2025-04-22T03:15:21.207152+00:00 app[web.32]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.208831+00:00 app[web.32]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.210680+00:00 app[web.32]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.210680+00:00 app[web.32]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.210681+00:00 app[web.32]: Executando script de reconstrução...
+2025-04-22T03:15:21.211048+00:00 app[web.32]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.211058+00:00 app[web.32]: Iniciando o servidor...
+2025-04-22T03:15:21.211085+00:00 app[web.32]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.235102+00:00 app[web.32]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.235238+00:00 app[web.32]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.235302+00:00 app[web.32]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.243278+00:00 app[web.32]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.243831+00:00 app[web.32]: Data/Hora: 2025-04-22T03:15:21.243Z
+2025-04-22T03:15:21.243837+00:00 app[web.32]: Diretório raiz: /app
+2025-04-22T03:15:21.243839+00:00 app[web.32]: 
+2025-04-22T03:15:21.243839+00:00 app[web.32]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.243839+00:00 app[web.32]: Copiando index.html do cliente...
+2025-04-22T03:15:21.243992+00:00 app[web.32]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.250275+00:00 app[web.32]: 
+2025-04-22T03:15:21.250276+00:00 app[web.32]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.250398+00:00 app[web.32]: Navegando para o diretório client/...
+2025-04-22T03:15:21.250432+00:00 app[web.32]: Tentando build do frontend...
+2025-04-22T03:15:21.250709+00:00 app[web.32]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.331596+00:00 app[web.32]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.205630+00:00 app[web.3]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.206036+00:00 app[web.3]: Data/Hora: 2025-04-22T03:15:21.205Z
+2025-04-22T03:15:21.206062+00:00 app[web.3]: Versão Node: v22.14.0
+2025-04-22T03:15:21.206136+00:00 app[web.3]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.206156+00:00 app[web.3]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.206257+00:00 app[web.3]: Criando diretório public...
+2025-04-22T03:15:21.206468+00:00 app[web.3]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.208104+00:00 app[web.3]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.209001+00:00 app[web.3]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.209244+00:00 app[web.3]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.209305+00:00 app[web.3]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.209320+00:00 app[web.3]: Iniciando o servidor...
+2025-04-22T03:15:21.209337+00:00 app[web.3]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.235271+00:00 app[web.3]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.235542+00:00 app[web.3]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.235680+00:00 app[web.3]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.507127+00:00 heroku[web.41]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.258374+00:00 app[web.7]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.258778+00:00 app[web.7]: Data/Hora: 2025-04-22T03:15:21.258Z
+2025-04-22T03:15:21.258782+00:00 app[web.7]: Versão Node: v22.14.0
+2025-04-22T03:15:21.258847+00:00 app[web.7]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.258863+00:00 app[web.7]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.258956+00:00 app[web.7]: Criando diretório public...
+2025-04-22T03:15:21.259130+00:00 app[web.7]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.260735+00:00 app[web.7]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.261590+00:00 app[web.7]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.261905+00:00 app[web.7]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.262023+00:00 app[web.7]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.262042+00:00 app[web.7]: Iniciando o servidor...
+2025-04-22T03:15:21.262065+00:00 app[web.7]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.286974+00:00 app[web.7]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.287277+00:00 app[web.7]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.287741+00:00 app[web.7]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.259625+00:00 app[web.44]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.260018+00:00 app[web.44]: Data/Hora: 2025-04-22T03:15:21.259Z
+2025-04-22T03:15:21.260050+00:00 app[web.44]: Versão Node: v22.14.0
+2025-04-22T03:15:21.260118+00:00 app[web.44]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.260137+00:00 app[web.44]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.260232+00:00 app[web.44]: Criando diretório public...
+2025-04-22T03:15:21.260418+00:00 app[web.44]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.262058+00:00 app[web.44]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.263041+00:00 app[web.44]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.263388+00:00 app[web.44]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.263463+00:00 app[web.44]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.263494+00:00 app[web.44]: Iniciando o servidor...
+2025-04-22T03:15:21.263532+00:00 app[web.44]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.289657+00:00 app[web.44]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.289990+00:00 app[web.44]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.290120+00:00 app[web.44]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.264283+00:00 app[web.35]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.264694+00:00 app[web.35]: Data/Hora: 2025-04-22T03:15:21.264Z
+2025-04-22T03:15:21.264728+00:00 app[web.35]: Versão Node: v22.14.0
+2025-04-22T03:15:21.264807+00:00 app[web.35]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.264826+00:00 app[web.35]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.264926+00:00 app[web.35]: Criando diretório public...
+2025-04-22T03:15:21.265113+00:00 app[web.35]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.266873+00:00 app[web.35]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.267779+00:00 app[web.35]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.268506+00:00 app[web.35]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.268507+00:00 app[web.35]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.268508+00:00 app[web.35]: Iniciando o servidor...
+2025-04-22T03:15:21.268508+00:00 app[web.35]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.298698+00:00 app[web.35]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.299114+00:00 app[web.35]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.299240+00:00 app[web.35]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.296268+00:00 app[web.18]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.296631+00:00 app[web.18]: Data/Hora: 2025-04-22T03:15:21.296Z
+2025-04-22T03:15:21.296661+00:00 app[web.18]: Versão Node: v22.14.0
+2025-04-22T03:15:21.296731+00:00 app[web.18]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.296751+00:00 app[web.18]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.296842+00:00 app[web.18]: Criando diretório public...
+2025-04-22T03:15:21.297014+00:00 app[web.18]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.298602+00:00 app[web.18]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.299406+00:00 app[web.18]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.299655+00:00 app[web.18]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.299697+00:00 app[web.18]: Executando script de reconstrução...
+2025-04-22T03:15:21.300673+00:00 app[web.18]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.300677+00:00 app[web.18]: Iniciando o servidor...
+2025-04-22T03:15:21.300695+00:00 app[web.18]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.325040+00:00 app[web.18]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.325299+00:00 app[web.18]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.325427+00:00 app[web.18]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.329207+00:00 app[web.18]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.329270+00:00 app[web.18]: Data/Hora: 2025-04-22T03:15:21.329Z
+2025-04-22T03:15:21.329304+00:00 app[web.18]: Diretório raiz: /app
+2025-04-22T03:15:21.329349+00:00 app[web.18]: 
+2025-04-22T03:15:21.329349+00:00 app[web.18]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.329413+00:00 app[web.18]: Copiando index.html do cliente...
+2025-04-22T03:15:21.329723+00:00 app[web.18]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.338001+00:00 app[web.18]: 
+2025-04-22T03:15:21.338002+00:00 app[web.18]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.338184+00:00 app[web.18]: Navegando para o diretório client/...
+2025-04-22T03:15:21.338234+00:00 app[web.18]: Tentando build do frontend...
+2025-04-22T03:15:21.338657+00:00 app[web.18]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.426488+00:00 app[web.18]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.555797+00:00 heroku[web.42]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.319988+00:00 app[web.16]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.320377+00:00 app[web.16]: Data/Hora: 2025-04-22T03:15:21.320Z
+2025-04-22T03:15:21.320409+00:00 app[web.16]: Versão Node: v22.14.0
+2025-04-22T03:15:21.320482+00:00 app[web.16]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.320506+00:00 app[web.16]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.320610+00:00 app[web.16]: Criando diretório public...
+2025-04-22T03:15:21.320807+00:00 app[web.16]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.322431+00:00 app[web.16]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.323304+00:00 app[web.16]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.324037+00:00 app[web.16]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.324038+00:00 app[web.16]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.324038+00:00 app[web.16]: Iniciando o servidor...
+2025-04-22T03:15:21.324044+00:00 app[web.16]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.353799+00:00 app[web.16]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.354110+00:00 app[web.16]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.354262+00:00 app[web.16]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.321900+00:00 app[web.27]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.321941+00:00 app[web.27]: Data/Hora: 2025-04-22T03:15:21.321Z
+2025-04-22T03:15:21.321947+00:00 app[web.27]: Versão Node: v22.14.0
+2025-04-22T03:15:21.321949+00:00 app[web.27]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.321972+00:00 app[web.27]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.322109+00:00 app[web.27]: Criando diretório public...
+2025-04-22T03:15:21.322274+00:00 app[web.27]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.323741+00:00 app[web.27]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.324686+00:00 app[web.27]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.324750+00:00 app[web.27]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.324790+00:00 app[web.27]: Executando script de reconstrução...
+2025-04-22T03:15:21.325524+00:00 app[web.27]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.325537+00:00 app[web.27]: Iniciando o servidor...
+2025-04-22T03:15:21.325557+00:00 app[web.27]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.351829+00:00 app[web.27]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.352090+00:00 app[web.27]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.352197+00:00 app[web.27]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.353293+00:00 app[web.27]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.353661+00:00 app[web.27]: Data/Hora: 2025-04-22T03:15:21.353Z
+2025-04-22T03:15:21.353683+00:00 app[web.27]: Diretório raiz: /app
+2025-04-22T03:15:21.353726+00:00 app[web.27]: 
+2025-04-22T03:15:21.353726+00:00 app[web.27]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.353771+00:00 app[web.27]: Copiando index.html do cliente...
+2025-04-22T03:15:21.353998+00:00 app[web.27]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.361806+00:00 app[web.27]: 
+2025-04-22T03:15:21.361807+00:00 app[web.27]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.361922+00:00 app[web.27]: Navegando para o diretório client/...
+2025-04-22T03:15:21.361947+00:00 app[web.27]: Tentando build do frontend...
+2025-04-22T03:15:21.362297+00:00 app[web.27]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.447557+00:00 app[web.27]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.326900+00:00 app[web.14]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.327266+00:00 app[web.14]: Data/Hora: 2025-04-22T03:15:21.327Z
+2025-04-22T03:15:21.327298+00:00 app[web.14]: Versão Node: v22.14.0
+2025-04-22T03:15:21.327366+00:00 app[web.14]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.327385+00:00 app[web.14]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.327479+00:00 app[web.14]: Criando diretório public...
+2025-04-22T03:15:21.327665+00:00 app[web.14]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.329266+00:00 app[web.14]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.330113+00:00 app[web.14]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.330340+00:00 app[web.14]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.330387+00:00 app[web.14]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.330407+00:00 app[web.14]: Iniciando o servidor...
+2025-04-22T03:15:21.330428+00:00 app[web.14]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.355688+00:00 app[web.14]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.355932+00:00 app[web.14]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.356067+00:00 app[web.14]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.382837+00:00 app[web.6]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.383408+00:00 app[web.6]: Data/Hora: 2025-04-22T03:15:21.383Z
+2025-04-22T03:15:21.383450+00:00 app[web.6]: Versão Node: v22.14.0
+2025-04-22T03:15:21.383563+00:00 app[web.6]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.383592+00:00 app[web.6]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.383736+00:00 app[web.6]: Criando diretório public...
+2025-04-22T03:15:21.383990+00:00 app[web.6]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.386305+00:00 app[web.6]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.388480+00:00 app[web.6]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.388482+00:00 app[web.6]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.388482+00:00 app[web.6]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.388482+00:00 app[web.6]: Iniciando o servidor...
+2025-04-22T03:15:21.388483+00:00 app[web.6]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.419702+00:00 app[web.6]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.420305+00:00 app[web.6]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.420313+00:00 app[web.6]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.386404+00:00 app[web.24]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.386753+00:00 app[web.24]: Data/Hora: 2025-04-22T03:15:21.386Z
+2025-04-22T03:15:21.386783+00:00 app[web.24]: Versão Node: v22.14.0
+2025-04-22T03:15:21.386855+00:00 app[web.24]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.386874+00:00 app[web.24]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.386967+00:00 app[web.24]: Criando diretório public...
+2025-04-22T03:15:21.387143+00:00 app[web.24]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.388782+00:00 app[web.24]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.389626+00:00 app[web.24]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.389854+00:00 app[web.24]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.390294+00:00 app[web.24]: Executando script de reconstrução...
+2025-04-22T03:15:21.391074+00:00 app[web.24]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.391074+00:00 app[web.24]: Iniciando o servidor...
+2025-04-22T03:15:21.391075+00:00 app[web.24]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.418546+00:00 app[web.24]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.418547+00:00 app[web.24]: Data/Hora: 2025-04-22T03:15:21.417Z
+2025-04-22T03:15:21.418548+00:00 app[web.24]: Diretório raiz: /app
+2025-04-22T03:15:21.418549+00:00 app[web.24]: 
+2025-04-22T03:15:21.418549+00:00 app[web.24]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.418550+00:00 app[web.24]: Copiando index.html do cliente...
+2025-04-22T03:15:21.418550+00:00 app[web.24]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.424965+00:00 app[web.24]: 
+2025-04-22T03:15:21.424967+00:00 app[web.24]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.424967+00:00 app[web.24]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.424971+00:00 app[web.24]: Navegando para o diretório client/...
+2025-04-22T03:15:21.424994+00:00 app[web.24]: Tentando build do frontend...
+2025-04-22T03:15:21.425224+00:00 app[web.24]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.425336+00:00 app[web.24]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.425365+00:00 app[web.24]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.518715+00:00 app[web.24]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.382157+00:00 app[web.45]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.382604+00:00 app[web.45]: Data/Hora: 2025-04-22T03:15:21.382Z
+2025-04-22T03:15:21.382656+00:00 app[web.45]: Versão Node: v22.14.0
+2025-04-22T03:15:21.382739+00:00 app[web.45]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.382761+00:00 app[web.45]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.382862+00:00 app[web.45]: Criando diretório public...
+2025-04-22T03:15:21.383069+00:00 app[web.45]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.384791+00:00 app[web.45]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.385819+00:00 app[web.45]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.386146+00:00 app[web.45]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.386203+00:00 app[web.45]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.386233+00:00 app[web.45]: Iniciando o servidor...
+2025-04-22T03:15:21.386257+00:00 app[web.45]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.413311+00:00 app[web.45]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.413575+00:00 app[web.45]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.413899+00:00 app[web.45]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.390890+00:00 app[web.37]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.391278+00:00 app[web.37]: Data/Hora: 2025-04-22T03:15:21.391Z
+2025-04-22T03:15:21.391289+00:00 app[web.37]: Versão Node: v22.14.0
+2025-04-22T03:15:21.391359+00:00 app[web.37]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.391376+00:00 app[web.37]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.391468+00:00 app[web.37]: Criando diretório public...
+2025-04-22T03:15:21.391637+00:00 app[web.37]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.393249+00:00 app[web.37]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.394173+00:00 app[web.37]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.394494+00:00 app[web.37]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.394568+00:00 app[web.37]: Executando script de reconstrução...
+2025-04-22T03:15:21.395449+00:00 app[web.37]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.395465+00:00 app[web.37]: Iniciando o servidor...
+2025-04-22T03:15:21.395489+00:00 app[web.37]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.419815+00:00 app[web.37]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.420069+00:00 app[web.37]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.420186+00:00 app[web.37]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.420981+00:00 app[web.37]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.421382+00:00 app[web.37]: Data/Hora: 2025-04-22T03:15:21.421Z
+2025-04-22T03:15:21.421409+00:00 app[web.37]: Diretório raiz: /app
+2025-04-22T03:15:21.421453+00:00 app[web.37]: 
+2025-04-22T03:15:21.421454+00:00 app[web.37]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.421499+00:00 app[web.37]: Copiando index.html do cliente...
+2025-04-22T03:15:21.421725+00:00 app[web.37]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.430568+00:00 app[web.37]: 
+2025-04-22T03:15:21.430569+00:00 app[web.37]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.430705+00:00 app[web.37]: Navegando para o diretório client/...
+2025-04-22T03:15:21.430739+00:00 app[web.37]: Tentando build do frontend...
+2025-04-22T03:15:21.431062+00:00 app[web.37]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.518781+00:00 app[web.37]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.404126+00:00 app[web.49]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.404626+00:00 app[web.49]: Data/Hora: 2025-04-22T03:15:21.404Z
+2025-04-22T03:15:21.404673+00:00 app[web.49]: Versão Node: v22.14.0
+2025-04-22T03:15:21.404773+00:00 app[web.49]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.404803+00:00 app[web.49]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.404944+00:00 app[web.49]: Criando diretório public...
+2025-04-22T03:15:21.405219+00:00 app[web.49]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.407173+00:00 app[web.49]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.408051+00:00 app[web.49]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.408378+00:00 app[web.49]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.408442+00:00 app[web.49]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.408467+00:00 app[web.49]: Iniciando o servidor...
+2025-04-22T03:15:21.408492+00:00 app[web.49]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.433840+00:00 app[web.49]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.434109+00:00 app[web.49]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.434226+00:00 app[web.49]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.433005+00:00 app[web.47]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.433384+00:00 app[web.47]: Data/Hora: 2025-04-22T03:15:21.433Z
+2025-04-22T03:15:21.433413+00:00 app[web.47]: Versão Node: v22.14.0
+2025-04-22T03:15:21.433492+00:00 app[web.47]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.433514+00:00 app[web.47]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.433614+00:00 app[web.47]: Criando diretório public...
+2025-04-22T03:15:21.433802+00:00 app[web.47]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.435537+00:00 app[web.47]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.436466+00:00 app[web.47]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.436691+00:00 app[web.47]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.436743+00:00 app[web.47]: Executando script de reconstrução...
+2025-04-22T03:15:21.437432+00:00 app[web.47]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.437457+00:00 app[web.47]: Iniciando o servidor...
+2025-04-22T03:15:21.437479+00:00 app[web.47]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.462335+00:00 app[web.47]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.462568+00:00 app[web.47]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.462682+00:00 app[web.47]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.462949+00:00 app[web.47]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.463451+00:00 app[web.47]: Data/Hora: 2025-04-22T03:15:21.463Z
+2025-04-22T03:15:21.463476+00:00 app[web.47]: Diretório raiz: /app
+2025-04-22T03:15:21.463522+00:00 app[web.47]: 
+2025-04-22T03:15:21.463522+00:00 app[web.47]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.463591+00:00 app[web.47]: Copiando index.html do cliente...
+2025-04-22T03:15:21.463838+00:00 app[web.47]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.471335+00:00 app[web.47]: 
+2025-04-22T03:15:21.471336+00:00 app[web.47]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.471505+00:00 app[web.47]: Navegando para o diretório client/...
+2025-04-22T03:15:21.471538+00:00 app[web.47]: Tentando build do frontend...
+2025-04-22T03:15:21.471841+00:00 app[web.47]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.558829+00:00 app[web.47]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.695349+00:00 heroku[web.25]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.443289+00:00 app[web.4]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.444677+00:00 app[web.4]: Data/Hora: 2025-04-22T03:15:21.443Z
+2025-04-22T03:15:21.444680+00:00 app[web.4]: Versão Node: v22.14.0
+2025-04-22T03:15:21.444682+00:00 app[web.4]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.444682+00:00 app[web.4]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.444978+00:00 app[web.4]: Criando diretório public...
+2025-04-22T03:15:21.445711+00:00 app[web.4]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.449075+00:00 app[web.4]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.451861+00:00 app[web.4]: ✅ Diretório public configurado com 2 arquivos.
+2025-04-22T03:15:21.451862+00:00 app[web.4]:   index.html: encontrado
+2025-04-22T03:15:21.451862+00:00 app[web.4]:   favicon.ico: NÃO ENCONTRADO
+2025-04-22T03:15:21.451862+00:00 app[web.4]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.451863+00:00 app[web.4]: Iniciando o servidor...
+2025-04-22T03:15:21.451871+00:00 app[web.4]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.481699+00:00 app[web.4]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.482081+00:00 app[web.4]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.482206+00:00 app[web.4]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.450905+00:00 app[web.31]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.451304+00:00 app[web.31]: Data/Hora: 2025-04-22T03:15:21.451Z
+2025-04-22T03:15:21.451335+00:00 app[web.31]: Versão Node: v22.14.0
+2025-04-22T03:15:21.451414+00:00 app[web.31]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.451432+00:00 app[web.31]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.451541+00:00 app[web.31]: Criando diretório public...
+2025-04-22T03:15:21.451729+00:00 app[web.31]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.453626+00:00 app[web.31]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.455026+00:00 app[web.31]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.455026+00:00 app[web.31]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.455053+00:00 app[web.31]: Executando script de reconstrução...
+2025-04-22T03:15:21.456281+00:00 app[web.31]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.456299+00:00 app[web.31]: Iniciando o servidor...
+2025-04-22T03:15:21.456324+00:00 app[web.31]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.491337+00:00 app[web.31]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.491677+00:00 app[web.31]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.491768+00:00 app[web.31]: Data/Hora: 2025-04-22T03:15:21.491Z
+2025-04-22T03:15:21.491796+00:00 app[web.31]: Diretório raiz: /app
+2025-04-22T03:15:21.491859+00:00 app[web.31]: 
+2025-04-22T03:15:21.491859+00:00 app[web.31]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.491899+00:00 app[web.31]: Copiando index.html do cliente...
+2025-04-22T03:15:21.492003+00:00 app[web.31]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.492165+00:00 app[web.31]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.492167+00:00 app[web.31]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.502281+00:00 app[web.31]: 
+2025-04-22T03:15:21.502283+00:00 app[web.31]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.502413+00:00 app[web.31]: Navegando para o diretório client/...
+2025-04-22T03:15:21.502450+00:00 app[web.31]: Tentando build do frontend...
+2025-04-22T03:15:21.502759+00:00 app[web.31]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.602465+00:00 app[web.31]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.726290+00:00 heroku[web.51]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.482370+00:00 app[web.15]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.482734+00:00 app[web.15]: Data/Hora: 2025-04-22T03:15:21.482Z
+2025-04-22T03:15:21.482763+00:00 app[web.15]: Versão Node: v22.14.0
+2025-04-22T03:15:21.482830+00:00 app[web.15]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.482851+00:00 app[web.15]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.482960+00:00 app[web.15]: Criando diretório public...
+2025-04-22T03:15:21.483149+00:00 app[web.15]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.484878+00:00 app[web.15]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.485725+00:00 app[web.15]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.486001+00:00 app[web.15]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.486048+00:00 app[web.15]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.486068+00:00 app[web.15]: Iniciando o servidor...
+2025-04-22T03:15:21.486082+00:00 app[web.15]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.511269+00:00 app[web.15]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.511516+00:00 app[web.15]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.511629+00:00 app[web.15]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.541857+00:00 app[web.36]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.542221+00:00 app[web.36]: Data/Hora: 2025-04-22T03:15:21.541Z
+2025-04-22T03:15:21.542241+00:00 app[web.36]: Versão Node: v22.14.0
+2025-04-22T03:15:21.542307+00:00 app[web.36]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.542325+00:00 app[web.36]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.542421+00:00 app[web.36]: Criando diretório public...
+2025-04-22T03:15:21.542585+00:00 app[web.36]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.544153+00:00 app[web.36]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.545686+00:00 app[web.36]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.545687+00:00 app[web.36]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.545687+00:00 app[web.36]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.545688+00:00 app[web.36]: Iniciando o servidor...
+2025-04-22T03:15:21.545694+00:00 app[web.36]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.580085+00:00 app[web.36]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.580430+00:00 app[web.36]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.580602+00:00 app[web.36]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.749571+00:00 heroku[web.20]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.511361+00:00 app[web.23]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.511864+00:00 app[web.23]: Data/Hora: 2025-04-22T03:15:21.511Z
+2025-04-22T03:15:21.511904+00:00 app[web.23]: Versão Node: v22.14.0
+2025-04-22T03:15:21.511994+00:00 app[web.23]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.512023+00:00 app[web.23]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.512151+00:00 app[web.23]: Criando diretório public...
+2025-04-22T03:15:21.512360+00:00 app[web.23]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.514140+00:00 app[web.23]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.515081+00:00 app[web.23]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.515299+00:00 app[web.23]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.515398+00:00 app[web.23]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.515399+00:00 app[web.23]: Iniciando o servidor...
+2025-04-22T03:15:21.515400+00:00 app[web.23]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.549274+00:00 app[web.23]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.549502+00:00 app[web.23]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.549616+00:00 app[web.23]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.535030+00:00 app[web.11]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.535516+00:00 app[web.11]: Data/Hora: 2025-04-22T03:15:21.535Z
+2025-04-22T03:15:21.535553+00:00 app[web.11]: Versão Node: v22.14.0
+2025-04-22T03:15:21.535633+00:00 app[web.11]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.535660+00:00 app[web.11]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.535874+00:00 app[web.11]: Criando diretório public...
+2025-04-22T03:15:21.536111+00:00 app[web.11]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.538091+00:00 app[web.11]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.539065+00:00 app[web.11]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.539393+00:00 app[web.11]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.539456+00:00 app[web.11]: Executando script de reconstrução...
+2025-04-22T03:15:21.540712+00:00 app[web.11]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.540713+00:00 app[web.11]: Iniciando o servidor...
+2025-04-22T03:15:21.540719+00:00 app[web.11]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.565529+00:00 app[web.11]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.565904+00:00 app[web.11]: Data/Hora: 2025-04-22T03:15:21.565Z
+2025-04-22T03:15:21.565939+00:00 app[web.11]: Diretório raiz: /app
+2025-04-22T03:15:21.566006+00:00 app[web.11]: 
+2025-04-22T03:15:21.566006+00:00 app[web.11]: 📦 Método 1: Copiar arquivos do cliente diretamente
+2025-04-22T03:15:21.566073+00:00 app[web.11]: Copiando index.html do cliente...
+2025-04-22T03:15:21.566354+00:00 app[web.11]: Copiando diretório src/ do cliente...
+2025-04-22T03:15:21.573408+00:00 app[web.11]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.573593+00:00 app[web.11]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.573711+00:00 app[web.11]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.574510+00:00 app[web.11]: 
+2025-04-22T03:15:21.574510+00:00 app[web.11]: 📦 Método 2: Construir arquivos estáticos via script inline
+2025-04-22T03:15:21.574669+00:00 app[web.11]: Navegando para o diretório client/...
+2025-04-22T03:15:21.574716+00:00 app[web.11]: Tentando build do frontend...
+2025-04-22T03:15:21.575006+00:00 app[web.11]: Executando: npx vite build --config temp-vite.config.js --outDir ../public
+2025-04-22T03:15:21.668643+00:00 app[web.11]: npm warn config production Use `--omit=dev` instead.
+2025-04-22T03:15:21.792259+00:00 heroku[web.5]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.798389+00:00 heroku[web.9]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:15:21.548302+00:00 app[web.46]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:15:21.548745+00:00 app[web.46]: Data/Hora: 2025-04-22T03:15:21.548Z
+2025-04-22T03:15:21.548788+00:00 app[web.46]: Versão Node: v22.14.0
+2025-04-22T03:15:21.548889+00:00 app[web.46]: Diretório public não encontrado ou está sem index.html
+2025-04-22T03:15:21.548918+00:00 app[web.46]: Tentando copiar arquivos estáticos...
+2025-04-22T03:15:21.549045+00:00 app[web.46]: Criando diretório public...
+2025-04-22T03:15:21.549277+00:00 app[web.46]: Encontrado index.html em client/, copiando para public...
+2025-04-22T03:15:21.551143+00:00 app[web.46]: favicon.ico não encontrado. Tentando criar...
+2025-04-22T03:15:21.552615+00:00 app[web.46]: ⚠️ Diretório public existe, mas não contém index.html.
+2025-04-22T03:15:21.552616+00:00 app[web.46]:   A interface web pode não funcionar corretamente.
+2025-04-22T03:15:21.552617+00:00 app[web.46]: Executando script de reconstrução...
+2025-04-22T03:15:21.553401+00:00 app[web.46]: Ambiente Heroku detectado, definindo variável HEROKU=true
+2025-04-22T03:15:21.553404+00:00 app[web.46]: Iniciando o servidor...
+2025-04-22T03:15:21.553421+00:00 app[web.46]: Comando: node --experimental-specifier-resolution=node --no-warnings /app/dist/index.js
+2025-04-22T03:15:21.580286+00:00 app[web.46]: 🔍 Verificando favicon.ico...
+2025-04-22T03:15:21.580538+00:00 app[web.46]: favicon.ico não encontrado. Criando favicon básico...
+2025-04-22T03:15:21.580665+00:00 app[web.46]: ✅ favicon.ico criado com sucesso.
+2025-04-22T03:15:21.589747+00:00 app[web.46]: 🔨 Reconstruindo arquivos estáticos para Heroku
+2025-04-22T03:15:21.590390+00:00 app[web.46]: Data/Hora: 2025-04-22T03:15:21.590Z
+2025-04-22T03:15:21.590420+00:00 app[web.46]: Diretório raiz: /app
+2025-04-22T03:15:21.590474+00:00 app[web.46]: 
