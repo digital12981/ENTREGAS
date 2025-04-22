@@ -10,10 +10,14 @@ Este projeto pode ser implantado de duas maneiras diferentes:
 
 Para implantar o aplicativo completo no Heroku seguindo nossa nova configuração otimizada:
 
-1. Já configuramos o Procfile principal para usar nosso servidor especializado:
+1. Já configuramos o Procfile principal para usar nosso servidor simplificado:
    ```
-   web: node heroku-server.js
+   web: node heroku-simple-server.js
    ```
+   
+   > Nota: Temos dois servidores disponíveis:
+   > - `heroku-simple-server.js`: Versão simples, mais robusta e menos propensa a erros de sintaxe
+   > - `heroku-server.js`: Versão avançada com mais recursos de diagnóstico
 
 2. Certifique-se de que você tem o buildpack Node.js configurado:
    ```bash
@@ -63,34 +67,55 @@ Esta abordagem é uma alternativa caso o deploy unificado não funcione:
 
 Se encontrar problemas com a aplicação no Heroku:
 
-### Página em branco após deploy
+### Página em branco ou erro no deploy
 
 1. Verifique os logs do Heroku: 
    ```bash
    heroku logs --tail
    ```
 
-2. Nosso novo servidor Heroku (heroku-server.js) adiciona logs detalhados que ajudam a identificar problemas:
-   - Registra todos os paths de assets solicitados
-   - Detalha quando ocorre redirecionamento
-   - Mostra problemas de carregamento de recursos
+2. Se houver erro de sintaxe, use nosso servidor simplificado:
+   ```bash
+   # Edite Procfile para usar a versão simplificada
+   echo "web: node heroku-simple-server.js" > Procfile
+   git add Procfile
+   git commit -m "Use simplified server"
+   git push heroku main
+   ```
 
-3. O servidor foi configurado para automaticamente:
+3. Nossos servidores estão configurados para automaticamente:
    - Detectar e corrigir caminhos absolutos para relativos
    - Adicionar um indicador visual durante o carregamento
    - Fazer fallback para caminhos alternativos se o original falhar
    - Injetar CSS de emergência para garantir que algo seja exibido
 
-4. Se mesmo assim não funcionar, tente:
+4. Se receber erros relacionados a template literals ou sintaxe, o servidor simplificado resolve:
+   - Ele usa uma abordagem mais simples com menos ES6 avançado
+   - Evita template literals aninhados que podem causar problemas de parse
+
+5. Após qualquer alteração, reinicie a aplicação:
    ```bash
    heroku restart
    ```
 
-5. Limpe o cache do navegador ou teste com um navegador anônimo
+6. Limpe o cache do navegador ou teste com um navegador anônimo
+
+### Problemas comuns e soluções
+
+#### Erro: SyntaxError: missing ) after argument list
+Este erro acontece por causa de template literals aninhados no código. Use o `heroku-simple-server.js` que evita esse problema.
+
+#### Erro: Cannot find module
+Verifique se todas as dependências estão no `package.json` e que `npm install` foi executado durante o build do Heroku.
+
+#### Página branca (sem erro no console)
+Provavelmente um problema com caminhos de assets. Nossos servidores corrigem isso.
 
 ### Alternativa de última instância
 
-Se o servidor heroku-server.js não resolver, use a abordagem alternativa de hospedagem separada (frontend no Netlify/Vercel e backend no Heroku).
+Se você continuar com problemas, considere a abordagem de separar frontend e backend:
+1. Frontend no Netlify/Vercel (já temos arquivos de configuração prontos)
+2. Backend no Heroku (use o `api-server.js` específico para esse caso)
 
 ## 📁 Estrutura do Projeto
 
@@ -98,9 +123,10 @@ Se o servidor heroku-server.js não resolver, use a abordagem alternativa de hos
 - `/server`: API backend com Express
 - `/shared`: Esquemas e tipos compartilhados
 - `/dist`: Arquivos compilados para produção 
-- `/heroku-server.js`: Servidor otimizado para Heroku
-- `/static-server.js`: Servidor estático alternativo
-- `/api-server.js`: Servidor apenas para API
+- `/heroku-simple-server.js`: Servidor simplificado e robusto para Heroku
+- `/heroku-server.js`: Servidor avançado com mais recursos (pode ter problemas de sintaxe)
+- `/static-server.js`: Servidor estático alternativo para testes
+- `/api-server.js`: Servidor apenas para API (usado no deploy separado)
 
 ## 🛠️ Tecnologias
 

@@ -292,7 +292,7 @@ app.get('/', (req, res) => {
     html = html.replace('</head>', inlineCSS + '</head>');
     
     // Adicionar script para detectar e corrigir falhas de carregamento + diagnóstico
-    html = html.replace('</body>', `
+    const bodyScript = `
       <div id="loading-status" class="loading">Carregando conteúdo...</div>
       
       <script>
@@ -331,12 +331,12 @@ app.get('/', (req, res) => {
             script.crossOrigin = true;
             script.src = url;
             script.onload = () => {
-              console.log(`Successfully loaded script: ${url}`);
+              console.log('Successfully loaded script: ' + url);
               loadedResources++;
               resolve();
             };
             script.onerror = () => {
-              console.error(`Failed to load script: ${url}`);
+              console.error('Failed to load script: ' + url);
               // Se falhar, tenta alternativas
               fetch(url)
                 .then(response => {
@@ -354,7 +354,7 @@ app.get('/', (req, res) => {
                     )).then(results => {
                       const success = results.find(r => r.ok);
                       if (success) {
-                        console.log(`Found working alternative: ${success.url}`);
+                        console.log('Found working alternative: ' + success.url);
                         return fetch(success.url);
                       } else {
                         throw new Error('All variations failed');
@@ -365,7 +365,7 @@ app.get('/', (req, res) => {
                 })
                 .then(response => response.text())
                 .then(code => {
-                  console.log(`Injecting script content directly`);
+                  console.log('Injecting script content directly');
                   const inlineScript = document.createElement('script');
                   inlineScript.type = 'module';
                   inlineScript.textContent = code;
@@ -374,7 +374,7 @@ app.get('/', (req, res) => {
                   resolve();
                 })
                 .catch(err => {
-                  console.error(`Could not fetch script: ${err.message}`);
+                  console.error('Could not fetch script: ' + err.message);
                   failedResources++;
                   resolve(); // resolve anyway to continue
                 });
@@ -399,8 +399,8 @@ app.get('/', (req, res) => {
                 // Remover o script que falhou
                 e.target.remove();
                 // Injetar com nosso método mais robusto
-                injectScript(src).then(() => {
-                  console.log(`Script recovery attempt complete for ${src}`);
+                injectScript(src).then(function() {
+                  console.log('Script recovery attempt complete for ' + src);
                 });
                 return;
               }
@@ -437,7 +437,7 @@ app.get('/', (req, res) => {
             console.log('All resources loaded or handled');
             
             // Remover o status e mostrar o conteúdo
-            setTimeout(() => {
+            setTimeout(function() {
               if (rootEl) rootEl.style.display = '';
               statusEl.style.display = 'none';
             }, 500);
@@ -445,28 +445,30 @@ app.get('/', (req, res) => {
         }
         
         // Monitorar carregamento de recursos
-        document.querySelectorAll('script[src]').forEach(script => {
+        document.querySelectorAll('script[src]').forEach(function(script) {
           script.onload = resourceLoaded;
-          script.onerror = () => {
+          script.onerror = function() {
             console.error('Script failed to load:', script.src);
           };
         });
         
-        document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+        document.querySelectorAll('link[rel="stylesheet"]').forEach(function(link) {
           link.onload = resourceLoaded;
-          link.onerror = () => {
+          link.onerror = function() {
             console.error('Stylesheet failed to load:', link.href);
           };
         });
         
         // Fallback para casos onde não conseguimos detectar o carregamento
-        setTimeout(() => {
+        setTimeout(function() {
           console.log('Timeout fallback triggered');
           if (rootEl) rootEl.style.display = '';
           statusEl.style.display = 'none';
         }, 5000);
       </script>
-    </body>`);
+    </body>`;
+    
+    html = html.replace('</body>', bodyScript);
     
     // Salvar versão modificada para debug
     fs.writeFileSync(path.join(debugDirPath, 'modified.html'), html);
