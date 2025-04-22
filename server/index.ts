@@ -2,6 +2,22 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Em produção, importar os utilitários de correção de caminhos
+if (process.env.NODE_ENV === 'production') {
+  try {
+    // Usar require dinâmico ou importação condicional para evitar erros
+    // em ambiente de desenvolvimento
+    import('./public-path-fix.js').then(module => {
+      console.log('[server] Aplicando correções de caminho para ambiente de produção...');
+      module.ensurePublicDirectory();
+    }).catch(err => {
+      console.warn('[server] Aviso: Não foi possível carregar o módulo de correção de caminhos:', err.message);
+    });
+  } catch (err) {
+    console.warn('[server] Aviso: Erro ao importar módulo de correção:', err);
+  }
+}
+
 const app = express();
 // Configuração para utilizar UTF-8 na aplicação
 app.use(express.json({ limit: '10mb' }));
@@ -67,7 +83,20 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // Tentar usar módulo alternativo de servir estáticos
+    try {
+      import('./alternative-static.js').then(module => {
+        log('Usando módulo alternativo para servir arquivos estáticos');
+        module.setupAlternativeStatic(app);
+      }).catch(err => {
+        log(`Erro ao carregar módulo alternativo: ${err.message}`);
+        // Fallback para o módulo padrão
+        serveStatic(app);
+      });
+    } catch (err) {
+      log(`Módulo alternativo não disponível: ${err}`);
+      serveStatic(app);
+    }
   }
 
   // Suporte para porta configurável (Heroku atribui a porta via PORT)

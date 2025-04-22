@@ -5,72 +5,158 @@
  * em modo de produção e garantir que o diretório public exista e contenha
  * os arquivos estáticos necessários.
  */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 
-// Obter o diretório atual para ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/**
+ * Função para mensagens de log
+ */
+function log(message, type = 'info') {
+  const timestamp = new Date().toLocaleTimeString();
+  const prefix = `[${timestamp}] [public-fix]`;
+  
+  if (type === 'error') {
+    console.error(`${prefix} ERROR: ${message}`);
+  } else if (type === 'warn') {
+    console.warn(`${prefix} WARN: ${message}`);
+  } else {
+    console.log(`${prefix} ${message}`);
+  }
+}
+
+/**
+ * Executa um comando e retorna o resultado
+ */
+function exec(command) {
+  log(`Executando: ${command}`);
+  const result = spawnSync(command, { shell: true, stdio: 'inherit' });
+  return result.status === 0;
+}
+
+/**
+ * Função para garantir que o diretório public existe e contém
+ * os arquivos necessários
+ */
 export function ensurePublicDirectory() {
-  console.log('[PublicPathFix] Verificando diretório público...');
+  // Apenas executar em produção
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+  
+  log('Verificando diretório public...');
   
   // Caminhos importantes
   const rootDir = path.resolve(__dirname, '..');
-  const publicDir = path.resolve(rootDir, 'public');
-  const distDir = path.resolve(rootDir, 'dist');
-  const distClientDir = path.resolve(distDir, 'client');
+  const publicDir = path.join(rootDir, 'public');
+  const distDir = path.join(rootDir, 'dist');
+  const distClientDir = path.join(distDir, 'client');
   
-  // Verificar se o diretório public existe
+  // Verificar se public existe
   if (!fs.existsSync(publicDir)) {
-    console.log('[PublicPathFix] Diretório public não encontrado, criando...');
+    log('Diretório public não encontrado. Criando...', 'warn');
     fs.mkdirSync(publicDir, { recursive: true });
   }
   
-  // Verificar se já temos arquivos no diretório public
-  const publicFiles = fs.existsSync(publicDir) ? fs.readdirSync(publicDir) : [];
-  
-  // Se o public estiver vazio, tentar copiar arquivos estáticos de dist/client ou dist
-  if (publicFiles.length === 0) {
-    console.log('[PublicPathFix] Diretório public vazio, procurando arquivos estáticos...');
+  // Verificar index.html
+  const indexPath = path.join(publicDir, 'index.html');
+  if (!fs.existsSync(indexPath)) {
+    log('index.html não encontrado em public/. Tentando copiar de outras localizações...', 'warn');
     
-    // Verificar dist/client
-    if (fs.existsSync(distClientDir) && fs.readdirSync(distClientDir).includes('index.html')) {
-      console.log('[PublicPathFix] Copiando arquivos de dist/client para public...');
-      try {
-        execSync(`cp -r ${distClientDir}/* ${publicDir}/`, { stdio: 'inherit' });
-      } catch (error) {
-        console.error('[PublicPathFix] Erro ao copiar arquivos:', error);
+    // Locais possíveis para index.html
+    const possibleSources = [
+      { path: path.join(distClientDir, 'index.html'), cmd: `cp -r ${distClientDir}/* ${publicDir}/` },
+      { path: path.join(distDir, 'index.html'), cmd: `cp -r ${distDir}/* ${publicDir}/` },
+      { path: path.join(rootDir, 'client/index.html'), cmd: `cp -r ${path.join(rootDir, 'client')}/* ${publicDir}/` }
+    ];
+    
+    let fixed = false;
+    for (const source of possibleSources) {
+      if (fs.existsSync(source.path)) {
+        log(`Encontrado index.html em ${source.path}. Copiando...`);
+        exec(source.cmd);
+        fixed = true;
+        break;
       }
-    } 
-    // Verificar dist
-    else if (fs.existsSync(distDir) && fs.readdirSync(distDir).includes('index.html')) {
-      console.log('[PublicPathFix] Copiando arquivos de dist para public...');
-      try {
-        execSync(`cp -r ${distDir}/* ${publicDir}/`, { stdio: 'inherit' });
-      } catch (error) {
-        console.error('[PublicPathFix] Erro ao copiar arquivos:', error);
-      }
-    } else {
-      console.warn('[PublicPathFix] Não foi possível encontrar arquivos estáticos para copiar');
     }
-  } else {
-    console.log(`[PublicPathFix] Diretório public contém ${publicFiles.length} arquivos.`);
+    
+    if (!fixed) {
+      log('Não foi possível encontrar index.html em nenhum local conhecido.', 'error');
+      log('Tentando reconstruir os arquivos estáticos...', 'warn');
+      
+      // Tentar executar script de reconstrução
+      const rebuildScriptPath = path.join(rootDir, 'rebuild-static.mjs');
+      if (fs.existsSync(rebuildScriptPath)) {
+        exec(`node ${rebuildScriptPath}`);
+      } else {
+        log('Script rebuild-static.mjs não encontrado.', 'error');
+        
+        // Último recurso: criar um index.html básico
+        log('Criando index.html básico de fallback...', 'warn');
+        
+        const fallbackHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopee Entregas</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { color: #ee4d2d; text-align: center; }
+    .message { background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; }
+    .warning { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <h1>Shopee Entregas</h1>
+  <div class="message">
+    <p>Obrigado por seu interesse em se tornar um parceiro de entregas da Shopee!</p>
+    <p>Estamos com problemas técnicos temporários. Por favor, tente novamente mais tarde.</p>
+    <p class="warning"><strong>Erro técnico:</strong> Arquivos estáticos não encontrados.</p>
+  </div>
+</body>
+</html>
+`;
+        
+        try {
+          fs.writeFileSync(indexPath, fallbackHtml);
+          log('index.html básico criado com sucesso.');
+        } catch (err) {
+          log(`Erro ao criar index.html: ${err.message}`, 'error');
+        }
+      }
+    }
   }
   
-  // Verificar novamente se temos index.html em public
-  const hasIndexHtml = fs.existsSync(path.join(publicDir, 'index.html'));
-  if (hasIndexHtml) {
-    console.log('[PublicPathFix] Verificação concluída: index.html encontrado em public/');
-  } else {
-    console.warn('[PublicPathFix] ATENÇÃO: index.html não encontrado em public/!');
-  }
+  // Verificar se o diretório public contém arquivos
+  const publicFiles = fs.readdirSync(publicDir);
   
-  return { 
-    publicDir, 
-    hasFiles: publicFiles.length > 0,
-    hasIndexHtml
-  };
+  if (publicFiles.length === 0) {
+    log('O diretório public está vazio!', 'error');
+  } else if (!publicFiles.includes('index.html')) {
+    log('O diretório public não contém index.html!', 'error');
+  } else {
+    // Verificar se há arquivos de script e estilo
+    const hasAssets = publicFiles.some(file => 
+      file === 'assets' || 
+      file.endsWith('.js') || 
+      file.endsWith('.css'));
+    
+    if (!hasAssets) {
+      log('O diretório public não contém arquivos de assets!', 'warn');
+    } else {
+      log(`Diretório public configurado corretamente com ${publicFiles.length} arquivos.`);
+    }
+  }
+}
+
+// Para uso direto via CLI
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  ensurePublicDirectory();
 }

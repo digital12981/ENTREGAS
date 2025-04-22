@@ -93,12 +93,37 @@ if (fs.existsSync(publicDir)) {
   console.warn('  A interface web pode não funcionar corretamente.');
 }
 
+// Verificar se precisamos executar o script de reconstrução
+if (!fs.existsSync(path.join(publicDir, 'index.html'))) {
+  console.log('Executando script de reconstrução...');
+  try {
+    const rebuildScript = path.join(process.cwd(), 'rebuild-static.mjs');
+    if (fs.existsSync(rebuildScript)) {
+      spawn('node', [rebuildScript], { stdio: 'inherit', shell: true });
+    } else {
+      console.warn('Script de reconstrução não encontrado!');
+    }
+  } catch (err) {
+    console.error('Erro ao executar script de reconstrução:', err.message);
+  }
+}
+
+// Verificar se estamos em um ambiente Heroku
+// e definir variáveis de ambiente relevantes
+if (process.env.PORT && !process.env.HEROKU) {
+  console.log('Ambiente Heroku detectado, definindo variável HEROKU=true');
+  process.env.HEROKU = 'true';
+}
+
 // Iniciar o servidor com configurações ESM
 console.log('Iniciando o servidor...');
 
 const args = [
   // Configurações de módulos ES
   '--experimental-specifier-resolution=node',
+  
+  // Permitir importações top-level
+  '--no-warnings',
   
   // Arquivo principal
   mainFile
