@@ -2,22 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
-// Em produção, importar os utilitários de correção de caminhos
-if (process.env.NODE_ENV === 'production') {
-  try {
-    // Usar require dinâmico ou importação condicional para evitar erros
-    // em ambiente de desenvolvimento
-    import('./public-path-fix.js').then(module => {
-      console.log('[server] Aplicando correções de caminho para ambiente de produção...');
-      module.ensurePublicDirectory();
-    }).catch(err => {
-      console.warn('[server] Aviso: Não foi possível carregar o módulo de correção de caminhos:', err.message);
-    });
-  } catch (err) {
-    console.warn('[server] Aviso: Erro ao importar módulo de correção:', err);
-  }
-}
-
 const app = express();
 // Configuração para utilizar UTF-8 na aplicação
 app.use(express.json({ limit: '10mb' }));
@@ -65,16 +49,9 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-    
-    console.error(`[ERROR HANDLER] ${status} ${message}`);
-    console.error(err.stack);
-    
-    // Responder com o erro formatado como JSON
-    res.status(status).json({ 
-      error: message,
-      status: status,
-      timestamp: new Date().toISOString()
-    });
+
+    res.status(status).json({ message });
+    throw err;
   });
 
   // importantly only setup vite in development and after
@@ -83,38 +60,18 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    // Tentar usar módulo alternativo de servir estáticos
-    try {
-      import('./alternative-static.js').then(module => {
-        log('Usando módulo alternativo para servir arquivos estáticos');
-        module.setupAlternativeStatic(app);
-      }).catch(err => {
-        log(`Erro ao carregar módulo alternativo: ${err.message}`);
-        // Fallback para o módulo padrão
-        serveStatic(app);
-      });
-    } catch (err) {
-      log(`Módulo alternativo não disponível: ${err}`);
-      serveStatic(app);
-    }
+    serveStatic(app);
   }
 
-  // Suporte para porta configurável (Heroku atribui a porta via PORT)
-  // Isso serve tanto para a API quanto para o cliente.
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  
-  // Log de variáveis de ambiente importantes
-  log(`Environment: ${app.get("env")}`);
-  log(`PORT: ${process.env.PORT || 'not set, using default 5000'}`);
-  log(`DATABASE_URL: ${process.env.DATABASE_URL ? 'configured' : 'not configured'}`);
-  log(`FOR4PAYMENTS_SECRET_KEY: ${process.env.FOR4PAYMENTS_SECRET_KEY ? 'configured' : 'not configured'}`);
-  log(`FOR4PAYMENTS_API_URL: ${process.env.FOR4PAYMENTS_API_URL || 'not configured'}`);
-  
+  // ALWAYS serve the app on port 5000
+  // this serves both the API and the client.
+  // It is the only port that is not firewalled.
+  const port = 5000;
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`Server started successfully on port ${port}`);
+    log(`serving on port ${port}`);
   });
 })();

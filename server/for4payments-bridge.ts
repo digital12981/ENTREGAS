@@ -16,15 +16,12 @@ export async function createFor4Payment(data: For4PaymentsData) {
     console.log('Processando pagamento via API For4Payments:', data);
     
     // Definir a URL do serviço Flask (prod vs dev)
-    let apiUrl = process.env.FOR4PAYMENTS_API_URL || 'https://shopee-entregas.com/api/for4payments';
+    let apiUrl = 'https://shopee-entregas.com/api/for4payments';
     
     // Em desenvolvimento, use localhost
     if (process.env.NODE_ENV === 'development') {
       apiUrl = 'http://localhost:5000/api/for4payments';
     }
-    
-    console.log(`FOR4PAYMENTS_API_URL: ${process.env.FOR4PAYMENTS_API_URL || 'não definido'}`);
-    console.log(`NODE_ENV: ${process.env.NODE_ENV || 'não definido'}`);
     
     console.log(`Enviando solicitação para: ${apiUrl}`);
     

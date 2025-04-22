@@ -1,0 +1,10 @@
+2025-04-22T03:58:26.570751+00:00 app[web.27]:     at async ModuleJob._link (node:internal/modules/esm/module_job:115:19)
+2025-04-22T03:58:26.570757+00:00 app[web.27]: 
+2025-04-22T03:58:26.570757+00:00 app[web.27]: Node.js v22.14.0
+2025-04-22T03:58:26.581750+00:00 app[web.27]: ❌ Servidor encerrado com código 1 e sinal null
+2025-04-22T03:58:26.643315+00:00 heroku[web.27]: Process exited with status 1
+2025-04-22T03:58:26.682790+00:00 heroku[web.27]: State changed from starting to crashed
+2025-04-22T03:58:27.668533+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/?fbclid=IwZXh0bgNhZW0BMABhZGlkAasgyQbbcmQBHoOE9pTXM8b35DNLaG9ShAa3LUCaH-Ohz2jlNza-DnfZB7_vR5OtTCEGh1tI_aem_sgWWiKIuTsm63m7tlkM_Ag&utm_medium=paid&utm_source=fb&utm_id=120225825817890404&utm_content=120225825817900404&utm_term=120225825817910404&utm_campaign=120225825817890404" host=www.shopee-entregas.com request_id=cd8230a4-fb53-472a-a626-157d706ac0ba fwd="191.205.3.138" dyno= connect= service= status=503 bytes= protocol=https
+2025-04-22T03:58:28.597705+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/?fbclid=IwZXh0bgNhZW0BMABhZGlkAasgyQbbcmQBHoOE9pTXM8b35DNLaG9ShAa3LUCaH-Ohz2jlNza-DnfZB7_vR5OtTCEGh1tI_aem_sgWWiKIuTsm63m7tlkM_Ag&utm_medium=paid&utm_source=fb&utm_id=120225825817890404&utm_content=120225825817900404&utm_term=120225825817910404&utm_campaign=120225825817890404" host=www.shopee-entregas.com request_id=2d5ae9eb-36d4-4006-a5f5-d62c49126ce8 fwd="191.205.3.138" dyno= connect= service= status=503 bytes= protocol=https
+2025-04-22T03:58:56.588499+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=www.shopee-entregas.com request_id=e82d4bb8-3748-4694-99e4-65476f9a55fe fwd="201.87.251.220" dyno= connect= service= status=503 bytes= protocol=https
+2025-04-22T03:58:56.828382+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=www.shopee-entregas.com request_id=33c93c60-e269-4583-8e96-0cc3d1e0b64f fwd="201.87.251.220" dyno= connect= service= status=503 bytes= protocol=https
