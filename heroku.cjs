@@ -14,7 +14,7 @@ try {
   console.log(`📌 NODE_ENV: ${process.env.NODE_ENV}`);
 
   // Carregar o servidor minimalista diretamente
-  require('./server-minimal.js');
+  require('./server-minimal.cjs');
 } catch (error) {
   console.error('❌ Erro crítico ao iniciar o servidor:', error);
   

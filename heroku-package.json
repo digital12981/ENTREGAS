@@ -7,9 +7,9 @@
   "type": "commonjs",
   "private": true,
   "description": "Versão Heroku do aplicativo Shopee Entregas",
-  "main": "heroku.js",
+  "main": "heroku.cjs",
   "scripts": {
-    "start": "node heroku.js"
+    "start": "node heroku.cjs"
   },
   "dependencies": {
     "express": "4.18.2"
