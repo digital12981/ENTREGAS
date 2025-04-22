@@ -71,7 +71,7 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
       document: payload.document.substring(0, 3) + '***' + payload.document.substring(payload.document.length - 2),
     });
     
-    // Configurar a requisição
+    // Configurar e enviar a requisição para a For4Payments API
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -79,19 +79,18 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
         'Authorization': `Bearer ${secretKey}`,
         'Accept': 'application/json'
       },
+      mode: 'cors',
+      credentials: 'omit',
       body: JSON.stringify(payload)
     });
     
     // Verificar se a resposta foi bem sucedida
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Erro HTTP ${response.status} da For4Payments API: ${errorText}`);
       throw new Error(`Falha na comunicação com For4Payments: ${response.statusText}`);
     }
     
     // Processar a resposta
     const result = await response.json();
-    
     console.log('Resposta da For4Payments recebida:', result);
     
     // Validar a resposta
@@ -106,6 +105,7 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
     };
   } catch (error: any) {
     console.error('Erro ao processar pagamento direto:', error);
+    // Propagar o erro para que o caller possa tentar com o Heroku
     throw new Error(error.message || 'Não foi possível processar o pagamento no momento');
   }
 }
