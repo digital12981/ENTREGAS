@@ -16,11 +16,14 @@ export async function apiRequest(
   // Converte URL relativa para absoluta se necessário
   const fullUrl = url.startsWith('http') ? url : apiUrl(url);
   
+  console.log(`Fazendo requisição ${method} para: ${fullUrl}`);
+  
   const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    mode: 'cors',
+    credentials: 'omit', // Não enviar credenciais para evitar problemas de CORS
   });
 
   await throwIfResNotOk(res);
@@ -39,8 +42,14 @@ export const getQueryFn: <T>(options: {
       url = apiUrl(url);
     }
     
+    console.log(`Query request para: ${url}`);
+    
     const res = await fetch(url, {
-      credentials: "include",
+      mode: 'cors',
+      credentials: 'omit', // Não enviar credenciais para evitar problemas de CORS
+      headers: {
+        'Accept': 'application/json'
+      }
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

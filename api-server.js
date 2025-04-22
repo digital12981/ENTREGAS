@@ -16,9 +16,10 @@ const app = express();
 
 // Middlewares essenciais
 app.use(cors({
-  origin: '*', // Permitir qualquer origem em desenvolvimento
+  origin: ['https://shopee-entregas.netlify.app', 'https://www.shopee-entregas.com', 'http://localhost:5000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false // Não precisamos de credenciais para a API pública
 }));
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
@@ -39,13 +40,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configurar cabeçalhos CORS específicos para cada requisição
+// Middleware para registrar todas as requisições (deixamos o CORS para o middleware oficial)
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  console.log(`Request: ${req.method} ${req.url} - Origin: ${req.headers.origin || 'Unknown'}`);
   
-  // Responder imediatamente para requisições OPTIONS
+  // Responder imediatamente para requisições OPTIONS (pré-voo CORS)
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
