@@ -57,6 +57,9 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={() => {}} modal={true}>
       <DialogContent className="p-0 sm:max-w-none w-full h-full max-h-screen overflow-hidden border-none shadow-none bg-white">
+        <DialogTitle className="sr-only">{title}</DialogTitle>
+        <DialogDescription className="sr-only">Processando sua solicitação...</DialogDescription>
+        
         <div className="absolute top-0 left-0 w-full h-full bg-white z-0"></div>
         
         <div className="relative flex flex-col justify-center items-center h-screen bg-transparent z-10">
@@ -95,64 +98,23 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
             </div>
             
             {isComplete && (
-              <div className="mt-6 text-center text-[#E83D22] font-medium">
-                {finishText}
+              <div className="mt-6 p-4 bg-green-100 rounded-lg border border-green-200">
+                <div className="flex items-center justify-center mb-2">
+                  <div className="bg-green-500 text-white rounded-full p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="text-center text-green-700 font-medium">
+                  {finishText}
+                </div>
               </div>
             )}
           </div>
         </div>
         
-        {/* CSS animações */}
-        <style jsx>{`
-          @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-          }
-          
-          .loading-dot {
-            animation: bounce 1.4s infinite ease-in-out both;
-          }
-          
-          .loading-dot:nth-child(1) {
-            animation-delay: -0.32s;
-          }
-          
-          .loading-dot:nth-child(2) {
-            animation-delay: -0.16s;
-          }
-
-          .status-item {
-            transition: all 0.3s ease;
-            opacity: 0.5;
-            transform: translateY(10px);
-          }
-
-          .status-item.active {
-            opacity: 1;
-            transform: translateY(0);
-          }
-
-          .status-item.active .status-icon {
-            background-color: #E83D22;
-            color: white;
-          }
-
-          .status-item.active .status-text {
-            color: #111827;
-            font-weight: bold;
-          }
-
-          @keyframes fadeInUp {
-            from {
-              opacity: 0.5;
-              transform: translateY(10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}</style>
+        {/* CSS animações são adicionadas ao arquivo index.css */}
       </DialogContent>
     </Dialog>
   );

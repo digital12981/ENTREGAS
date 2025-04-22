@@ -338,50 +338,61 @@ const Municipios: React.FC = () => {
       
       {/* Modal de seleção de data de início */}
       <Dialog open={showStartDateModal} onOpenChange={setShowStartDateModal}>
-        <DialogContent className="sm:max-w-md p-6 bg-white">
-          <DialogTitle className="text-xl font-bold text-[#E83D22] text-center">Atenção! Oportunidade de Trabalho</DialogTitle>
-          <DialogDescription className="text-base text-center text-gray-700 py-2">
-            Na região que você escolheu, estamos com <span className="font-bold">URGENTE</span> necessidade
-            de novos entregadores, pois a demanda de entregas está alta e temos poucos entregadores cadastrados.
-          </DialogDescription>
+        <DialogContent className="p-0 sm:max-w-none w-full h-full max-h-screen overflow-hidden border-none shadow-none bg-white">
+          <div className="absolute top-0 left-0 w-full h-full bg-white z-0"></div>
           
-          <div className="mt-4 mb-4">
-            <h3 className="font-medium text-gray-800 mb-3 text-center">Quando você pode começar?</h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-              {getNextThreeDays().map((date, index) => (
+          <div className="relative flex flex-col justify-center items-center h-screen bg-transparent z-10 p-6">
+            <div className="w-11/12 max-w-md bg-white rounded-lg shadow-lg p-6 border border-[#E83D2220]">
+              <DialogTitle className="text-2xl font-bold text-[#E83D22] text-center mb-4">
+                <i className="fas fa-exclamation-circle mr-2"></i>
+                Atenção! Oportunidade de Trabalho
+              </DialogTitle>
+              
+              <DialogDescription className="text-base text-center text-gray-700 py-3 mb-4 bg-[#FFF8F6] rounded-lg border border-[#E83D2220] p-4">
+                Na região que você escolheu, estamos com <span className="font-bold text-[#E83D22]">URGENTE</span> necessidade
+                de novos entregadores, pois a demanda de entregas está alta e temos poucos entregadores cadastrados.
+              </DialogDescription>
+              
+              <div className="my-6">
+                <h3 className="font-medium text-gray-800 mb-4 text-center text-lg">Quando você pode começar?</h3>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+                  {getNextThreeDays().map((date, index) => (
+                    <Button
+                      key={index}
+                      type="button"
+                      variant={selectedStartDate === date.value ? "default" : "outline"}
+                      onClick={() => handleStartDateSelection(date.value)}
+                      className={`py-4 px-2 h-auto text-base ${selectedStartDate === date.value ? 'bg-[#E83D22] hover:bg-[#d73920] border-[#E83D22] shadow-md' : 'border-gray-300 hover:border-[#E83D22] hover:text-[#E83D22]'}`}
+                    >
+                      {date.full}
+                    </Button>
+                  ))}
+                </div>
+                
                 <Button
-                  key={index}
                   type="button"
-                  variant={selectedStartDate === date.value ? "default" : "outline"}
-                  onClick={() => handleStartDateSelection(date.value)}
-                  className={`py-3 px-2 h-auto ${selectedStartDate === date.value ? 'bg-[#E83D22] hover:bg-[#d73920] border-[#E83D22]' : 'border-gray-300 hover:border-[#E83D22] hover:text-[#E83D22]'}`}
+                  variant={selectedStartDate === 'outro' ? "default" : "outline"}
+                  onClick={() => handleStartDateSelection('outro')}
+                  className={`w-full mt-4 py-4 h-auto text-base ${selectedStartDate === 'outro' ? 'bg-[#E83D22] hover:bg-[#d73920] border-[#E83D22] shadow-md' : 'border-gray-300 hover:border-[#E83D22] hover:text-[#E83D22]'}`}
                 >
-                  {date.full}
+                  Outro dia
                 </Button>
-              ))}
+              </div>
+              
+              <div className="mt-6">
+                <Button 
+                  type="button" 
+                  onClick={handleStartDateContinue}
+                  className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium text-lg py-6" 
+                  style={{ height: '60px' }}
+                  disabled={!selectedStartDate}
+                >
+                  Continuar
+                </Button>
+              </div>
             </div>
-            
-            <Button
-              type="button"
-              variant={selectedStartDate === 'outro' ? "default" : "outline"}
-              onClick={() => handleStartDateSelection('outro')}
-              className={`w-full mt-3 py-3 h-auto ${selectedStartDate === 'outro' ? 'bg-[#E83D22] hover:bg-[#d73920] border-[#E83D22]' : 'border-gray-300 hover:border-[#E83D22] hover:text-[#E83D22]'}`}
-            >
-              Outro dia
-            </Button>
           </div>
-          
-          <DialogFooter>
-            <Button 
-              type="button" 
-              onClick={handleStartDateContinue}
-              className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white" 
-              disabled={!selectedStartDate}
-            >
-              Continuar
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
