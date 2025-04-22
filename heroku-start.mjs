@@ -31,20 +31,66 @@ if (!fs.existsSync(mainFile)) {
   process.exit(1);
 }
 
-// Verificar diretório public para arquivos estáticos
+// Verificar diretório public para arquivos estáticos e tentar corrigir se necessário
 const publicDir = path.join(process.cwd(), 'public');
-if (fs.existsSync(publicDir)) {
-  const hasIndexHtml = fs.existsSync(path.join(publicDir, 'index.html'));
-  console.log(`Diretório public ${hasIndexHtml ? 'tem' : 'NÃO tem'} index.html`);
+const distDir = path.join(process.cwd(), 'dist');
+const distClientDir = path.join(distDir, 'client');
+
+// Se public não existir ou estiver vazio, tentar copiar os arquivos
+if (!fs.existsSync(publicDir) || !fs.existsSync(path.join(publicDir, 'index.html'))) {
+  console.log('Diretório public não encontrado ou está sem index.html');
+  console.log('Tentando copiar arquivos estáticos...');
   
-  if (hasIndexHtml) {
-    const publicFiles = fs.readdirSync(publicDir);
-    console.log(`Total de arquivos em public: ${publicFiles.length}`);
+  // Criar diretório public se não existir
+  if (!fs.existsSync(publicDir)) {
+    console.log('Criando diretório public...');
+    fs.mkdirSync(publicDir, { recursive: true });
+  }
+  
+  // Tentar copiar de dist/client
+  if (fs.existsSync(distClientDir) && fs.existsSync(path.join(distClientDir, 'index.html'))) {
+    console.log('Encontrado index.html em dist/client, copiando para public...');
+    try {
+      spawn('cp', ['-r', `${distClientDir}/*`, publicDir], { shell: true, stdio: 'inherit' });
+    } catch (err) {
+      console.error('Erro ao copiar arquivos:', err.message);
+    }
+  } 
+  // Tentar copiar diretamente de dist
+  else if (fs.existsSync(path.join(distDir, 'index.html'))) {
+    console.log('Encontrado index.html em dist, copiando para public...');
+    try {
+      spawn('cp', ['-r', `${distDir}/*`, publicDir], { shell: true, stdio: 'inherit' });
+    } catch (err) {
+      console.error('Erro ao copiar arquivos:', err.message);
+    }
+  }
+  // Se o diretório dist não contiver o index.html, procurar no source do projeto
+  else if (fs.existsSync(path.join(process.cwd(), 'client/index.html'))) {
+    console.log('Encontrado index.html em client/, copiando para public...');
+    try {
+      spawn('cp', ['-r', `${path.join(process.cwd(), 'client')}/*`, publicDir], { shell: true, stdio: 'inherit' });
+    } catch (err) {
+      console.error('Erro ao copiar arquivos:', err.message);
+    }
   } else {
-    console.warn('AVISO: index.html não encontrado. A interface web pode não funcionar corretamente.');
+    console.warn('AVISO: Não foi possível encontrar index.html em nenhum local conhecido.');
+    console.warn('A interface web pode não funcionar corretamente.');
+  }
+}
+
+// Verificar resultado
+if (fs.existsSync(publicDir)) {
+  if (fs.existsSync(path.join(publicDir, 'index.html'))) {
+    const publicFiles = fs.readdirSync(publicDir);
+    console.log(`✅ Diretório public configurado corretamente com ${publicFiles.length} arquivos.`);
+  } else {
+    console.warn('⚠️ Diretório public existe, mas não contém index.html.');
+    console.warn('  A interface web pode não funcionar corretamente.');
   }
 } else {
-  console.warn('AVISO: Diretório public não encontrado. A interface web pode não funcionar corretamente.');
+  console.warn('⚠️ Não foi possível criar o diretório public.');
+  console.warn('  A interface web pode não funcionar corretamente.');
 }
 
 // Iniciar o servidor com configurações ESM

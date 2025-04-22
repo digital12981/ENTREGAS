@@ -1,0 +1,49 @@
+2025-04-22T03:05:49.414503+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=www.shopee-entregas.com request_id=500f0b6f-0886-4d66-9294-59bb3cbe1038 fwd="201.87.251.220" dyno=web.49 connect=0ms service=11ms status=200 bytes=1219 protocol=https
+2025-04-22T03:05:49.380573+00:00 app[web.52]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:05:49.381446+00:00 app[web.52]: Data/Hora: 2025-04-22T03:05:49.381Z
+2025-04-22T03:05:49.381599+00:00 app[web.52]: Versão Node: v22.14.0
+2025-04-22T03:05:49.381756+00:00 app[web.52]: AVISO: Diretório public não encontrado. A interface web pode não funcionar corretamente.
+2025-04-22T03:05:49.381827+00:00 app[web.52]: Iniciando o servidor...
+2025-04-22T03:05:49.382008+00:00 app[web.52]: Comando: node --experimental-specifier-resolution=node /app/dist/index.js
+2025-04-22T03:05:49.476514+00:00 app[web.48]: 3:05:49 AM [express] Environment: production
+2025-04-22T03:05:49.477012+00:00 app[web.48]: 3:05:49 AM [express] PORT: 50355
+2025-04-22T03:05:49.477140+00:00 app[web.48]: 3:05:49 AM [express] DATABASE_URL: configured
+2025-04-22T03:05:49.477236+00:00 app[web.48]: 3:05:49 AM [express] FOR4PAYMENTS_SECRET_KEY: configured
+2025-04-22T03:05:49.477329+00:00 app[web.48]: 3:05:49 AM [express] FOR4PAYMENTS_API_URL: not configured
+2025-04-22T03:05:49.484608+00:00 app[web.48]: 3:05:49 AM [express] Server started successfully on port 50355
+2025-04-22T03:05:50.001112+00:00 heroku[web.48]: State changed from starting to up
+2025-04-22T03:05:49.844816+00:00 app[web.31]: 3:05:49 AM [express] Environment: production
+2025-04-22T03:05:49.845291+00:00 app[web.31]: 3:05:49 AM [express] PORT: 53252
+2025-04-22T03:05:49.845526+00:00 app[web.31]: 3:05:49 AM [express] DATABASE_URL: configured
+2025-04-22T03:05:49.845686+00:00 app[web.31]: 3:05:49 AM [express] FOR4PAYMENTS_SECRET_KEY: configured
+2025-04-22T03:05:49.845825+00:00 app[web.31]: 3:05:49 AM [express] FOR4PAYMENTS_API_URL: not configured
+2025-04-22T03:05:49.851841+00:00 app[web.31]: 3:05:49 AM [express] Server started successfully on port 53252
+2025-04-22T03:05:50.232055+00:00 heroku[web.31]: State changed from starting to up
+2025-04-22T03:05:50.120137+00:00 app[web.35]: 3:05:50 AM [express] Environment: production
+2025-04-22T03:05:50.120788+00:00 app[web.35]: 3:05:50 AM [express] PORT: 7637
+2025-04-22T03:05:50.121026+00:00 app[web.35]: 3:05:50 AM [express] DATABASE_URL: configured
+2025-04-22T03:05:50.121186+00:00 app[web.35]: 3:05:50 AM [express] FOR4PAYMENTS_SECRET_KEY: configured
+2025-04-22T03:05:50.121377+00:00 app[web.35]: 3:05:50 AM [express] FOR4PAYMENTS_API_URL: not configured
+2025-04-22T03:05:50.128846+00:00 app[web.35]: 3:05:50 AM [express] Server started successfully on port 7637
+2025-04-22T03:05:50.539377+00:00 heroku[web.35]: State changed from starting to up
+2025-04-22T03:05:50.620695+00:00 heroku[web.6]: Starting process with command `node heroku-start.mjs`
+2025-04-22T03:05:50.384397+00:00 app[web.52]: 3:05:50 AM [express] Environment: production
+2025-04-22T03:05:50.384836+00:00 app[web.52]: 3:05:50 AM [express] PORT: 11114
+2025-04-22T03:05:50.385029+00:00 app[web.52]: 3:05:50 AM [express] DATABASE_URL: configured
+2025-04-22T03:05:50.385154+00:00 app[web.52]: 3:05:50 AM [express] FOR4PAYMENTS_SECRET_KEY: configured
+2025-04-22T03:05:50.385268+00:00 app[web.52]: 3:05:50 AM [express] FOR4PAYMENTS_API_URL: not configured
+2025-04-22T03:05:50.390672+00:00 app[web.52]: 3:05:50 AM [express] Server started successfully on port 11114
+2025-04-22T03:05:50.944422+00:00 heroku[web.52]: State changed from starting to up
+2025-04-22T03:05:51.215852+00:00 app[web.6]: 🚀 Iniciando aplicação Shopee Entregas no Heroku
+2025-04-22T03:05:51.216261+00:00 app[web.6]: Data/Hora: 2025-04-22T03:05:51.216Z
+2025-04-22T03:05:51.216266+00:00 app[web.6]: Versão Node: v22.14.0
+2025-04-22T03:05:51.216323+00:00 app[web.6]: AVISO: Diretório public não encontrado. A interface web pode não funcionar corretamente.
+2025-04-22T03:05:51.216353+00:00 app[web.6]: Iniciando o servidor...
+2025-04-22T03:05:51.216448+00:00 app[web.6]: Comando: node --experimental-specifier-resolution=node /app/dist/index.js
+2025-04-22T03:05:51.994438+00:00 app[web.6]: 3:05:51 AM [express] Environment: production
+2025-04-22T03:05:51.994908+00:00 app[web.6]: 3:05:51 AM [express] PORT: 56555
+2025-04-22T03:05:51.995108+00:00 app[web.6]: 3:05:51 AM [express] DATABASE_URL: configured
+2025-04-22T03:05:51.995541+00:00 app[web.6]: 3:05:51 AM [express] FOR4PAYMENTS_SECRET_KEY: configured
+2025-04-22T03:05:51.995688+00:00 app[web.6]: 3:05:51 AM [express] FOR4PAYMENTS_API_URL: not configured
+2025-04-22T03:05:52.001280+00:00 app[web.6]: 3:05:52 AM [express] Server started successfully on port 56555
+2025-04-22T03:05:52.355997+00:00 heroku[web.6]: State changed from starting to up

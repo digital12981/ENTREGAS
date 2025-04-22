@@ -41,48 +41,34 @@ if (!fs.existsSync(distDir)) {
   process.exit(1);
 }
 
-// 4. Criar diretório public se necessário
-console.log('Ensuring public directory exists...');
-const publicDir = path.resolve(process.cwd(), 'public');
-if (!fs.existsSync(publicDir)) {
-  console.log('Creating public directory...');
-  fs.mkdirSync(publicDir, { recursive: true });
-}
-
-// 5. Copiar arquivos estáticos do cliente para o diretório public
-const distClientDir = path.resolve(distDir, 'client');
-if (fs.existsSync(distClientDir)) {
-  console.log('Found client files in dist/client, copying to public...');
-  try {
+// 4. Executar script dedicado para copiar arquivos estáticos
+console.log('Copiando arquivos estáticos...');
+try {
+  execCommand('node copy-static-files.mjs');
+} catch (err) {
+  console.error('Erro ao copiar arquivos estáticos:', err);
+  console.error('Tentando método alternativo...');
+  
+  // Fallback: método manual
+  console.log('Criando diretório public manualmente...');
+  const publicDir = path.resolve(process.cwd(), 'public');
+  if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true });
+  }
+  
+  // Verificar em dist/client
+  const distClientDir = path.resolve(distDir, 'client');
+  if (fs.existsSync(distClientDir) && fs.existsSync(path.join(distClientDir, 'index.html'))) {
+    console.log('Encontrado index.html em dist/client, copiando para public...');
     execCommand(`cp -r ${distClientDir}/* ${publicDir}/`);
-  } catch (err) {
-    console.warn('Warning: Could not copy files from dist/client to public');
+  } 
+  // Verificar em dist
+  else if (fs.existsSync(path.join(distDir, 'index.html'))) {
+    console.log('Encontrado index.html em dist, copiando para public...');
+    execCommand(`cp -r ${distDir}/* ${publicDir}/`);
+  } else {
+    console.error('ERRO: Não foi possível encontrar arquivos estáticos!');
   }
-} 
-// Se dist/client não existir, verificar se temos index.html diretamente em dist
-else if (fs.existsSync(path.resolve(distDir, 'index.html'))) {
-  console.log('Found index.html in dist, copying to public...');
-  try {
-    // Copiar somente arquivos que não são do servidor
-    const distFiles = fs.readdirSync(distDir)
-      .filter(file => !file.endsWith('.js') && file !== 'server');
-    
-    for (const file of distFiles) {
-      const srcPath = path.resolve(distDir, file);
-      const destPath = path.resolve(publicDir, file);
-      
-      if (fs.statSync(srcPath).isDirectory()) {
-        execCommand(`mkdir -p ${destPath}`);
-        execCommand(`cp -r ${srcPath}/* ${destPath}/`);
-      } else {
-        fs.copyFileSync(srcPath, destPath);
-      }
-    }
-  } catch (err) {
-    console.warn('Warning: Error copying files from dist to public:', err.message);
-  }
-} else {
-  console.warn('Warning: Could not find static files in expected locations');
 }
 
 // 6. Verificar permissões de arquivos importantes
