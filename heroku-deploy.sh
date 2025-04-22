@@ -10,7 +10,7 @@ if [ ! -d "static_html" ]; then
 fi
 
 # Verificar arquivos necessários
-for file in heroku.cjs server-minimal.cjs server-fallback.js Procfile heroku-package.json; do
+for file in heroku.cjs server-minimal.cjs server-fallback.js heroku-index.cjs Procfile heroku-package.json; do
   if [ ! -f "$file" ]; then
     echo "❌ Arquivo $file não encontrado. Impossível continuar."
     exit 1
@@ -33,6 +33,7 @@ echo "📦 Copiando arquivos para implantação..."
 cp heroku.cjs "$DEPLOY_DIR/"
 cp server-minimal.cjs "$DEPLOY_DIR/"
 cp server-fallback.js "$DEPLOY_DIR/"
+cp heroku-index.cjs "$DEPLOY_DIR/"
 cp Procfile "$DEPLOY_DIR/"
 cp heroku-package.json "$DEPLOY_DIR/package.json"
 
