@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { useScrollTop } from '@/hooks/use-scroll-top';
+import { API_BASE_URL } from '../lib/api-config';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -215,15 +216,10 @@ const Entrega: React.FC = () => {
         telefone = parsedUserData.telefone || "";
       }
       
-      // Determinar a URL base da API dependendo do ambiente
-      const apiBaseUrl = import.meta.env.DEV 
-        ? '' // Em desenvolvimento, usa o URL local (relativo)
-        : 'https://shopee-delivery-api.herokuapp.com'; // Em produção, usa a URL do Heroku
-      
-      const apiEndpoint = `${apiBaseUrl}/api/payments/pix`;
+      const apiEndpoint = `${API_BASE_URL}/api/payments/pix`;
       console.log('Enviando requisição de pagamento para For4Payments via:', apiEndpoint);
       
-      // Enviar requisição para API da For4Payments
+      // Enviar requisição para API da For4Payments sem usar credenciais
       const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
