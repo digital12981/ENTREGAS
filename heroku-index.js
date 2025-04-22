@@ -43,7 +43,7 @@ try {
         console.warn(`⚠️ Arquivo ESM não encontrado: ${esmFile}`);
         console.log('⚠️ Iniciando servidor fallback diretamente...');
         require('./server-fallback.js');
-        return;
+        process.exit(0); // Usar process.exit em vez de return
       }
       
       // Verificar se temos o arquivo de fallback para caso de erro

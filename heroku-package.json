@@ -1,0 +1,14 @@
+{
+  "name": "shopee-entregas-heroku",
+  "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
+  "type": "commonjs",
+  "private": true,
+  "description": "Versão Heroku do aplicativo Shopee Entregas",
+  "main": "heroku-index.js",
+  "scripts": {
+    "start": "node heroku-index.js"
+  }
+}
