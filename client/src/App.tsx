@@ -10,6 +10,7 @@ import Recebedor from "@/pages/Recebedor";
 import Finalizacao from "@/pages/Finalizacao";
 import Entrega from "@/pages/Entrega";
 import { useAppContext } from "@/contexts/AppContext";
+import { useDesktopProtection } from "@/hooks/use-desktop-protection";
 
 function Router() {
   return (
@@ -27,6 +28,9 @@ function Router() {
 
 function App() {
   const [location] = useLocation();
+  
+  // Ativar proteção contra acesso desktop no frontend
+  useDesktopProtection();
   
   return (
     <TooltipProvider>
