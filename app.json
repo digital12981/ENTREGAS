@@ -45,7 +45,7 @@
     }
   },
   "scripts": {
-    "postdeploy": "node fixup-static-dirs.js"
+    "postdeploy": "node heroku-verify.mjs"
   },
   "success_url": "/"
 }

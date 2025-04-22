@@ -1,2 +1,2 @@
-web: node production-loader.mjs
+web: node heroku-start.mjs
 api: gunicorn for4payments-wrapper:app
