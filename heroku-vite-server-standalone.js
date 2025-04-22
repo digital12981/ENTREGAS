@@ -45,13 +45,18 @@ async function startServer() {
         hmr: {
           // Desabilitar HMR em produção
           disable: isProduction
-        }
+        },
+        // Permitir TODOS os hosts - crucial para domínios personalizados
+        host: '0.0.0.0',
+        cors: true
       },
       appType: 'spa',
       logLevel: 'info',
       optimizeDeps: {
         include: ['react', 'react-dom', 'wouter']
-      }
+      },
+      // Esta é a parte crucial - permitir qualquer host em produção
+      allowedHosts: 'all'
     });
     
     // Usar middleware Vite

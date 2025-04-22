@@ -123,6 +123,9 @@ Este erro acontece por causa de template literals aninhados no código. Use o `h
 #### Erro: ERR_MODULE_NOT_FOUND: shared/schema.js
 Este erro ocorre porque o arquivo TypeScript não foi transpilado. Use o servidor standalone: `heroku-vite-server-standalone.js`.
 
+#### Erro: Blocked request. This host is not allowed
+Este erro ocorre porque o Vite bloqueia domínios personalizados. Nossa versão mais recente do arquivo `heroku-vite-server-standalone.js` já inclui `allowedHosts: 'all'` para resolver isso.
+
 #### Erro: Cannot find module
 Verifique se todas as dependências estão no `package.json` e que `npm install` foi executado durante o build do Heroku.
 
