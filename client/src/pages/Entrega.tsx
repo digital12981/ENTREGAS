@@ -220,10 +220,11 @@ const Entrega: React.FC = () => {
         ? '' // Em desenvolvimento, usa o URL local (relativo)
         : 'https://shopee-delivery-api.herokuapp.com'; // Em produção, usa a URL do Heroku
       
-      console.log('Enviando requisição de pagamento para For4Payments via:', `${apiBaseUrl}/api/payments/pix`);
+      const apiEndpoint = `${apiBaseUrl}/api/payments/pix`;
+      console.log('Enviando requisição de pagamento para For4Payments via:', apiEndpoint);
       
       // Enviar requisição para API da For4Payments
-      const response = await fetch(`${apiBaseUrl}/api/payments/pix`, {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

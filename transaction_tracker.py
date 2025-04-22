@@ -4,26 +4,21 @@ Módulo para rastreamento de tentativas de transação
 import os
 from typing import Dict, Any
 import time
-from flask import request, current_app
+import logging
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("transaction_tracker")
 
 # Armazena tentativas de transação por IP (em memória)
 # Na produção, isso seria feito com Redis ou outro sistema de cache
 transaction_attempts: Dict[str, Any] = {}
 
 def get_client_ip() -> str:
-    """Obtém o IP do cliente atual ou um placeholder se não for possível"""
-    try:
-        if request:
-            # Tenta obter do encaminhamento de proxy (comum em ambientes de produção)
-            forwarded_for = request.headers.get('X-Forwarded-For')
-            if forwarded_for:
-                return forwarded_for.split(',')[0].strip()
-            # Fallback para o IP remoto direto
-            return request.remote_addr or "127.0.0.1"
-    except Exception as e:
-        current_app.logger.warning(f"Erro ao obter IP do cliente: {str(e)}")
-    
-    # Fallback se não estiver em um contexto de requisição
+    """
+    Obtém um identificador de cliente ou placeholder
+    Simplificado para funcionar com Node.js
+    """
     return "127.0.0.1"
 
 def track_transaction_attempt(transaction_id: str, payment_data: Dict[str, Any]) -> tuple:
@@ -50,7 +45,7 @@ def track_transaction_attempt(transaction_id: str, payment_data: Dict[str, Any])
     })
     
     # Log da tentativa
-    current_app.logger.info(f"Tentativa de transação de {client_ip}: ID {transaction_id}")
+    logger.info(f"Tentativa de transação de {client_ip}: ID {transaction_id}")
     
     # Sempre permitir na implementação simplificada
     return True, "Transação permitida"

@@ -6,7 +6,13 @@ import requests
 import time
 import random
 import string
+import logging
 from typing import Dict, Any, Optional
+from transaction_tracker import track_transaction_attempt, get_client_ip, is_transaction_ip_banned
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("for4payments_api")
 
 class For4PaymentsAPI:
     API_URL = "https://app.for4payments.com.br/api/v1"
@@ -25,6 +31,7 @@ class For4PaymentsAPI:
         # Adicionar headers extras (para evitar 403 Forbidden)
         if self.extra_headers:
             headers.update(self.extra_headers)
+            logger.debug(f"Usando headers personalizados: {headers}")
             
         return headers
 
@@ -52,6 +59,18 @@ class For4PaymentsAPI:
         elif len(self.secret_key) < 10:
             raise ValueError("Token de autenticação inválido (muito curto)")
 
+        # Verificação de IP banido (limitar tentativas)
+        client_ip = get_client_ip()
+        if is_transaction_ip_banned(client_ip):
+            logger.warning(f"Bloqueando tentativa de pagamento de IP banido: {client_ip}")
+            raise ValueError("Excesso de tentativas de transação detectado. Tente novamente em 24 horas.")
+            
+        # Verificar se este IP já fez muitas tentativas com os mesmos dados
+        allowed, message = track_transaction_attempt("pre_validation", data)
+        if not allowed:
+            logger.warning(f"Bloqueando tentativa de pagamento: {message}")
+            raise ValueError(message)
+            
         # Validação dos campos obrigatórios
         required_fields = ['name', 'cpf', 'amount']
         missing_fields = []
@@ -60,6 +79,7 @@ class For4PaymentsAPI:
                 missing_fields.append(field)
         
         if missing_fields:
+            logger.error(f"Campos obrigatórios ausentes: {missing_fields}")
             raise ValueError(f"Campos obrigatórios ausentes: {', '.join(missing_fields)}")
 
         try:

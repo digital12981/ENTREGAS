@@ -158,28 +158,7 @@ export class PaymentService {
         console.error('Detalhes do erro:', error.response.data);
       }
       
-      // Tratamento de falha na API - gerar código PIX de fallback
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Gerando código PIX de fallback para desenvolvimento');
-        
-        // Gerar ID único para a transação
-        const paymentId = `fallback_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-        
-        // Gerar código PIX de fallback (para desenvolvimento)
-        const pixCode = "00020126580014BR.GOV.BCB.PIX0136f5f04a2d-ecec-4072-955c-9e1d44c5060a0224Pagamento Kit Seguranca5204000053039865406107.805802BR5909ShopeeKit6009Sao Paulo62100506codigo6304E57B";
-        
-        // Gerar QR Code
-        const pixQrCode = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixCode)}`;
-        
-        console.log('PIX de fallback gerado. Isto deve ser usado apenas durante o desenvolvimento!');
-        
-        return {
-          id: paymentId,
-          pixCode: pixCode,
-          pixQrCode: pixQrCode,
-          status: 'pending'
-        };
-      }
+      // Não usamos mais geração de fallback conforme solicitado pelo cliente
       
       throw new Error(error.message || 'Erro ao processar pagamento');
     }
