@@ -9,27 +9,9 @@ import cors from "cors";
 const app = express();
 
 // Configuração de CORS para permitir requisições de outras origens
-const allowedOrigins = [
-  'http://localhost:3000', 
-  'http://localhost:5000',
-  'https://shopee-delivery.netlify.app',
-  'https://shopee-motboy.netlify.app',
-  'https://shopee-entr.netlify.app'
-];
-
 app.use(cors({
-  origin: function(origin, callback) {
-    // Permitir requisições sem origem (como apps mobile ou curl)
-    if (!origin) return callback(null, true);
-    
-    // Verificar se a origem está na lista de permitidas
-    if (allowedOrigins.indexOf(origin) !== -1 || origin.match(/\.netlify\.app$/)) {
-      callback(null, true);
-    } else {
-      console.log(`CORS: Origem bloqueada: ${origin}`);
-      callback(null, false);
-    }
-  },
+  // Em desenvolvimento, aceitar qualquer origem
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
