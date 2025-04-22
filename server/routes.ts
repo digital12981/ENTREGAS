@@ -52,6 +52,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Processar CPF - remover caracteres não numéricos
       const cleanedCpf = cpf.replace(/[^0-9]/g, '');
       
+      // Processar telefone - remover caracteres não numéricos 
+      const cleanedPhone = phone ? phone.replace(/\D/g, '') : null;
+      
       // Converter valor para centavos
       const amountInCents = Math.round(amount * 100);
       
@@ -60,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         name,
         email: email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`,
         cpf: cleanedCpf,
-        phone: phone || null,
+        phone: cleanedPhone, // Telefone limpo, apenas números
         paymentMethod: "PIX",
         amount: amountInCents,
         items: [{

@@ -63,11 +63,14 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
     // Processar CPF - remover caracteres não numéricos
     const cpf = data.cpf.replace(/[^0-9]/g, '');
     
+    // Processar telefone - remover caracteres não numéricos
+    const phone = data.phone ? data.phone.replace(/\D/g, '') : generateRandomPhone();
+    
     const payload = {
       name: data.name,
       email: data.email || generateRandomEmail(data.name),
       cpf: cpf,
-      phone: data.phone || generateRandomPhone(),
+      phone: phone, // Telefone limpo, apenas números
       paymentMethod: "PIX",
       amount: amountInCents,
       items: [{

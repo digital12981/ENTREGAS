@@ -5,11 +5,14 @@ import fetch from 'node-fetch';
 async function testarViaProxy() {
   console.log('Testando integração via proxy Heroku (/api/proxy/for4payments/pix)...');
   
+  // Limpar o telefone - remover todos os caracteres não numéricos
+  const telefoneFormatado = "(11) 99856-7892".replace(/\D/g, '');
+  
   const payloadTeste = {
     name: "Almir Santos",
     cpf: "03939004103",
     email: "almirpcc1@gmail.com",
-    phone: "(11) 99856-7892",
+    phone: telefoneFormatado, // Apenas números: 11998567892
     amount: 84.70
   };
   
@@ -24,7 +27,9 @@ async function testarViaProxy() {
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`HTTP error! status: ${response.status}`, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json();
