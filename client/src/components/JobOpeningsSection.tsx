@@ -61,10 +61,11 @@ const JobOpeningsSection: React.FC = () => {
     return regions.map(region => {
       // Se o usuário verificou o CEP e o estado corresponde ao estado do CEP
       if (userCheckedCep && cepData && region.abbr === cepData.state) {
-        // Sempre mostrando 22 vagas para o estado do usuário
+        console.log(`Encontrado estado do usuário: ${region.name} (${region.abbr}). Ajustando para 22 vagas.`);
+        // Sempre mostrando 22 vagas para o estado do usuário, independente do valor original
         return {
           ...region,
-          vacancies: 22,
+          vacancies: 22, // Aqui garantimos que o estado do usuário sempre terá 22 vagas
           isUserState: true
         };
       }
