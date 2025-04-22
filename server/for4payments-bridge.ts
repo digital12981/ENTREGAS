@@ -1,4 +1,8 @@
-import axios from 'axios';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import * as path from 'path';
+
+const execPromise = promisify(exec);
 
 // Interface para o payload de pagamento
 interface For4PaymentsData {
@@ -9,41 +13,33 @@ interface For4PaymentsData {
 }
 
 /**
- * Wrapper para chamar a API Flask for4payments
+ * Wrapper para chamar o script for4payments.py
  */
 export async function createFor4Payment(data: For4PaymentsData) {
   try {
-    console.log('Processando pagamento via API For4Payments:', data);
+    console.log('Processando pagamento via for4payments.py:', data);
     
-    // Definir a URL do serviço Flask (prod vs dev)
-    let apiUrl = 'https://shopee-entregas.com/api/for4payments';
+    // Construir comando para executar o script Python
+    const scriptPath = path.resolve(process.cwd(), 'for4payments-wrapper.py');
+    const command = `python3 ${scriptPath} ${JSON.stringify(JSON.stringify(data))}`;
     
-    // Em desenvolvimento, use localhost
-    if (process.env.NODE_ENV === 'development') {
-      apiUrl = 'http://localhost:5000/api/for4payments';
+    console.log(`Executando comando: ${command}`);
+    
+    // Executar o script Python
+    const { stdout, stderr } = await execPromise(command);
+    
+    if (stderr) {
+      console.error('Erro no script Python:', stderr);
+      throw new Error(stderr);
     }
     
-    console.log(`Enviando solicitação para: ${apiUrl}`);
+    console.log('Resultado do script Python:', stdout);
     
-    // Chamar a API Flask via HTTP
-    const response = await axios.post(apiUrl, data, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      timeout: 30000
-    });
-    
-    console.log('Resultado da API For4Payments:', response.status);
-    
-    // Retornar os dados
-    return response.data;
+    // Parsear a saída do script
+    const result = JSON.parse(stdout);
+    return result;
   } catch (error: any) {
-    console.error('Erro ao processar pagamento via API For4Payments:', error.message);
-    
-    if (error.response) {
-      console.error('Detalhes do erro:', error.response.data);
-    }
-    
+    console.error('Erro ao processar pagamento via for4payments.py:', error.message);
     throw new Error(`Falha ao processar pagamento: ${error.message}`);
   }
 }

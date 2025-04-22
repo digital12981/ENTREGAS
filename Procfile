@@ -1,1 +1,1 @@
-web: node server-fallback.js
+web: node heroku-index.js
