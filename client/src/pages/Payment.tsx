@@ -125,7 +125,7 @@ const Payment: React.FC = () => {
                 
                 // Inicializar o Facebook Pixel e rastrear o evento
                 initFacebookPixel();
-                const amount = statusData.amount ? parseFloat(statusData.amount) : 84.70;
+                const amount = statusData.amount ? parseFloat(statusData.amount) : 119.70;
                 trackPurchase(id, amount);
                 
                 // Também notifica o backend para fins de registro
@@ -164,7 +164,7 @@ const Payment: React.FC = () => {
                 // Se aprovado via backend, relatar via frontend de qualquer forma
                 if (backendData.status === 'APPROVED' && !backendData.facebookReported) {
                   initFacebookPixel();
-                  trackPurchase(id, 84.70);
+                  trackPurchase(id, 119.70);
                 }
               }
             } catch (backendError) {
@@ -195,7 +195,7 @@ const Payment: React.FC = () => {
               // Se aprovado, garantir que o evento seja enviado do frontend
               if (backendData.status === 'APPROVED') {
                 initFacebookPixel();
-                trackPurchase(id, 84.70);
+                trackPurchase(id, 119.70);
               }
             }
           } catch (backendError) {
@@ -339,7 +339,7 @@ const Payment: React.FC = () => {
                     </div>
                     <div className="flex-grow">
                       <h3 className="text-sm font-medium text-gray-800">Kit de Segurança Oficial</h3>
-                      <p className="text-lg font-bold text-[#E83D22]">R$ 84,70</p>
+                      <p className="text-lg font-bold text-[#E83D22]">R$ 119,70</p>
                       
                       <div className="w-full mt-1">
                         <p className="text-sm text-gray-600">
