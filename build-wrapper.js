@@ -1,34 +1,28 @@
-/**
- * Build wrapper script for Heroku deployment
- * 
- * This script runs the build process and performs additional tasks
- * to ensure the application can start correctly on Heroku.
- */
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import fs from 'fs';
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
-console.log('Starting build process for Heroku deployment...');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 try {
-  // Run the regular build process
-  console.log('Running npm build...');
+  console.log('🏗️ Iniciando build...');
   execSync('npm run build', { stdio: 'inherit' });
-  console.log('✅ Build completed successfully');
+  console.log('✅ Build completado com sucesso');
   
   // Run the post-build steps
   console.log('Running post-build steps...');
   
   // Ensure the server directory exists in dist
-  const serverDir = path.join(__dirname, 'dist', 'server');
+  const serverDir = join(__dirname, 'dist', 'server');
   if (!fs.existsSync(serverDir)) {
     fs.mkdirSync(serverDir, { recursive: true });
     console.log('✅ Created server directory in dist folder');
   }
   
   // Check if the dist/index.js file exists
-  const indexPath = path.join(__dirname, 'dist', 'index.js');
+  const indexPath = join(__dirname, 'dist', 'index.js');
   if (fs.existsSync(indexPath)) {
     console.log('✅ Found index.js in dist folder');
   } else {
@@ -37,6 +31,6 @@ try {
   
   console.log('✅ All build steps completed successfully');
 } catch (error) {
-  console.error('❌ Error during build process:', error.message);
+  console.error('❌ Erro durante o build:', error);
   process.exit(1);
 }
