@@ -1,169 +1,227 @@
 #!/usr/bin/env node
 
 /**
- * Este script copia os arquivos estáticos do frontend para o diretório public
- * para que eles possam ser servidos pelo servidor express.
+ * Script para copiar arquivos estáticos para todos os diretórios possíveis
+ * 
+ * Este script verifica e copia arquivos estáticos necessários para todos os diretórios
+ * onde eles podem ser servidos, garantindo que estejam acessíveis independentemente
+ * do caminho que o Express use para servi-los.
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
 
-// Obter o diretório atual
+// Configurar caminhos
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-console.log('Iniciando cópia de arquivos estáticos...');
-console.log(`Hora atual: ${new Date().toISOString()}`);
-
-// Caminhos importantes
 const rootDir = process.cwd();
-const distDir = path.join(rootDir, 'dist');
-const distClientDir = path.join(distDir, 'client');
-const publicDir = path.join(rootDir, 'public');
 
-// Função para executar comandos
-function exec(command) {
-  console.log(`Executando: ${command}`);
-  try {
-    execSync(command, { stdio: 'inherit' });
-    return true;
-  } catch (error) {
-    console.error(`Erro ao executar comando: ${error.message}`);
-    return false;
+console.log('📋 Iniciando cópia de arquivos estáticos...');
+
+// Lista de diretórios onde os arquivos estáticos devem existir
+const directories = [
+  path.join(rootDir, 'public'),
+  path.join(rootDir, 'dist', 'public'),
+  path.join(rootDir, 'dist', 'client'),
+  path.join(rootDir, 'dist', 'server', 'public'),
+  path.join(rootDir, 'src', 'public')
+];
+
+// Garantir que todos os diretórios existam
+directories.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+      console.log(`Criado diretório: ${dir}`);
+    } catch (err) {
+      console.error(`Erro ao criar diretório ${dir}: ${err.message}`);
+    }
   }
-}
+});
 
-// Verificar se dist existe
-if (!fs.existsSync(distDir)) {
-  console.error('ERRO: Diretório dist não encontrado!');
-  console.log('Executando build...');
-  
-  if (!exec('npm run build')) {
-    console.error('Falha ao executar build. Abortando.');
-    process.exit(1);
-  }
-  
-  // Verificar novamente
-  if (!fs.existsSync(distDir)) {
-    console.error('ERRO: Diretório dist ainda não existe após build. Algo está errado.');
-    process.exit(1);
-  }
-}
-
-// Criar diretório public se não existir
-if (!fs.existsSync(publicDir)) {
-  console.log('Criando diretório public...');
-  fs.mkdirSync(publicDir, { recursive: true });
-}
-
-// Verificar possíveis localizações dos arquivos estáticos
-let staticFilesFound = false;
-
-// 1. Verificar em dist/client
-if (fs.existsSync(distClientDir)) {
-  console.log('Diretório dist/client encontrado.');
-  
-  const files = fs.readdirSync(distClientDir);
-  if (files.includes('index.html')) {
-    console.log('index.html encontrado em dist/client. Copiando para public...');
-    exec(`cp -r ${distClientDir}/* ${publicDir}/`);
-    staticFilesFound = true;
-  } else {
-    console.log('index.html não encontrado em dist/client.');
-  }
-}
-
-// 2. Verificar diretamente em dist
-if (!staticFilesFound && fs.existsSync(path.join(distDir, 'index.html'))) {
-  console.log('index.html encontrado diretamente em dist. Copiando arquivos para public...');
-  
-  // Listar arquivos em dist, excluindo os que são claramente parte do servidor
-  const distFiles = fs.readdirSync(distDir).filter(file => 
-    file !== 'index.js' && 
-    !file.endsWith('.mjs') && 
-    !file.endsWith('.cjs') &&
-    file !== 'server'
-  );
-  
-  // Copiar cada arquivo/diretório para public
-  for (const file of distFiles) {
-    const srcPath = path.join(distDir, file);
-    const destPath = path.join(publicDir, file);
-    
-    if (fs.statSync(srcPath).isDirectory()) {
-      // Se for diretório, copiar recursivamente
-      exec(`mkdir -p ${destPath}`);
-      exec(`cp -r ${srcPath}/* ${destPath}/`);
-    } else {
-      // Se for arquivo, copiar diretamente
-      fs.copyFileSync(srcPath, destPath);
+// Encontrar diretórios com arquivos importantes
+function findFileSource(filename, directories) {
+  for (const dir of directories) {
+    const filePath = path.join(dir, filename);
+    if (fs.existsSync(filePath)) {
+      return filePath;
     }
   }
   
-  staticFilesFound = true;
-}
-
-// 3. Como último recurso, tentar encontrar em /app/dist/client (caminho na Heroku)
-if (!staticFilesFound && process.env.HEROKU === 'true' && fs.existsSync('/app/dist/client')) {
-  console.log('Tentando encontrar arquivos estáticos no caminho /app/dist/client...');
-  
-  if (fs.existsSync(path.join('/app/dist/client', 'index.html'))) {
-    console.log('index.html encontrado em /app/dist/client. Copiando para public...');
-    exec(`cp -r /app/dist/client/* ${publicDir}/`);
-    staticFilesFound = true;
+  // Verificar em cliente/dist/assets
+  const clientAssetsPath = path.join(rootDir, 'client', 'dist', 'assets', filename);
+  if (fs.existsSync(clientAssetsPath)) {
+    return clientAssetsPath;
   }
+  
+  // Não encontrado
+  return null;
 }
 
-// 4. Verificar em src/client/index.html
-if (!staticFilesFound && fs.existsSync(path.join(rootDir, 'client/index.html'))) {
-  console.log('Encontrado client/index.html. Copiando para public...');
-  exec(`cp -r ${path.join(rootDir, 'client')}/* ${publicDir}/`);
-  staticFilesFound = true;
-}
-
-// 5. Reconstruir manualmente o projeto na pasta client e copiar o resultado
-if (!staticFilesFound && fs.existsSync(path.join(rootDir, 'client'))) {
-  console.log('Tentando reconstruir o frontend manualmente...');
+// Função para copiar um arquivo para todos os diretórios
+function copyFileToAllDirectories(sourceFile, destFilename = null) {
+  const filename = destFilename || path.basename(sourceFile);
+  const sourceDir = path.dirname(sourceFile);
   
-  // Navegar para o diretório client
-  process.chdir(path.join(rootDir, 'client'));
-  
-  // Executar build
-  if (exec('npm run build')) {
-    console.log('Build do frontend concluído. Verificando resultado...');
-    
-    // Verificar se o build gerou arquivos estáticos
-    const buildDir = path.join(rootDir, 'client/dist');
-    if (fs.existsSync(buildDir) && fs.existsSync(path.join(buildDir, 'index.html'))) {
-      console.log('Copiando arquivos do build manual para public...');
-      exec(`cp -r ${buildDir}/* ${publicDir}/`);
-      staticFilesFound = true;
+  let copyCount = 0;
+  directories.forEach(dir => {
+    if (dir !== sourceDir) {
+      const targetPath = path.join(dir, filename);
+      try {
+        fs.copyFileSync(sourceFile, targetPath);
+        console.log(`✅ Copiado ${filename} para ${dir}`);
+        copyCount++;
+      } catch (err) {
+        console.error(`❌ Erro ao copiar para ${targetPath}: ${err.message}`);
+      }
     }
-  }
+  });
   
-  // Voltar para o diretório raiz
-  process.chdir(rootDir);
+  return copyCount;
 }
 
-// Verificar resultado
-if (staticFilesFound) {
-  console.log('Arquivos estáticos foram copiados com sucesso para o diretório public.');
-  
-  // Verificar conteúdo do diretório public
-  const publicFiles = fs.readdirSync(publicDir);
-  console.log(`Diretório public contém ${publicFiles.length} arquivos:`);
-  console.log(publicFiles.join(', '));
-  
-  if (publicFiles.includes('index.html')) {
-    console.log('✅ index.html encontrado em public/. Tudo parece estar correto!');
-  } else {
-    console.error('❌ index.html não encontrado em public/ após a cópia. Algo deu errado.');
+// Função para copiar todo o conteúdo de um diretório para outros diretórios
+function copyDirectoryContents(sourceDir, targetSubDir = '') {
+  if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+    console.warn(`⚠️ Diretório fonte não encontrado ou não é um diretório: ${sourceDir}`);
+    return 0;
   }
+  
+  const files = fs.readdirSync(sourceDir);
+  let copyCount = 0;
+  
+  // Para cada diretório de destino
+  directories.forEach(targetBaseDir => {
+    if (targetBaseDir === sourceDir) return; // Pular o diretório fonte
+    
+    // Criar o subdiretório de destino se necessário
+    const fullTargetDir = path.join(targetBaseDir, targetSubDir);
+    if (!fs.existsSync(fullTargetDir)) {
+      try {
+        fs.mkdirSync(fullTargetDir, { recursive: true });
+      } catch (err) {
+        console.error(`Erro ao criar diretório ${fullTargetDir}: ${err.message}`);
+        return;
+      }
+    }
+    
+    // Copiar cada arquivo
+    files.forEach(file => {
+      const sourcePath = path.join(sourceDir, file);
+      const targetPath = path.join(fullTargetDir, file);
+      
+      // Verificar se é um arquivo ou diretório
+      if (fs.statSync(sourcePath).isDirectory()) {
+        // Criar subdiretório recursivamente
+        const newSubDir = targetSubDir ? path.join(targetSubDir, file) : file;
+        const newSourceDir = path.join(sourceDir, file);
+        copyCount += copyDirectoryContents(newSourceDir, newSubDir);
+      } else {
+        // Copiar arquivo
+        try {
+          fs.copyFileSync(sourcePath, targetPath);
+          console.log(`Copiado ${file} para ${fullTargetDir}`);
+          copyCount++;
+        } catch (err) {
+          console.error(`Erro ao copiar ${file}: ${err.message}`);
+        }
+      }
+    });
+  });
+  
+  return copyCount;
+}
+
+// Verificar e copiar os arquivos importantes
+console.log('🔍 Procurando arquivos importantes...');
+
+// 1. Procurar e copiar index.html
+const indexHtmlSource = findFileSource('index.html', directories);
+if (indexHtmlSource) {
+  console.log(`✅ Encontrado index.html em ${indexHtmlSource}`);
+  const copiedCount = copyFileToAllDirectories(indexHtmlSource);
+  console.log(`Copiado index.html para ${copiedCount} diretórios`);
 } else {
-  console.error('❌ Não foi possível encontrar arquivos estáticos em nenhum local conhecido.');
-  console.error('A interface web pode não funcionar corretamente.');
+  // Verificar em client/index.html
+  const clientIndexPath = path.join(rootDir, 'client', 'index.html');
+  if (fs.existsSync(clientIndexPath)) {
+    console.log(`✅ Encontrado index.html em ${clientIndexPath}`);
+    const copiedCount = copyFileToAllDirectories(clientIndexPath);
+    console.log(`Copiado index.html para ${copiedCount} diretórios`);
+  } else {
+    console.error('❌ Não foi possível encontrar index.html em nenhum diretório!');
+  }
 }
 
-console.log('Processo de cópia de arquivos estáticos concluído.');
+// 2. Procurar e copiar favicon.ico
+const faviconSource = findFileSource('favicon.ico', directories);
+if (faviconSource) {
+  console.log(`✅ Encontrado favicon.ico em ${faviconSource}`);
+  const copiedCount = copyFileToAllDirectories(faviconSource);
+  console.log(`Copiado favicon.ico para ${copiedCount} diretórios`);
+} else {
+  // Usar o favicon gerado, se existir
+  const generatedIconPath = path.join(rootDir, 'generated-icon.png');
+  if (fs.existsSync(generatedIconPath)) {
+    console.log(`✅ Usando ícone gerado: ${generatedIconPath}`);
+    const copiedCount = copyFileToAllDirectories(generatedIconPath, 'favicon.ico');
+    console.log(`Copiado favicon.ico para ${copiedCount} diretórios`);
+  } else {
+    console.warn('⚠️ Não foi possível encontrar favicon.ico em nenhum diretório.');
+  }
+}
+
+// 3. Verificar e copiar diretorios de assets
+console.log('🔍 Verificando diretórios de assets...');
+
+// Lista de possíveis diretórios de assets
+const possibleAssetsDirs = [
+  path.join(rootDir, 'dist', 'client', 'assets'),
+  path.join(rootDir, 'public', 'assets'),
+  path.join(rootDir, 'dist', 'public', 'assets'),
+  path.join(rootDir, 'client', 'dist', 'assets')
+];
+
+// Encontrar diretórios de assets existentes
+const existingAssetsDirs = possibleAssetsDirs.filter(dir => fs.existsSync(dir));
+
+if (existingAssetsDirs.length > 0) {
+  console.log(`✅ Encontrados ${existingAssetsDirs.length} diretórios de assets`);
+  
+  // Usar o primeiro diretório como fonte
+  const sourceAssetsDir = existingAssetsDirs[0];
+  console.log(`Usando ${sourceAssetsDir} como fonte para assets`);
+  
+  // Garantir que todos os diretórios tenham um subdiretório assets
+  directories.forEach(dir => {
+    const assetsDir = path.join(dir, 'assets');
+    if (!fs.existsSync(assetsDir)) {
+      try {
+        fs.mkdirSync(assetsDir, { recursive: true });
+        console.log(`Criado diretório de assets em ${dir}`);
+      } catch (err) {
+        console.error(`Erro ao criar diretório de assets em ${dir}: ${err.message}`);
+      }
+    }
+  });
+  
+  // Copiar conteúdo do diretório de assets para todos os outros
+  console.log('Copiando arquivos de assets para todos os diretórios...');
+  const copiedCount = copyDirectoryContents(sourceAssetsDir, 'assets');
+  console.log(`Copiados ${copiedCount} arquivos de assets`);
+} else {
+  console.warn('⚠️ Nenhum diretório de assets encontrado!');
+}
+
+console.log('\n📋 Resumo:');
+console.log(`- Diretórios verificados: ${directories.length}`);
+console.log(`- Diretórios de assets encontrados: ${existingAssetsDirs.length}`);
+
+if (indexHtmlSource || faviconSource || existingAssetsDirs.length > 0) {
+  console.log('✅ Processo de cópia concluído com sucesso!');
+} else {
+  console.warn('⚠️ Nenhum arquivo importante foi encontrado para copiar.');
+}
+
+console.log('\n🚀 Arquivos estáticos preparados para implantação!');

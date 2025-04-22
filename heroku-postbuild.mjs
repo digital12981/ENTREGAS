@@ -1,112 +1,143 @@
+#!/usr/bin/env node
+
 /**
- * Script de pós-build para Heroku (versão ESM)
+ * Script de post-build para a Heroku
+ * Este script é executado após o build e antes da inicialização do servidor
  */
+
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Obter __dirname equivalente no modo ESM
+// Configuração de caminhos para ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('Running Heroku postbuild script...');
-console.log('Node version:', process.version);
-console.log('Timestamp:', new Date().toISOString());
+console.log('🚀 Executando script de post-build da Heroku...');
+console.log('🔵 Versão do Node:', process.version);
+console.log('🕒 Timestamp:', new Date().toISOString());
 
 // Função para executar um comando e exibir o log
 function execCommand(command) {
-  console.log(`Executing: ${command}`);
+  console.log(`Executando: ${command}`);
   try {
     execSync(command, { stdio: 'inherit' });
   } catch (error) {
-    console.error(`Command failed: ${command}`);
+    console.error(`Comando falhou: ${command}`);
     console.error(error);
     process.exit(1);
   }
 }
 
 // 1. Instalação do Python e dependências
-console.log('Installing Python dependencies...');
+console.log('📦 Instalando dependências Python...');
 execCommand('pip install -r heroku-requirements.txt');
 
 // 2. Construir o aplicativo Node.js
-console.log('Building Node.js application...');
+console.log('🏗️ Construindo aplicação Node.js...');
 execCommand('npm run build');
 
 // 3. Verificar se o build foi bem-sucedido
 const distDir = path.resolve(process.cwd(), 'dist');
 if (!fs.existsSync(distDir)) {
-  console.error('FATAL: dist directory not found after build!');
+  console.error('❌ FATAL: Diretório dist não encontrado após o build!');
   process.exit(1);
 }
 
-// 4. Executar script dedicado para copiar arquivos estáticos
-console.log('Copiando arquivos estáticos...');
+// 4. Executar o script de correção de caminhos estáticos
+console.log('🔧 Executando script de correção de caminhos estáticos...');
+try {
+  // Primeiro tentar usar o novo script
+  execCommand('node fix-static-paths.mjs');
+} catch (err) {
+  console.warn('⚠️ Erro ao executar fix-static-paths.mjs, tentando script alternativo...');
+  try {
+    // Se falhar, usar o script existente
+    execCommand('node fixup-static-dirs.js');
+  } catch (err2) {
+    console.error('❌ Ambos os scripts de correção falharam. Tentando continuar...');
+  }
+}
+
+// 5. Executar o script de cópia de arquivos estáticos
+console.log('📋 Executando script de cópia de arquivos estáticos...');
 try {
   execCommand('node copy-static-files.mjs');
 } catch (err) {
-  console.error('Erro ao copiar arquivos estáticos:', err);
-  console.error('Tentando método alternativo...');
-  
-  // Fallback: método manual
-  console.log('Criando diretório public manualmente...');
-  const publicDir = path.resolve(process.cwd(), 'public');
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
-  
-  // Verificar em dist/client
-  const distClientDir = path.resolve(distDir, 'client');
-  if (fs.existsSync(distClientDir) && fs.existsSync(path.join(distClientDir, 'index.html'))) {
-    console.log('Encontrado index.html em dist/client, copiando para public...');
-    execCommand(`cp -r ${distClientDir}/* ${publicDir}/`);
-  } 
-  // Verificar em dist
-  else if (fs.existsSync(path.join(distDir, 'index.html'))) {
-    console.log('Encontrado index.html em dist, copiando para public...');
-    execCommand(`cp -r ${distDir}/* ${publicDir}/`);
-  } else {
-    console.error('ERRO: Não foi possível encontrar arquivos estáticos!');
-  }
-}
-
-// 5. Criar favicon.ico se não existir
-console.log('Verificando favicon.ico...');
-const faviconPath = path.resolve(process.cwd(), 'public/favicon.ico');
-if (!fs.existsSync(faviconPath)) {
-  console.log('Criando favicon.ico...');
-  try {
-    execCommand('node create-favicon.mjs');
-  } catch (err) {
-    console.error('Erro ao criar favicon.ico:', err);
-  }
-} else {
-  console.log('favicon.ico já existe.');
+  console.warn('⚠️ Erro ao executar copy-static-files.mjs. Tentando continuar...');
 }
 
 // 6. Verificar permissões de arquivos importantes
-console.log('Checking file permissions...');
-execCommand('chmod +x production-loader.mjs');
+console.log('🔒 Verificando permissões de arquivos...');
+const filesToMakeExecutable = [
+  'production-loader.js',
+  'production-loader.mjs',
+  'fixup-static-dirs.js',
+  'fix-static-paths.mjs',
+  'copy-static-files.mjs',
+  'heroku-start.mjs'
+];
 
-// 7. Verificar conteúdo do diretório public
-if (fs.existsSync(publicDir)) {
-  const publicFiles = fs.readdirSync(publicDir);
-  console.log(`Public directory contains ${publicFiles.length} files.`);
-  
-  if (fs.existsSync(path.join(publicDir, 'index.html'))) {
-    console.log('SUCCESS: index.html found in public directory!');
-  } else {
-    console.warn('WARNING: index.html not found in public directory!');
-    console.warn('The web application may not work correctly.');
+filesToMakeExecutable.forEach(file => {
+  if (fs.existsSync(file)) {
+    try {
+      execCommand(`chmod +x ${file}`);
+    } catch (err) {
+      console.warn(`⚠️ Não foi possível definir permissão de execução para ${file}`);
+    }
   }
-}
+});
 
-// 8. Mostrar informações do ambiente para debug
-console.log('Environment information:');
-console.log('- NODE_ENV:', process.env.NODE_ENV);
-console.log('- Current directory:', process.cwd());
-console.log('- Directory structure:');
-execCommand('find . -type d -not -path "*/node_modules/*" -not -path "*/.git/*" | sort');
+// 7. Exibir estrutura de diretórios para debug
+console.log('📁 Estrutura de diretórios:');
+execCommand('find . -type d -maxdepth 3 -not -path "*/node_modules/*" -not -path "*/.git/*" | sort');
 
-console.log('Heroku postbuild completed successfully!');
+// 8. Verificar conteúdo do diretório public e outros diretórios importantes
+const dirsToCheck = [
+  path.resolve(process.cwd(), 'public'),
+  path.resolve(process.cwd(), 'dist', 'public'),
+  path.resolve(process.cwd(), 'dist', 'client')
+];
+
+dirsToCheck.forEach(dir => {
+  if (fs.existsSync(dir)) {
+    console.log(`📁 Arquivos em ${path.relative(process.cwd(), dir)}:`);
+    execCommand(`find "${dir}" -type f -maxdepth 2 | sort`);
+    
+    // Verificar se index.html existe
+    if (fs.existsSync(path.join(dir, 'index.html'))) {
+      console.log(`✅ SUCESSO: index.html encontrado em ${path.relative(process.cwd(), dir)}!`);
+    } else {
+      console.warn(`⚠️ AVISO: index.html não encontrado em ${path.relative(process.cwd(), dir)}!`);
+    }
+    
+    // Verificar se assets/index.js existe (compilado pelo Vite)
+    const assetsDir = path.join(dir, 'assets');
+    if (fs.existsSync(assetsDir)) {
+      const hasIndexJs = fs.existsSync(path.join(assetsDir, 'index.js'));
+      const hasIndexCss = fs.existsSync(path.join(assetsDir, 'index.css'));
+      
+      if (hasIndexJs) {
+        console.log(`✅ SUCESSO: assets/index.js encontrado em ${path.relative(process.cwd(), dir)}!`);
+      } else {
+        console.warn(`⚠️ AVISO: assets/index.js não encontrado em ${path.relative(process.cwd(), dir)}!`);
+      }
+      
+      if (hasIndexCss) {
+        console.log(`✅ SUCESSO: assets/index.css encontrado em ${path.relative(process.cwd(), dir)}!`);
+      }
+    } else {
+      console.warn(`⚠️ AVISO: diretório assets não encontrado em ${path.relative(process.cwd(), dir)}!`);
+    }
+  }
+});
+
+// 9. Imprimir resumo
+console.log('\n📋 Resumo do post-build:');
+console.log('✅ Build da aplicação concluído');
+console.log('✅ Scripts de correção executados');
+console.log('✅ Permissões de arquivos verificadas');
+console.log('✅ Estrutura de diretórios exibida');
+
+console.log('\n🎉 Script de post-build da Heroku concluído com sucesso!\n');
