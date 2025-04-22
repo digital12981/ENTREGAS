@@ -4,20 +4,19 @@ Uma plataforma inovadora para recrutamento de entregadores para a Shopee, otimiz
 
 ## 🚀 Opções de Deploy (Atualizado Abril 2025)
 
-Este projeto pode ser implantado de duas maneiras diferentes:
+Este projeto pode ser implantado de diferentes maneiras:
 
-### 1. Deploy Completo no Heroku (Recomendado)
+### 1. Deploy com Vite em modo Dev no Heroku (Recomendado)
 
-Para implantar o aplicativo completo no Heroku seguindo nossa nova configuração otimizada:
+Para implantar o aplicativo completo no Heroku com o Vite em modo de desenvolvimento, igual ao preview da Replit:
 
-1. Já configuramos o Procfile principal para usar nosso servidor simplificado:
+1. Já configuramos o Procfile principal para usar nosso servidor Vite:
    ```
-   web: node heroku-simple-server.js
+   web: NODE_ENV=development node heroku-vite-server.js
    ```
    
-   > Nota: Temos dois servidores disponíveis:
-   > - `heroku-simple-server.js`: Versão simples, mais robusta e menos propensa a erros de sintaxe
-   > - `heroku-server.js`: Versão avançada com mais recursos de diagnóstico
+   > Nota: Esta abordagem usa o Vite em modo de desenvolvimento, igual ao preview da Replit, para garantir o funcionamento correto
+   > O servidor `heroku-vite-server.js` carrega todo o ambiente de desenvolvimento diretamente no Heroku
 
 2. Certifique-se de que você tem o buildpack Node.js configurado:
    ```bash
@@ -67,53 +66,69 @@ Esta abordagem é uma alternativa caso o deploy unificado não funcione:
 
 Se encontrar problemas com a aplicação no Heroku:
 
-### Página em branco ou erro no deploy
+### Abordagem preferencial - Vite em modo Dev
 
-1. Verifique os logs do Heroku: 
+Nossa nova solução usa o Vite em modo de desenvolvimento diretamente no Heroku, da mesma forma que funciona no preview da Replit:
+
+1. Use o servidor Vite diretamente:
+   ```bash
+   # Atualizar Procfile para usar o servidor Vite
+   echo "web: NODE_ENV=development node heroku-vite-server.js" > Procfile
+   git add Procfile
+   git commit -m "Use Vite development server"
+   git push heroku main
+   ```
+
+2. Vantagens desta abordagem:
+   - Funciona igual ao preview da Replit (onde já sabemos que funciona)
+   - Não depende de assets compilados
+   - Não tem problemas de caminho de assets
+   - Suporta hot-reloading (se configurado)
+
+3. Esta abordagem é a mais confiável pois:
+   - Evita a complexidade de servir arquivos estáticos
+   - Resolve diferenças entre ambientes de desenvolvimento e produção
+   - Elimina a necessidade de processo de build
+
+4. Depois de fazer o deploy, verifique os logs para confirmar:
    ```bash
    heroku logs --tail
    ```
+   
+   Você deve ver: "Servidor Vite rodando na porta XXXX (modo desenvolvimento)"
 
-2. Se houver erro de sintaxe, use nosso servidor simplificado:
+### Solução alternativa: Servidor simplificado para assets estáticos
+
+Se preferir usar uma abordagem tradicional com arquivos estáticos:
+
+1. Configure o Procfile para usar o servidor simplificado:
    ```bash
-   # Edite Procfile para usar a versão simplificada
    echo "web: node heroku-simple-server.js" > Procfile
    git add Procfile
    git commit -m "Use simplified server"
    git push heroku main
    ```
 
-3. Nossos servidores estão configurados para automaticamente:
-   - Detectar e corrigir caminhos absolutos para relativos
-   - Adicionar um indicador visual durante o carregamento
-   - Fazer fallback para caminhos alternativos se o original falhar
-   - Injetar CSS de emergência para garantir que algo seja exibido
+2. Este servidor é configurado para corrigir problemas comuns:
+   - Detecta e corrige caminhos absolutos para relativos
+   - Adiciona indicador visual durante o carregamento
+   - Tenta caminhos alternativos se o original falhar
+   - Evita template literals aninhados que causam erros
 
-4. Se receber erros relacionados a template literals ou sintaxe, o servidor simplificado resolve:
-   - Ele usa uma abordagem mais simples com menos ES6 avançado
-   - Evita template literals aninhados que podem causar problemas de parse
-
-5. Após qualquer alteração, reinicie a aplicação:
-   ```bash
-   heroku restart
-   ```
-
-6. Limpe o cache do navegador ou teste com um navegador anônimo
-
-### Problemas comuns e soluções
+### Solução para tipos específicos de erro
 
 #### Erro: SyntaxError: missing ) after argument list
-Este erro acontece por causa de template literals aninhados no código. Use o `heroku-simple-server.js` que evita esse problema.
+Este erro acontece por causa de template literals aninhados no código. Use o `heroku-vite-server.js` (preferencial) ou `heroku-simple-server.js`.
 
 #### Erro: Cannot find module
 Verifique se todas as dependências estão no `package.json` e que `npm install` foi executado durante o build do Heroku.
 
 #### Página branca (sem erro no console)
-Provavelmente um problema com caminhos de assets. Nossos servidores corrigem isso.
+O melhor é usar o `heroku-vite-server.js` que evita completamente esse problema.
 
 ### Alternativa de última instância
 
-Se você continuar com problemas, considere a abordagem de separar frontend e backend:
+Se mesmo com o servidor Vite você continuar tendo problemas, considere separar o frontend e backend:
 1. Frontend no Netlify/Vercel (já temos arquivos de configuração prontos)
 2. Backend no Heroku (use o `api-server.js` específico para esse caso)
 
@@ -123,8 +138,10 @@ Se você continuar com problemas, considere a abordagem de separar frontend e ba
 - `/server`: API backend com Express
 - `/shared`: Esquemas e tipos compartilhados
 - `/dist`: Arquivos compilados para produção 
-- `/heroku-simple-server.js`: Servidor simplificado e robusto para Heroku
-- `/heroku-server.js`: Servidor avançado com mais recursos (pode ter problemas de sintaxe)
+- `/heroku-vite-server.js`: Servidor Vite em modo dev para Heroku (RECOMENDADO)
+- `/heroku-simple-server.js`: Servidor simplificado para servir assets estáticos
+- `/heroku-server.js`: Servidor avançado para assets estáticos (pode ter problemas de sintaxe)
+- `/heroku-rebuild-server.js`: Servidor que executa build antes de servir
 - `/static-server.js`: Servidor estático alternativo para testes
 - `/api-server.js`: Servidor apenas para API (usado no deploy separado)
 

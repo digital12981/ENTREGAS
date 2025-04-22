@@ -1,1 +1,1 @@
-web: node heroku-simple-server.js
+web: NODE_ENV=development node heroku-vite-server.js
