@@ -54,6 +54,67 @@ export function setupAlternativeStatic(app) {
     path.resolve('/app/public')                   // /app/public (caminho absoluto na Heroku)
   ];
   
+  // Copiar arquivos para todos os caminhos possíveis primeiro
+  const rootDir = path.resolve(__dirname, '..');
+  const publicDir = path.resolve(rootDir, 'public');
+  
+  if (fs.existsSync(publicDir)) {
+    // Copiar para todos os outros caminhos possíveis
+    possiblePaths.forEach(testPath => {
+      if (testPath !== publicDir && !fs.existsSync(testPath)) {
+        log(`Criando diretório ${testPath}...`);
+        fs.mkdirSync(testPath, { recursive: true });
+      }
+      
+      if (testPath !== publicDir && fs.existsSync(testPath)) {
+        try {
+          // Copiar index.html
+          if (fs.existsSync(path.join(publicDir, 'index.html'))) {
+            fs.copyFileSync(
+              path.join(publicDir, 'index.html'), 
+              path.join(testPath, 'index.html')
+            );
+            log(`Copiado index.html para ${testPath}`);
+          }
+          
+          // Copiar favicon.ico
+          if (fs.existsSync(path.join(publicDir, 'favicon.ico'))) {
+            fs.copyFileSync(
+              path.join(publicDir, 'favicon.ico'), 
+              path.join(testPath, 'favicon.ico')
+            );
+            log(`Copiado favicon.ico para ${testPath}`);
+          }
+          
+          // Copiar diretório assets
+          const srcAssetsDir = path.join(publicDir, 'assets');
+          const destAssetsDir = path.join(testPath, 'assets');
+          
+          if (fs.existsSync(srcAssetsDir)) {
+            if (!fs.existsSync(destAssetsDir)) {
+              fs.mkdirSync(destAssetsDir, { recursive: true });
+            }
+            
+            // Copiar arquivos
+            const assetFiles = fs.readdirSync(srcAssetsDir);
+            assetFiles.forEach(file => {
+              const srcFile = path.join(srcAssetsDir, file);
+              const destFile = path.join(destAssetsDir, file);
+              
+              if (fs.statSync(srcFile).isFile()) {
+                fs.copyFileSync(srcFile, destFile);
+              }
+            });
+            
+            log(`Copiados ${assetFiles.length} arquivos de assets para ${destAssetsDir}`);
+          }
+        } catch (err) {
+          log(`Erro ao copiar arquivos para ${testPath}: ${err.message}`, 'error');
+        }
+      }
+    });
+  }
+  
   // Encontrar todos os caminhos válidos
   const validPaths = possiblePaths.filter(testPath => {
     const exists = fs.existsSync(testPath);

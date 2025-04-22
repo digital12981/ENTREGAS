@@ -10,7 +10,31 @@ import {
   insertUserSchema 
 } from "@shared/schema";
 
+// Importar o módulo de diagnóstico HTTP
+let httpDiagnosis;
+try {
+  import('./http-diagnosis.js')
+    .then(module => {
+      httpDiagnosis = module;
+      console.log('Módulo de diagnóstico HTTP importado com sucesso');
+    })
+    .catch(err => {
+      console.warn('Não foi possível importar o módulo de diagnóstico HTTP:', err.message);
+    });
+} catch (err) {
+  console.warn('Erro ao importar o módulo de diagnóstico HTTP:', err);
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configurar o módulo de diagnóstico HTTP (se estiver disponível)
+  try {
+    if (httpDiagnosis) {
+      httpDiagnosis.setupHttpDiagnosis(app);
+      console.log('Módulo de diagnóstico HTTP configurado com sucesso');
+    }
+  } catch (err) {
+    console.warn('Erro ao configurar módulo de diagnóstico HTTP:', err);
+  }
   // Rota para obter todos os estados
   app.get('/api/states', async (req, res) => {
     try {
