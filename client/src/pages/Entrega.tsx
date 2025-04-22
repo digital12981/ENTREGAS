@@ -16,7 +16,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
 import { createPixPayment } from '../lib/payments-api';
-import { initFacebookPixel, trackEvent } from '../lib/facebook-pixel';
+import { initFacebookPixel, trackEvent, trackPurchase, checkPaymentStatus } from '../lib/facebook-pixel';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -65,6 +65,15 @@ const Entrega: React.FC = () => {
   // Inicializar o Facebook Pixel
   useEffect(() => {
     initFacebookPixel();
+    
+    // Verificar se há um pagamento em andamento
+    const currentPaymentId = localStorage.getItem('current_payment_id');
+    if (currentPaymentId) {
+      console.log('[ENTREGA] Encontrado pagamento em andamento:', currentPaymentId);
+      setTimeout(() => {
+        verificarStatusPagamento(currentPaymentId);
+      }, 3000);
+    }
   }, []);
   
   const [endereco, setEndereco] = useState<EnderecoUsuario | null>(null);
@@ -240,6 +249,23 @@ const Entrega: React.FC = () => {
       // Definir os dados do PIX no estado
       setPixInfo(pixData);
       
+      // Rastrear evento de checkout iniciado no Facebook Pixel
+      trackEvent('InitiateCheckout', {
+        content_name: 'Kit de Segurança Shopee',
+        content_ids: [pixData.id],
+        content_type: 'product',
+        value: 84.70,
+        currency: 'BRL'
+      });
+      
+      // Armazenar ID da transação para verificação posterior
+      localStorage.setItem('current_payment_id', pixData.id);
+      
+      // Iniciar verificação de status após 15 segundos
+      setTimeout(() => {
+        verificarStatusPagamento(pixData.id);
+      }, 15000);
+      
     } catch (error: any) {
       console.error("Erro ao processar pagamento:", error);
       toast({
@@ -268,6 +294,93 @@ const Entrega: React.FC = () => {
         title: "Código PIX copiado!",
         description: "O código PIX foi copiado para a área de transferência.",
       });
+    }
+  };
+  
+  // Função para verificar o status do pagamento diretamente na For4Payments
+  const verificarStatusPagamento = async (paymentId: string) => {
+    console.log('[ENTREGA] Verificando status do pagamento:', paymentId);
+    
+    // Obter a chave de API For4Payments via variável de ambiente específica para frontend
+    const apiKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
+    
+    if (apiKey) {
+      try {
+        // Usar a função que verifica diretamente do frontend
+        const { success, data: statusData } = await checkPaymentStatus(paymentId, apiKey);
+        
+        if (success && statusData) {
+          console.log('[ENTREGA] Status obtido diretamente:', statusData);
+          
+          // Se aprovado, relatar diretamente do frontend para o Facebook
+          if (statusData.status === 'APPROVED') {
+            console.log('[ENTREGA] Pagamento APROVADO! Rastreando conversão do frontend...');
+            
+            // Rastrear o evento de compra no Facebook Pixel
+            const amount = statusData.amount ? parseFloat(statusData.amount) / 100 : 84.70;
+            trackPurchase(paymentId, amount);
+            
+            // Exibir mensagem de sucesso para o usuário
+            toast({
+              title: "Pagamento aprovado!",
+              description: "Seu pagamento foi confirmado com sucesso!",
+            });
+            
+            // Também notifica o backend para fins de registro
+            try {
+              await fetch(`${API_BASE_URL}/api/payments/${paymentId}/check-status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+              });
+            } catch (err) {
+              console.warn('[ENTREGA] Falha ao notificar backend, mas evento já foi enviado do frontend');
+            }
+          } else {
+            // Se não está aprovado, agendar nova verificação em 30 segundos
+            setTimeout(() => {
+              verificarStatusPagamento(paymentId);
+            }, 30000);
+          }
+        }
+      } catch (error) {
+        console.error('[ENTREGA] Erro ao verificar status:', error);
+        
+        // Em caso de erro, agendar nova tentativa em 60 segundos
+        setTimeout(() => {
+          verificarStatusPagamento(paymentId);
+        }, 60000);
+      }
+    } else {
+      // Sem a chave API no frontend, tentar via backend
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/payments/${paymentId}?check_status=true`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.status === 'APPROVED') {
+            // Mesmo sem acesso direto à API, rastreamos o evento do frontend
+            initFacebookPixel();
+            trackPurchase(paymentId, 84.70);
+            
+            toast({
+              title: "Pagamento aprovado!",
+              description: "Seu pagamento foi confirmado com sucesso!"
+            });
+          } else {
+            // Se não está aprovado, agendar nova verificação em 30 segundos
+            setTimeout(() => {
+              verificarStatusPagamento(paymentId);
+            }, 30000);
+          }
+        }
+      } catch (error) {
+        console.error('[ENTREGA] Erro na verificação via backend:', error);
+        
+        // Em caso de erro, agendar nova tentativa em 60 segundos
+        setTimeout(() => {
+          verificarStatusPagamento(paymentId);
+        }, 60000);
+      }
     }
   };
 
