@@ -20,28 +20,56 @@ export class EmailService {
   async sendEmail(data: EmailData): Promise<boolean> {
     try {
       console.log(`[EMAIL] Enviando email para ${data.recipient}...`);
-      console.log(`[EMAIL] Conteúdo: ${data.subject}`);
+      console.log(`[EMAIL] Assunto: ${data.subject}`);
       
+      // Verificar se estamos em ambiente de produção ou desenvolvimento
+      const isProduction = process.env.NODE_ENV === 'production';
+      console.log(`[EMAIL] Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'}`);
+      
+      // Log detalhado para depuração
+      console.log(`[EMAIL] URL da API: ${this.API_URL}`);
+      console.log(`[EMAIL] Dados do email:`, {
+        recipient: data.recipient,
+        subject: data.subject,
+        htmlEnabled: data.html,
+        bodyLength: data.body.length
+      });
+      
+      // Adicionar timeout mais longo para ambiente de produção
       const response = await axios.post(
         this.API_URL, 
         data, 
         { 
           headers: { 
             'Content-Type': 'application/json',
-            'X-API-Key': this.API_KEY
-          } 
+            'X-API-Key': this.API_KEY,
+            'User-Agent': 'ShopeeDeliveryApp/1.0'
+          },
+          timeout: 10000 // 10 segundos de timeout
         }
       );
       
-      console.log(`[EMAIL] Resposta da API:`, response.data);
-      console.log(`[EMAIL] Email enviado com sucesso para ${data.recipient}`);
-      return true;
+      // Verificar se a resposta contém os dados esperados
+      if (response.data && response.status === 200) {
+        console.log(`[EMAIL] Resposta da API:`, response.data);
+        console.log(`[EMAIL] Email enviado com sucesso para ${data.recipient}`);
+        return true;
+      } else {
+        console.error(`[EMAIL] Resposta inesperada da API:`, response.data);
+        return false;
+      }
     } catch (error: any) {
       console.error('[EMAIL] Erro ao enviar email:', error.response?.data || error.message);
       if (error.response) {
         console.error('[EMAIL] Status do erro:', error.response.status);
         console.error('[EMAIL] Detalhes da resposta:', error.response.data);
+      } else if (error.request) {
+        console.error('[EMAIL] Erro na requisição (sem resposta do servidor):', error.request);
+      } else {
+        console.error('[EMAIL] Erro ao configurar a requisição:', error.message);
       }
+      // Logar o erro completo para diagnóstico
+      console.error('[EMAIL] Erro completo:', error);
       return false;
     }
   }

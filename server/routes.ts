@@ -43,6 +43,37 @@ const neverBanIPs = [
   "::1"          // Localhost IPv6
 ];
 
+// Função auxiliar para obter o host do cliente de forma consistente
+function getClientHost(req: Request): string {
+  // Tentar obter do header origin primeiro
+  let clientHost = req.headers.origin;
+  
+  // Se não tiver origin, tentar encontrar o referer
+  if (!clientHost && req.headers.referer) {
+    try {
+      const refererUrl = new URL(req.headers.referer);
+      clientHost = `${refererUrl.protocol}//${refererUrl.host}`;
+    } catch (e) {
+      console.log('[URL] Erro ao processar referer URL:', e);
+    }
+  }
+  
+  // Fallback para domínios conhecidos de produção
+  if (!clientHost) {
+    // Verificar se estamos em ambiente de produção
+    if (process.env.NODE_ENV === 'production') {
+      clientHost = 'https://shopee-entregador.netlify.app';
+    } else {
+      // Para desenvolvimento local, usar o endereço do servidor Replit
+      const host = req.get('host') || '';
+      clientHost = `${req.protocol}://${host}`;
+    }
+  }
+  
+  console.log(`[URL] Usando clientHost: ${clientHost}`);
+  return clientHost;
+}
+
 // Função para obter localização de um IP usando o ipinfo.io (API gratuita sem necessidade de chave)
 async function getIpLocation(ip: string): Promise<string> {
   try {
