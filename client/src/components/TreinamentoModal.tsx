@@ -183,7 +183,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         {step === 'schedule' ? (
           <>
             <DialogHeader>
@@ -307,31 +307,32 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
           </>
         ) : (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-xl text-[#E83D22] font-bold">Pagamento Obrigatório</DialogTitle>
-              <DialogDescription>
-                Para confirmar seu agendamento, você precisa realizar o pagamento do curso online e emissão do crachá de entregador.
+            <DialogHeader className="pb-2">
+              <DialogTitle className="text-lg text-[#E83D22] font-bold">Pagamento do Curso</DialogTitle>
+              <DialogDescription className="text-sm">
+                Para confirmar seu agendamento é necessário pagar o curso e emissão do crachá.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-6 py-4">
+            <div className="grid gap-3 py-2">
               {isLoading && (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="w-12 h-12 text-[#E83D22] animate-spin mb-4" />
-                  <p className="text-gray-700 font-medium">Processando pagamento...</p>
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Loader2 className="w-10 h-10 text-[#E83D22] animate-spin mb-3" />
+                  <p className="text-gray-700 text-sm font-medium">Processando pagamento...</p>
                 </div>
               )}
 
               {!isLoading && !paymentInfo && (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="bg-red-50 p-4 rounded-md border border-red-200 w-full">
-                    <p className="text-red-700">
+                <div className="flex flex-col items-center justify-center py-4">
+                  <div className="bg-red-50 p-3 rounded-md border border-red-200 w-full">
+                    <p className="text-red-700 text-sm">
                       Ocorreu um erro ao processar o pagamento. Por favor, tente novamente.
                     </p>
                   </div>
                   <Button 
-                    className="mt-4 bg-[#EE4E2E] hover:bg-[#D43C1E] text-white" 
+                    className="mt-3 bg-[#EE4E2E] hover:bg-[#D43C1E] text-white text-sm" 
                     onClick={() => setStep('schedule')}
+                    size="sm"
                   >
                     Voltar
                   </Button>
@@ -339,91 +340,87 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
               )}
 
               {!isLoading && paymentInfo && (
-                <div className="space-y-6">
-                  <div className="bg-green-50 p-4 rounded-md border border-green-200">
-                    <div className="flex">
-                      <CheckCircle2 className="h-6 w-6 text-green-600 mr-3 shrink-0" />
+                <div className="space-y-3">
+                  <div className="bg-green-50 p-3 rounded-md border border-green-200">
+                    <div className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mr-2 mt-0.5 shrink-0" />
                       <div>
-                        <h3 className="font-semibold text-green-800">Agendamento Confirmado!</h3>
-                        <p className="text-sm text-green-700">
-                          Seu treinamento foi agendado para {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : ""} às {horario}.
+                        <h3 className="font-semibold text-green-800 text-sm">Agendamento confirmado!</h3>
+                        <p className="text-xs text-green-700">
+                          Treinamento: {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : ""} às {horario}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Detalhes do Pagamento</h3>
-                    
-                    <div className="space-y-4 mb-4">
-                      <div className="flex justify-between p-3 bg-gray-50 rounded-md">
-                        <span className="text-gray-700">Curso Online</span>
-                        <span className="font-medium">R$ 49,90</span>
-                      </div>
-                    </div>
+                  <div className="flex justify-between p-2 bg-gray-50 rounded-md items-center border border-gray-100">
+                    <span className="text-gray-700 text-sm">Curso Online + Crachá</span>
+                    <span className="font-medium bg-[#E83D22] text-white py-1 px-2 rounded-md text-sm">R$ 49,90</span>
                   </div>
 
-                  <div className="bg-[#f7f7f7] p-4 rounded-md border border-gray-200">
-                    <h4 className="font-medium text-gray-800 mb-3">Pagamento PIX</h4>
-                    <div className="flex justify-center mb-4">
+                  <div className="bg-white p-3 rounded-md border border-gray-200 shadow-sm">
+                    <h4 className="text-sm font-medium text-[#E83D22] mb-2 pb-1 border-b border-gray-100">Pagamento PIX</h4>
+                    <div className="flex justify-center mb-2">
                       <img 
                         src={paymentInfo.pixQrCode} 
                         alt="QR Code PIX" 
-                        className="w-52 h-52 border border-gray-200 rounded-md"
+                        className="w-40 h-40 border border-gray-200 rounded-md"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <p className="text-sm text-gray-600 text-center">
-                        Escaneie o QR Code acima com o aplicativo do seu banco ou copie o código PIX abaixo
-                      </p>
-                      <div className="flex">
-                        <input 
-                          type="text" 
-                          value={paymentInfo.pixCode} 
-                          readOnly 
-                          className="flex-1 border border-gray-300 rounded-l-md px-3 py-2 text-sm"
-                        />
-                        <Button 
-                          onClick={() => {
-                            navigator.clipboard.writeText(paymentInfo.pixCode);
-                            toast({
-                              title: "Código copiado!",
-                              description: "O código PIX foi copiado para a área de transferência."
-                            });
-                          }} 
-                          className="rounded-l-none border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800"
-                        >
-                          Copiar
-                        </Button>
-                      </div>
+                    <p className="text-xs text-gray-600 text-center mb-2">
+                      Escaneie o QR Code ou copie o código PIX
+                    </p>
+                    <div className="flex">
+                      <input 
+                        type="text" 
+                        value={paymentInfo.pixCode} 
+                        readOnly 
+                        className="flex-1 border border-gray-300 rounded-l-md px-2 py-1 text-xs"
+                      />
+                      <Button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(paymentInfo.pixCode);
+                          toast({
+                            title: "Código copiado!",
+                            description: "O código PIX foi copiado para a área de transferência."
+                          });
+                        }} 
+                        className="rounded-l-none border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800 h-7 text-xs px-2"
+                        size="sm"
+                      >
+                        Copiar
+                      </Button>
                     </div>
                   </div>
 
-                  <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200">
-                    <h5 className="font-semibold text-yellow-800 mb-2">Importante:</h5>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-yellow-800">
-                      <li>O pagamento deve ser realizado em até 30 minutos</li>
-                      <li>Após o pagamento, você receberá o link para a videochamada</li>
-                      <li>O treinamento é OBRIGATÓRIO para ativar seu cadastro</li>
-                    </ul>
+                  <div className="flex gap-2 text-xs">
+                    <div className="flex-1 bg-yellow-50 p-2 rounded-md border border-yellow-200">
+                      <h5 className="font-semibold text-yellow-800 mb-1 text-xs">⏱️ 30 min</h5>
+                      <p className="text-yellow-700 text-xs">Realize o pagamento em até 30 minutos</p>
+                    </div>
+                    <div className="flex-1 bg-blue-50 p-2 rounded-md border border-blue-200">
+                      <h5 className="font-semibold text-blue-800 mb-1 text-xs">📱 Link</h5>
+                      <p className="text-blue-700 text-xs">Receberá o link do treinamento por email</p>
+                    </div>
                   </div>
                   
-                  <div className="bg-red-50 p-4 rounded-md border border-red-200">
-                    <p className="text-sm text-red-700 font-bold">
-                      ATENÇÃO: Sem a conclusão do curso online e o pagamento, você NÃO receberá suas credenciais 
-                      e NÃO poderá começar a trabalhar como entregador.
+                  <div className="bg-red-50 p-2 rounded-md border border-red-200">
+                    <p className="text-xs text-red-700">
+                      <span className="font-bold">IMPORTANTE:</span> Sem o curso e o pagamento, você NÃO receberá suas credenciais 
+                      de acesso ao aplicativo Shopee.
                     </p>
                   </div>
                 </div>
               )}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="pt-2">
               <Button 
                 type="button" 
                 variant="outline"
-                className="w-full" 
+                className="w-full text-sm py-1 h-8" 
                 onClick={() => onOpenChange(false)}
+                size="sm"
               >
                 Fechar
               </Button>
