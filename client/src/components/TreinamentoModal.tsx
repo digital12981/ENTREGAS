@@ -384,7 +384,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
                           description: "O código PIX foi copiado para a área de transferência."
                         });
                       }} 
-                      className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300 py-1 text-xs flex items-center justify-center gap-2"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white border border-green-700 py-1 text-xs flex items-center justify-center gap-2"
                       size="sm"
                     >
                       <CopyIcon className="h-4 w-4" />
