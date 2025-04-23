@@ -201,77 +201,116 @@ const Cadastro: React.FC = () => {
     try {
       setIsLoadingVehicleInfo(true);
       
-      // Determinar se estamos em produção (Netlify) ou desenvolvimento (Replit/Local)
-      const isProduction = window.location.hostname.includes('netlify.app') || 
-                          window.location.hostname.includes('shopee-parceiro.com');
+      // Determinar ambiente (produção vs desenvolvimento)
+      const hostname = window.location.hostname;
+      const isProduction = hostname.includes('netlify.app') || 
+                          hostname.includes('shopee-parceiro.com') ||
+                          hostname === 'shopee-entregador.com';
+      
+      console.log(`[DEBUG] Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'}, Host: ${hostname}`);
       
       let vehicleData = null;
       
-      // MÉTODO 1: Tentar consulta via Proxy do Netlify (apenas em produção)
+      // MÉTODO 1: Em produção, SEMPRE usar o proxy Netlify primeiro
       if (isProduction) {
         try {
-          console.log('[DEBUG] Tentando consultar API via proxy Netlify');
+          console.log('[DEBUG] Usando proxy Netlify para consulta de placa');
+          // Usar caminho relativo à raiz do site
           const proxyUrl = `/vehicle-api/${cleanedPlaca}`;
-          const proxyResponse = await fetch(proxyUrl);
+          console.log(`[DEBUG] URL do proxy: ${proxyUrl}`);
+          
+          const proxyResponse = await fetch(proxyUrl, {
+            method: 'GET',
+            // Garantir que estamos usando o modo de CORS default
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
           
           if (proxyResponse.ok) {
             vehicleData = await proxyResponse.json();
             console.log('[INFO] Dados do veículo obtidos via proxy Netlify:', vehicleData);
           } else {
-            console.warn('[AVISO] Proxy falhou, status:', proxyResponse.status);
+            const errorStatus = proxyResponse.status;
+            console.warn(`[AVISO] Proxy falhou com status: ${errorStatus}`);
+            
+            if (errorStatus === 404) {
+              // Possível problema nos redirecionamentos do Netlify
+              console.log('[DEBUG] Tentando URL alternativa no Netlify');
+              // Tentar com o caminho completo para a função
+              const altProxyUrl = `/.netlify/functions/vehicle-proxy/${cleanedPlaca}`;
+              
+              const altResponse = await fetch(altProxyUrl, {
+                method: 'GET',
+                headers: {
+                  'Accept': 'application/json'
+                }
+              });
+              
+              if (altResponse.ok) {
+                vehicleData = await altResponse.json();
+                console.log('[INFO] Dados obtidos via caminho alternativo do Netlify:', vehicleData);
+              } else {
+                console.error('[ERRO] Caminho alternativo do Netlify também falhou:', altResponse.status);
+              }
+            }
           }
         } catch (proxyError) {
           console.error('[ERRO] Falha ao consultar via proxy:', proxyError);
         }
       }
       
-      // MÉTODO 2: Tentar consulta direta com a API (bom para desenvolvimento)
-      if (!vehicleData) {
+      // MÉTODO 2: Em desenvolvimento, tentar API direta (ou como fallback em produção)
+      if (!vehicleData && (!isProduction || (isProduction && localStorage.getItem('allow_direct_api') === 'true'))) {
         const apiKey = import.meta.env.VITE_VEHICLE_API_KEY;
         
         if (apiKey) {
           try {
-            // Tentativa com Bearer prefix
-            console.log('[DEBUG] Tentando consulta direta com prefixo Bearer');
+            console.log('[DEBUG] Tentando consulta direta à API de veículos');
             const headers = new Headers();
-            headers.append('Authorization', apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`);
+            const authValue = apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`;
+            headers.append('Authorization', authValue);
             
-            const directResponse = await fetch(`https://wdapi2.com.br/consulta/${cleanedPlaca}`, {
+            const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
+            console.log(`[DEBUG] URL da API direta: ${apiUrl}`);
+            
+            const directResponse = await fetch(apiUrl, { 
               method: 'GET',
               headers: headers
             });
             
             if (directResponse.ok) {
               vehicleData = await directResponse.json();
-              console.log('[INFO] Dados do veículo obtidos via API direta (com Bearer):', vehicleData);
-            } else {
-              // Tentativa 2: Sem Bearer
-              console.log('[DEBUG] Tentando consulta direta sem prefixo Bearer');
+              console.log('[INFO] Dados do veículo obtidos via API direta');
+            } else if (!apiKey.startsWith('Bearer ')) {
+              // Tentar sem o prefixo Bearer
+              console.log('[DEBUG] Tentando novamente sem prefixo Bearer');
               const headersWithoutBearer = new Headers();
               headersWithoutBearer.append('Authorization', apiKey);
               
-              const secondResponse = await fetch(`https://wdapi2.com.br/consulta/${cleanedPlaca}`, {
+              const retryResponse = await fetch(apiUrl, {
                 method: 'GET',
                 headers: headersWithoutBearer
               });
               
-              if (secondResponse.ok) {
-                vehicleData = await secondResponse.json();
-                console.log('[INFO] Dados do veículo obtidos via API direta (sem Bearer):', vehicleData);
+              if (retryResponse.ok) {
+                vehicleData = await retryResponse.json();
+                console.log('[INFO] Dados do veículo obtidos via API direta (sem Bearer)');
               } else {
-                console.warn('[AVISO] API direta falhou em todas as tentativas');
+                console.warn('[AVISO] Consulta direta falhou em todas as tentativas');
               }
             }
-          } catch (directError) {
-            console.error('[ERRO] Falha ao consultar API direta:', directError);
+          } catch (apiError) {
+            console.error('[ERRO] Falha ao consultar API direta:', apiError);
           }
         } else {
           console.warn('[AVISO] API Key não disponível para consulta direta');
         }
       }
       
-      // MÉTODO 3: Fallback para Backend API
-      if (!vehicleData) {
+      // MÉTODO 3: Fallback para backend Heroku (DESATIVADO EM PRODUÇÃO por causa do CORS)
+      if (!vehicleData && !isProduction) {
         try {
           console.log('[DEBUG] Tentando consultar via backend Heroku');
           const apiUrl = `${getApiBaseUrl()}/api/vehicle-info/${cleanedPlaca}`;
@@ -279,7 +318,7 @@ const Cadastro: React.FC = () => {
           
           if (backendResponse.ok) {
             vehicleData = await backendResponse.json();
-            console.log('[INFO] Dados do veículo obtidos via backend:', vehicleData);
+            console.log('[INFO] Dados do veículo obtidos via backend Heroku');
           } else {
             console.error('[ERRO] Backend falhou, status:', backendResponse.status);
           }
