@@ -2,6 +2,7 @@
 // Resolve problemas de CORS diretamente no Netlify
 // Atualizado para resolver erros 401/403 e falhas de CORS
 
+// Importar o módulo node-fetch (versão 2.x é compatível com require)
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
