@@ -1407,6 +1407,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rota específica para pagamentos de treinamento (R$ 49,90)
   app.post('/api/payments/treinamento', async (req, res) => {
     try {
+      console.log('[DEBUG] Recebida requisição para pagamento de treinamento');
+      
       // Verificar se a API For4Payments está configurada
       if (!process.env.FOR4PAYMENTS_SECRET_KEY) {
         console.error('ERRO: FOR4PAYMENTS_SECRET_KEY não configurada');
@@ -1415,7 +1417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      console.log('Dados de pagamento de treinamento recebidos:', req.body);
+      console.log('[DEBUG] Dados de pagamento de treinamento recebidos:', req.body);
       
       // Validar dados da requisição
       const { name, email, cpf, phone, items } = req.body;
@@ -1430,7 +1432,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Valor fixo para o treinamento: R$ 49,90
-      const paymentAmount = 49.90;
+      const paymentAmount = 4990 / 100; // Converter o valor de centavos para reais
       
       // Usar o email fornecido ou gerar um
       const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
