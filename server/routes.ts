@@ -910,6 +910,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Endpoint para consultar informações do veículo pela placa
   app.get('/api/vehicle-info/:placa', async (req: Request, res: Response) => {
+    // Adicionar headers CORS específicos para permitir solicitações do Netlify
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
     try {
       const { placa } = req.params;
       
@@ -953,7 +958,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
     } catch (error) {
       console.error('Erro ao consultar informações do veículo:', error);
-      res.status(500).json({ error: 'Erro ao consultar informações do veículo' });
+      // Detalhes do erro para facilitar a depuração
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      res.status(500).json({ 
+        error: 'Erro ao consultar informações do veículo',
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      });
     }
   });
 

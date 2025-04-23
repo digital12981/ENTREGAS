@@ -172,6 +172,18 @@ const Cadastro: React.FC = () => {
     setValue('placa', formatted);
   };
 
+  // Obter a URL base da API do backend dependendo do ambiente
+  const getApiBaseUrl = () => {
+    // Em desenvolvimento, usa a URL relativa
+    if (window.location.hostname.includes('localhost') || 
+        window.location.hostname.includes('replit.dev')) {
+      return '';
+    }
+    
+    // Em produção, usa a URL absoluta do backend Heroku
+    return 'https://disparador-f065362693d3.herokuapp.com';
+  };
+  
   // Função para buscar informações do veículo pela placa
   const fetchVehicleInfo = async (placa: string) => {
     if (!placa || placa.length < 7) {
@@ -188,14 +200,21 @@ const Cadastro: React.FC = () => {
 
     try {
       setIsLoadingVehicleInfo(true);
-      const response = await fetch(`/api/vehicle-info/${cleanedPlaca}`);
+      
+      // Construir URL da API com a URL base correta
+      const apiUrl = `${getApiBaseUrl()}/api/vehicle-info/${cleanedPlaca}`;
+      console.log('[DEBUG] Consultando API de veículos:', apiUrl);
+      
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
+        console.error('[ERRO] Falha ao consultar informações do veículo:', response.status, response.statusText);
         setVehicleInfo(null);
         return;
       }
       
       const data = await response.json();
+      console.log('[INFO] Dados do veículo recebidos:', data);
       setVehicleInfo(data);
     } catch (error) {
       console.error('Erro ao buscar informações do veículo:', error);
