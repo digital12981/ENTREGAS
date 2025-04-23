@@ -14,6 +14,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { useAppContext } from '@/contexts/AppContext';
 import { LoadingModal } from '@/components/LoadingModal';
 import { useScrollTop } from '@/hooks/use-scroll-top';
+import { VehicleInfoBox } from '@/components/VehicleInfoBox';
 
 import shopeeMotoImage from '../assets/shopee-moto.webp';
 import shopeeCarsImage from '../assets/shopee-cars.webp';
@@ -70,6 +71,7 @@ const Cadastro: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [isLoadingVehicleInfo, setIsLoadingVehicleInfo] = useState(false);
+  const [vehicleIsValid, setVehicleIsValid] = useState(false);
   const [vehicleInfo, setVehicleInfo] = useState<{
     marca?: string;
     modelo?: string;
@@ -575,8 +577,8 @@ const Cadastro: React.FC = () => {
                   <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
                 )}
                 
-                {/* Área para mostrar as informações do veículo - sempre visível */}
-                <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                {/* Área para mostrar as informações do veículo usando o componente VehicleInfoBox */}
+                <div className="mt-3">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
                     {vehicleInfo && (
@@ -590,57 +592,18 @@ const Cadastro: React.FC = () => {
                     )}
                   </div>
                   
-                  {isLoadingVehicleInfo ? (
-                    <div className="flex items-center space-x-2 py-2">
-                      <p className="text-sm text-gray-600">Buscando informações do veículo...</p>
-                    </div>
-                  ) : vehicleInfo ? (
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                      <div>
-                        <span className="font-medium text-gray-600">Marca:</span>
-                        <span className="ml-1 text-gray-800">{vehicleInfo.marca}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Modelo:</span>
-                        <span className="ml-1 text-gray-800">{vehicleInfo.modelo}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Ano:</span>
-                        <span className="ml-1 text-gray-800">{vehicleInfo.ano}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Cor:</span>
-                        <span className="ml-1 text-gray-800">{vehicleInfo.cor}</span>
-                      </div>
-                      <div className="col-span-2">
-                        <span className="font-medium text-gray-600">Chassi:</span>
-                        <span className="ml-1 text-gray-800">{vehicleInfo.chassi}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                      <div>
-                        <span className="font-medium text-gray-600">Marca:</span>
-                        <span className="ml-1 text-gray-500">Não informado</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Modelo:</span>
-                        <span className="ml-1 text-gray-500">Não informado</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Ano:</span>
-                        <span className="ml-1 text-gray-500">Não informado</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Cor:</span>
-                        <span className="ml-1 text-gray-500">Não informado</span>
-                      </div>
-                      <div className="col-span-2">
-                        <span className="font-medium text-gray-600">Chassi:</span>
-                        <span className="ml-1 text-gray-500">Não informado</span>
-                      </div>
-                    </div>
-                  )}
+                  {/* Usar o componente VehicleInfoBox */}
+                  <VehicleInfoBox
+                    licensePlate={placaValue}
+                    onChange={(isValid) => {
+                      // Se o veículo é válido, atualizar o estado
+                      if (isValid) {
+                        // O componente já buscará as informações do veículo
+                        setIsLoadingVehicleInfo(false);
+                      }
+                    }}
+                    className="w-full"
+                  />
                 </div>
               </div>
             </div>
