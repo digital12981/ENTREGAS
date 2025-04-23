@@ -80,7 +80,7 @@ export const insertBenefitSchema = createInsertSchema(benefits).pick({
   iconName: true,
 });
 
-// Tabela de IPs banidos
+// Tabela de IPs banidos (nova versão com índices otimizados)
 export const bannedIps = pgTable("banned_ips", {
   id: serial("id").primaryKey(),
   ip: text("ip").notNull().unique(),
@@ -98,6 +98,12 @@ export const bannedIps = pgTable("banned_ips", {
   accessUrl: text("access_url"),
   bannedAt: timestamp("banned_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  // Novo campo para facilitar sincronização entre instâncias
+  syncStatus: text("sync_status").default("active").notNull(),
+  // Novo campo para identificador exclusivo do dispositivo (mantém banimento em IPs dinâmicos)
+  deviceId: text("device_id"),
+  // Novo campo para data de última tentativa de acesso
+  lastAccessAttempt: timestamp("last_access_attempt"),
 });
 
 // Tabela de domínios permitidos
@@ -124,6 +130,9 @@ export const insertBannedIpSchema = createInsertSchema(bannedIps).pick({
   reason: true,
   location: true,
   accessUrl: true,
+  syncStatus: true,
+  deviceId: true,
+  lastAccessAttempt: true,
 });
 
 export const insertAllowedDomainSchema = createInsertSchema(allowedDomains).pick({
@@ -149,3 +158,26 @@ export type BannedIp = typeof bannedIps.$inferSelect;
 
 export type InsertAllowedDomain = z.infer<typeof insertAllowedDomainSchema>;
 export type AllowedDomain = typeof allowedDomains.$inferSelect;
+
+// Nova tabela para armazenar IDs de dispositivos banidos
+export const bannedDevices = pgTable("banned_devices", {
+  id: serial("id").primaryKey(),
+  deviceId: text("device_id").notNull().unique(),
+  isBanned: boolean("is_banned").default(true).notNull(),
+  originalIp: text("original_ip").notNull(),
+  userAgent: text("user_agent"),
+  reason: text("reason"),
+  bannedAt: timestamp("banned_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertBannedDeviceSchema = createInsertSchema(bannedDevices).pick({
+  deviceId: true,
+  isBanned: true,
+  originalIp: true,
+  userAgent: true,
+  reason: true,
+});
+
+export type InsertBannedDevice = z.infer<typeof insertBannedDeviceSchema>;
+export type BannedDevice = typeof bannedDevices.$inferSelect;

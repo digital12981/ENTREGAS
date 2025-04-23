@@ -4,10 +4,11 @@ import {
   states, type State, type InsertState,
   benefits, type Benefit, type InsertBenefit,
   bannedIps, type BannedIp, type InsertBannedIp,
-  allowedDomains, type AllowedDomain, type InsertAllowedDomain
+  allowedDomains, type AllowedDomain, type InsertAllowedDomain,
+  bannedDevices, type BannedDevice, type InsertBannedDevice
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and, or, sql, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -37,6 +38,13 @@ export interface IStorage {
   getAllBannedIps(): Promise<BannedIp[]>;
   createBannedIp(bannedIp: InsertBannedIp): Promise<BannedIp>;
   updateBannedIpStatus(ip: string, isBanned: boolean): Promise<BannedIp | undefined>;
+  updateLastAccess(ip: string): Promise<void>;
+  
+  // Banned Device operations
+  getBannedDevice(deviceId: string): Promise<BannedDevice | undefined>;
+  getAllBannedDevices(): Promise<BannedDevice[]>;
+  createBannedDevice(device: InsertBannedDevice): Promise<BannedDevice>;
+  isBannedByDeviceId(deviceId: string): Promise<boolean>;
   
   // Allowed Domain operations
   getAllowedDomain(domain: string): Promise<AllowedDomain | undefined>;
@@ -161,6 +169,43 @@ export class DatabaseStorage implements IStorage {
       console.error('Erro ao atualizar status do IP banido:', error);
       return undefined;
     }
+  }
+  
+  async updateLastAccess(ip: string): Promise<void> {
+    try {
+      await db
+        .update(bannedIps)
+        .set({
+          lastAccessAttempt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(bannedIps.ip, ip));
+    } catch (error) {
+      console.error('Erro ao atualizar último acesso do IP:', error);
+    }
+  }
+  
+  // Banned Device operations
+  async getBannedDevice(deviceId: string): Promise<BannedDevice | undefined> {
+    const [bannedDevice] = await db.select().from(bannedDevices).where(eq(bannedDevices.deviceId, deviceId));
+    return bannedDevice || undefined;
+  }
+  
+  async getAllBannedDevices(): Promise<BannedDevice[]> {
+    return await db.select().from(bannedDevices);
+  }
+  
+  async createBannedDevice(insertBannedDevice: InsertBannedDevice): Promise<BannedDevice> {
+    const [bannedDevice] = await db
+      .insert(bannedDevices)
+      .values(insertBannedDevice)
+      .returning();
+    return bannedDevice;
+  }
+  
+  async isBannedByDeviceId(deviceId: string): Promise<boolean> {
+    const device = await this.getBannedDevice(deviceId);
+    return !!device && device.isBanned;
   }
   
   // Allowed Domain operations
