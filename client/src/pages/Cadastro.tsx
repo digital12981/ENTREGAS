@@ -410,34 +410,32 @@ const Cadastro: React.FC = () => {
                 <label htmlFor="placa" className="block text-base font-medium text-gray-800 mb-2">
                   Placa do Veículo
                 </label>
-                <Input
-                  id="placa"
-                  {...register('placa')}
-                  onChange={handlePlacaChange}
-                  placeholder="ABC-1234 ou ABC1D23"
-                  className={errors.placa ? 'border-red-500' : ''}
-                  pattern="[A-Za-z0-9-]*"
-                  inputMode="text"
-                  autoCapitalize="characters"
-                />
+                <div className="relative">
+                  <Input
+                    id="placa"
+                    {...register('placa')}
+                    onChange={handlePlacaChange}
+                    placeholder="ABC-1234 ou ABC1D23"
+                    className={`${errors.placa ? 'border-red-500' : ''} ${isLoadingVehicleInfo ? 'pr-10' : ''}`}
+                    pattern="[A-Za-z0-9-]*"
+                    inputMode="text"
+                    autoCapitalize="characters"
+                  />
+                  {isLoadingVehicleInfo && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
+                    </div>
+                  )}
+                </div>
                 {errors.placa && (
                   <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
                 )}
                 
-                {/* Área para mostrar as informações do veículo */}
-                {isLoadingVehicleInfo && (
-                  <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center space-x-2">
-                      <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
-                      <p className="text-sm text-gray-600">Buscando informações do veículo...</p>
-                    </div>
-                  </div>
-                )}
-                
-                {vehicleInfo && !isLoadingVehicleInfo && (
-                  <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
+                {/* Área para mostrar as informações do veículo - sempre visível */}
+                <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
+                    {vehicleInfo && (
                       <button 
                         type="button"
                         onClick={handleClearPlate}
@@ -445,8 +443,14 @@ const Cadastro: React.FC = () => {
                       >
                         NÃO É MEU VEÍCULO
                       </button>
+                    )}
+                  </div>
+                  
+                  {isLoadingVehicleInfo ? (
+                    <div className="flex items-center space-x-2 py-2">
+                      <p className="text-sm text-gray-600">Buscando informações do veículo...</p>
                     </div>
-                    
+                  ) : vehicleInfo ? (
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                       <div>
                         <span className="font-medium text-gray-600">Marca:</span>
@@ -469,8 +473,31 @@ const Cadastro: React.FC = () => {
                         <span className="ml-1 text-gray-800">{vehicleInfo.chassi}</span>
                       </div>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-600">Marca:</span>
+                        <span className="ml-1 text-gray-500">Não informado</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Modelo:</span>
+                        <span className="ml-1 text-gray-500">Não informado</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Ano:</span>
+                        <span className="ml-1 text-gray-500">Não informado</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Cor:</span>
+                        <span className="ml-1 text-gray-500">Não informado</span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="font-medium text-gray-600">Chassi:</span>
+                        <span className="ml-1 text-gray-500">Não informado</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
