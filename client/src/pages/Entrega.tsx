@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { addDays, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useLocation } from 'wouter';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -59,6 +60,9 @@ const enderecoSchema = z.object({
 type EnderecoFormValues = z.infer<typeof enderecoSchema>;
 
 const Entrega: React.FC = () => {
+  // Hook para navegação
+  const [, setLocation] = useLocation();
+  
   // Aplica o scroll para o topo quando o componente é montado
   useScrollTop();
   
@@ -335,6 +339,12 @@ const Entrega: React.FC = () => {
             } catch (err) {
               console.warn('[ENTREGA] Falha ao notificar backend, mas evento já foi enviado do frontend');
             }
+            
+            // Redirecionar para a página de treinamento
+            console.log('[ENTREGA] Redirecionando para página de treinamento...');
+            setTimeout(() => {
+              setLocation('/treinamento');
+            }, 1000);
           } else {
             // Se não está aprovado, agendar nova verificação em 30 segundos
             setTimeout(() => {
@@ -366,6 +376,12 @@ const Entrega: React.FC = () => {
               title: "Pagamento aprovado!",
               description: "Seu pagamento foi confirmado com sucesso!"
             });
+            
+            // Redirecionar para a página de treinamento
+            console.log('[ENTREGA] Redirecionando para página de treinamento via verificação backend...');
+            setTimeout(() => {
+              setLocation('/treinamento');
+            }, 1000);
           } else {
             // Se não está aprovado, agendar nova verificação em 30 segundos
             setTimeout(() => {
