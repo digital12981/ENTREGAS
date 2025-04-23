@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from 'wouter';
 import { API_BASE_URL } from '@/lib/api-config';
+import { createPixPaymentDirect } from '@/lib/for4payments-direct';
 
 interface TreinamentoModalProps {
   open: boolean;
@@ -80,29 +81,46 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
     return diaDaSemana === 0 || diaDaSemana === 6;
   };
 
-  // Criar pagamento PIX via API
+  // Criar pagamento PIX via API For4Payments diretamente no frontend
   const createPixPayment = async () => {
     setIsLoading(true);
     
     try {
+      console.log('[TREINAMENTO] Iniciando pagamento via For4Payments diretamente no frontend');
+      
       // Dados fixos para o pagamento conforme solicitado
       const paymentData = {
         name: "Marina Souza",
         email: "compradecurso@gmail.com",
         cpf: "83054235149",
         phone: "11998346572",
-        amount: 49.90,
-        items: [
-          {
-            title: "Crachá Shopee + Treinamento Exclusivo",
-            quantity: 1,
-            unitPrice: 4990,
-            tangible: false
-          }
-        ]
+        amount: 49.90
       };
       
-      // Criar rota exclusiva para pagamento do treinamento
+      // Tentativa 1: Usar API For4Payments diretamente no frontend (para Netlify)
+      try {
+        // Chamar For4Payments diretamente
+        console.log('[TREINAMENTO] Tentando pagamento direto via For4Payments');
+        const result = await createPixPaymentDirect(paymentData);
+        
+        console.log('[TREINAMENTO] Pagamento direto bem-sucedido:', result);
+        
+        // Armazenar as informações do pagamento
+        setPaymentInfo({
+          id: result.id,
+          pixCode: result.pixCode,
+          pixQrCode: result.pixQrCode,
+          status: 'PENDING'
+        });
+        
+        return; // Encerrar aqui se o pagamento direto foi bem-sucedido
+      } catch (directError) {
+        // Se falhar o pagamento direto, tenta via backend (fallback)
+        console.warn('[TREINAMENTO] Pagamento direto falhou, tentando via backend:', directError);
+      }
+      
+      // Tentativa 2 (fallback): Usar o backend (para Replit)
+      console.log('[TREINAMENTO] Tentando pagamento via backend');
       const response = await fetch(`${API_BASE_URL}/api/payments/treinamento`, {
         method: 'POST',
         headers: {
@@ -120,6 +138,8 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
       if (data.error) {
         throw new Error(data.error);
       }
+      
+      console.log('[TREINAMENTO] Pagamento via backend bem-sucedido:', data);
       
       // Armazenar as informações do pagamento
       setPaymentInfo({

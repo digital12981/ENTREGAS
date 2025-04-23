@@ -74,7 +74,7 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
       paymentMethod: "PIX",
       amount: amountInCents,
       items: [{
-        title: "Kit de Segurança",
+        title: "Crachá Shopee + Treinamento Exclusivo",
         quantity: 1,
         unitPrice: amountInCents,
         tangible: false
