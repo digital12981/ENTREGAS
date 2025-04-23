@@ -1245,7 +1245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Valor fixo para o kit de segurança: R$ 64,90
-      const paymentAmount = 64.90;
+      const paymentAmount = 79.90;
       
       // Usar o email fornecido ou gerar um
       const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
@@ -1586,7 +1586,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userEmail = email || `${nome.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
       
       // Valor fixo para o kit de segurança: R$ 64,90
-      const paymentAmount = 64.90;
+      const paymentAmount = 79.90;
       
       // Processar pagamento via API For4Payments
       const paymentResult = await paymentService.createPixPayment({

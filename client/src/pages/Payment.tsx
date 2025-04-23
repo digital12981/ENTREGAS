@@ -333,7 +333,7 @@ const Payment: React.FC = () => {
       {isApproved && (
         <ConversionTracker 
           transactionId={paymentInfo.id} 
-          amount={64.90} 
+          amount={79.90} 
           enabled={true} 
         />
       )}
