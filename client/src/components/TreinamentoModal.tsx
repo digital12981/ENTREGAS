@@ -203,7 +203,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] h-auto max-h-[90vh] overflow-y-auto scrollbar-thin" style={{ overscrollBehavior: 'contain' }}>
+      <DialogContent className="sm:max-w-[500px] h-[100vh] max-h-[100vh] overflow-y-auto scrollbar-thin" style={{ overscrollBehavior: 'contain', display: 'flex', flexDirection: 'column' }}>
         {step === 'schedule' ? (
           <>
             <DialogHeader>
@@ -213,7 +213,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-6 py-4">
+            <div className="grid gap-6 py-4 flex-grow">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-100 text-[#E83D22]">
                   <span className="text-xl font-bold">1</span>
@@ -315,7 +315,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="sticky bottom-0 bg-white pb-2 mt-3">
               <Button 
                 type="submit" 
                 className="w-full bg-[#EE4E2E] hover:bg-[#D43C1E] text-white" 
@@ -334,7 +334,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-3 py-2">
+            <div className="grid gap-3 py-2 flex-grow">
               {isLoading && (
                 <div className="flex flex-col items-center justify-center py-8">
                   <Loader2 className="w-10 h-10 text-[#E83D22] animate-spin mb-3" />
@@ -442,7 +442,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
               )}
             </div>
 
-            <DialogFooter className="pt-2">
+            <DialogFooter className="pt-2 sticky bottom-0 bg-white pb-2 mt-3">
               <Button 
                 type="button" 
                 variant="outline"
