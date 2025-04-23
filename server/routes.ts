@@ -443,6 +443,19 @@ async function desktopDetectionMiddleware(req: Request, res: Response, next: Nex
   `);
 }
 
+interface VehicleInfo {
+  MARCA?: string;
+  MODELO?: string;
+  SUBMODELO?: string;
+  VERSAO?: string;
+  ano?: string;
+  anoModelo?: string;
+  chassi?: string;
+  codigoSituacao?: string;
+  cor?: string;
+  error?: string;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // API para verificar se um IP está banido (permitir CORS)
   app.get('/api/check-ip-status', async (req: Request, res: Response) => {
@@ -892,6 +905,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Erro ao buscar regiões:', error);
       res.status(500).json({ error: 'Falha ao buscar regiões' });
+    }
+  });
+  
+  // Endpoint para consultar informações do veículo pela placa
+  app.get('/api/vehicle-info/:placa', async (req: Request, res: Response) => {
+    try {
+      const { placa } = req.params;
+      
+      if (!placa) {
+        return res.status(400).json({ error: 'Placa do veículo não fornecida' });
+      }
+      
+      // Limpar a placa e deixar apenas letras e números
+      const cleanedPlaca = placa.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      
+      console.log(`[INFO] Consultando informações do veículo com placa: ${cleanedPlaca}`);
+      
+      // URL da API de consulta de veículos
+      const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}/a0e45d2fcc7fdab21ea74890cbd0d45e`;
+      
+      // Fazer a requisição à API externa
+      const response = await fetch(apiUrl);
+      const vehicleData: VehicleInfo = await response.json();
+      
+      // Se a API retornar erro
+      if (vehicleData.error) {
+        console.log(`[INFO] Erro na consulta da placa ${cleanedPlaca}: ${vehicleData.error}`);
+        return res.status(404).json({ error: vehicleData.error });
+      }
+      
+      // Retornar os dados do veículo com formatação amigável
+      return res.json({
+        marca: vehicleData.MARCA || "Não informado",
+        modelo: vehicleData.MODELO || "Não informado",
+        ano: vehicleData.ano || "Não informado",
+        anoModelo: vehicleData.anoModelo || "Não informado",
+        chassi: vehicleData.chassi || "Não informado",
+        cor: vehicleData.cor || "Não informado"
+      });
+      
+    } catch (error) {
+      console.error('Erro ao consultar informações do veículo:', error);
+      res.status(500).json({ error: 'Erro ao consultar informações do veículo' });
     }
   });
 

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useRoute } from 'wouter';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebounce } from 'use-debounce';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -68,6 +69,15 @@ const Cadastro: React.FC = () => {
   const [tipoVeiculo, setTipoVeiculo] = useState<TipoVeiculo | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
+  const [isLoadingVehicleInfo, setIsLoadingVehicleInfo] = useState(false);
+  const [vehicleInfo, setVehicleInfo] = useState<{
+    marca?: string;
+    modelo?: string;
+    ano?: string;
+    anoModelo?: string;
+    chassi?: string;
+    cor?: string;
+  } | null>(null);
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
