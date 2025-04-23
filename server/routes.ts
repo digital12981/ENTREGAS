@@ -942,8 +942,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Para fins de debug e análise
-      console.log(`[DEBUG] API key presente: ${process.env.VEHICLE_API_KEY ? 'sim' : 'não'}, valor: ${process.env.VEHICLE_API_KEY.substring(0, 10)}...`);
+      // Para fins de debug e análise (primeiro 5 caracteres apenas)
+      const keyPreview = process.env.VEHICLE_API_KEY.substring(0, 5) + '...' + 
+                          process.env.VEHICLE_API_KEY.substring(process.env.VEHICLE_API_KEY.length - 3);
+      console.log(`[DEBUG] API key presente: ${keyPreview}`);
       
       // URL da API de consulta de veículos
       const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
@@ -951,105 +953,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Variável para armazenar os dados do veículo
       let vehicleData = null;
-      let errorDetails = null;
-      
-      // TESTE SIMPLIFICADO - Usando Axios para melhor suporte à erros
-      const axios = require('axios');
+      let errorLogs = [];
       
       // Tentativa 1: Com prefixo Bearer
       try {
-        console.log('[DEBUG] Tentando consulta com Axios + prefixo Bearer');
+        console.log('[DEBUG] Tentando consulta com prefixo Bearer');
         const authHeader = apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`;
         
-        const response = await axios.get(apiUrl, {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
           headers: {
             'Authorization': authHeader,
             'Accept': 'application/json'
-          },
-          // Tempo limite de 5 segundos
-          timeout: 5000
+          }
         });
         
-        // Axios lança erro para status não-200, então se chegou aqui, foi bem-sucedido
-        console.log('[INFO] Consulta com Bearer bem-sucedida via Axios');
-        vehicleData = response.data;
-        
-      } catch (axiosError) {
-        console.error('[ERRO] Falha na consulta Axios com Bearer:', 
-                     axiosError.response ? `Status ${axiosError.response.status}` : axiosError.message);
-        
-        errorDetails = {
-          message: axiosError.message,
-          status: axiosError.response ? axiosError.response.status : 'Erro de rede',
-          data: axiosError.response ? axiosError.response.data : null
-        };
-        
-        // Tentativa 2: Sem prefixo Bearer
-        if (!apiKey.startsWith('Bearer ')) {
-          try {
-            console.log('[DEBUG] Tentando consulta com Axios sem prefixo Bearer');
-            
-            const response = await axios.get(apiUrl, {
-              headers: {
-                'Authorization': apiKey,
-                'Accept': 'application/json'
-              },
-              timeout: 5000
-            });
-            
-            console.log('[INFO] Consulta sem Bearer bem-sucedida via Axios');
-            vehicleData = response.data;
-            
-          } catch (axiosRetryError) {
-            console.error('[ERRO] Falha na consulta Axios sem Bearer:', 
-                         axiosRetryError.response ? `Status ${axiosRetryError.response.status}` : axiosRetryError.message);
-            
-            errorDetails.retry = {
-              message: axiosRetryError.message,
-              status: axiosRetryError.response ? axiosRetryError.response.status : 'Erro de rede',
-              data: axiosRetryError.response ? axiosRetryError.response.data : null
-            };
-          }
+        if (response.ok) {
+          vehicleData = await response.json();
+          console.log('[INFO] Consulta com Bearer bem-sucedida');
+        } else {
+          const status = response.status;
+          console.log('[AVISO] Consulta com Bearer falhou:', status);
+          errorLogs.push(`Tentativa 1 falhou: Status ${status}`);
         }
-        
-        // Se mesmo assim falhou, tentamos com fetch padrão como último recurso
-        if (!vehicleData) {
-          try {
-            console.log('[DEBUG] Tentativa final com fetch API');
-            const authHeader = apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`;
-            
-            const fetchResponse = await fetch(apiUrl, {
-              method: 'GET',
-              headers: {
-                'Authorization': authHeader,
-                'Accept': 'application/json'
-              }
-            });
-            
-            if (fetchResponse.ok) {
-              vehicleData = await fetchResponse.json();
-              console.log('[INFO] Consulta bem-sucedida via fetch API');
-            } else {
-              console.log('[AVISO] Fetch API falhou:', fetchResponse.status);
-              errorDetails.fetch = {
-                status: fetchResponse.status,
-                statusText: fetchResponse.statusText
-              };
+      } catch (error1) {
+        const errorMsg = error1 instanceof Error ? error1.message : String(error1);
+        console.error('[ERRO] Falha na primeira tentativa:', errorMsg);
+        errorLogs.push(`Erro na tentativa 1: ${errorMsg}`);
+      }
+      
+      // Tentativa 2: Sem prefixo Bearer (se a primeira falhou)
+      if (!vehicleData && !apiKey.startsWith('Bearer ')) {
+        try {
+          console.log('[DEBUG] Tentando consulta sem prefixo Bearer');
+          
+          const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': apiKey,
+              'Accept': 'application/json'
             }
-          } catch (fetchError) {
-            console.error('[ERRO] Falha na tentativa fetch:', fetchError);
-            errorDetails.fetch = {
-              message: fetchError.message
-            };
+          });
+          
+          if (response.ok) {
+            vehicleData = await response.json();
+            console.log('[INFO] Consulta sem Bearer bem-sucedida');
+          } else {
+            const status = response.status;
+            console.log('[AVISO] Consulta sem Bearer falhou:', status);
+            errorLogs.push(`Tentativa 2 falhou: Status ${status}`);
           }
+        } catch (error2) {
+          const errorMsg = error2 instanceof Error ? error2.message : String(error2);
+          console.error('[ERRO] Falha na segunda tentativa:', errorMsg);
+          errorLogs.push(`Erro na tentativa 2: ${errorMsg}`);
         }
       }
       
       // Verificar se a consulta falhou completamente
       if (!vehicleData) {
-        console.error('[ERRO] Todas as tentativas falharam:', JSON.stringify(errorDetails));
+        console.error('[ERRO] Todas as tentativas falharam');
         
-        // Como estamos em desenvolvimento, fornecemos veículo de teste apenas para ambiente de dev
+        // Em ambiente de desenvolvimento, fornecer dados de teste
         if (process.env.NODE_ENV === 'development') {
           console.log('[DEBUG] Fornecendo dados de veículo de teste para desenvolvimento');
           return res.json({
@@ -1058,14 +1023,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ano: "2023",
             anoModelo: "2023",
             chassi: "TESTE123456789",
-            cor: "Prata"
+            cor: "Prata",
+            placa: cleanedPlaca
           });
         }
         
         return res.status(500).json({ 
           error: 'Falha ao consultar dados do veículo',
           details: 'Todas as tentativas de consulta falharam. Verifique sua conexão ou a chave de API.',
-          errorInfo: errorDetails,
+          errorLogs,
           timestamp: new Date().toISOString()
         });
       }
