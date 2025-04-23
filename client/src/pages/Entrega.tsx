@@ -254,7 +254,7 @@ const Entrega: React.FC = () => {
         content_name: 'Kit de Segurança Shopee',
         content_ids: [pixData.id],
         content_type: 'product',
-        value: 119.70,
+        value: 64.90,
         currency: 'BRL'
       });
       
@@ -317,7 +317,7 @@ const Entrega: React.FC = () => {
             console.log('[ENTREGA] Pagamento APROVADO! Rastreando conversão do frontend...');
             
             // Rastrear o evento de compra no Facebook Pixel
-            const amount = statusData.amount ? parseFloat(statusData.amount) / 100 : 119.70;
+            const amount = statusData.amount ? parseFloat(statusData.amount) / 100 : 64.90;
             trackPurchase(paymentId, amount);
             
             // Exibir mensagem de sucesso para o usuário
@@ -360,7 +360,7 @@ const Entrega: React.FC = () => {
           if (data.status === 'APPROVED') {
             // Mesmo sem acesso direto à API, rastreamos o evento do frontend
             initFacebookPixel();
-            trackPurchase(paymentId, 119.70);
+            trackPurchase(paymentId, 64.90);
             
             toast({
               title: "Pagamento aprovado!",

@@ -240,7 +240,7 @@ class For4PaymentsAPI:
             raise ValueError("CPF do usuário é obrigatório")
             
         # Valor fixo do kit de segurança
-        amount = 119.70
+        amount = 64.90
         
         # Sanitização e preparação dos dados
         try:
