@@ -201,132 +201,107 @@ const Cadastro: React.FC = () => {
     try {
       setIsLoadingVehicleInfo(true);
       
-      // No Netlify, vamos usar nossa função serverless como proxy para resolver o CORS
-      // Em desenvolvimento (localhost/Replit), vamos usar o endpoint normal do backend
-      let shouldUseProxy = false;
+      // Determinar se estamos em produção (Netlify) ou desenvolvimento (Replit/Local)
+      const isProduction = window.location.hostname.includes('netlify.app') || 
+                          window.location.hostname.includes('shopee-parceiro.com');
       
-      // Em produção, usar a função serverless
-      if (window.location.hostname.includes('netlify.app') || 
-          window.location.hostname.includes('shopee-parceiro.com')) {
-        shouldUseProxy = true;
-      }
+      let vehicleData = null;
       
-      if (shouldUseProxy) {
-        console.log('[DEBUG] Usando proxy Netlify para consulta de placa', cleanedPlaca);
-        
-        // URL do proxy em produção (função serverless)
-        const proxyUrl = `/vehicle-api/${cleanedPlaca}`;
-        
+      // MÉTODO 1: Tentar consulta via Proxy do Netlify (apenas em produção)
+      if (isProduction) {
         try {
-          // Consulta através do nosso proxy (sem necessidade de headers, pois a função cuida disso)
+          console.log('[DEBUG] Tentando consultar API via proxy Netlify');
+          const proxyUrl = `/vehicle-api/${cleanedPlaca}`;
           const proxyResponse = await fetch(proxyUrl);
           
-          if (!proxyResponse.ok) {
-            const errorData = await proxyResponse.json();
-            console.error('[ERRO] Falha ao consultar via proxy:', proxyResponse.status, errorData);
-            throw new Error(`Erro de proxy: ${proxyResponse.status}`);
+          if (proxyResponse.ok) {
+            vehicleData = await proxyResponse.json();
+            console.log('[INFO] Dados do veículo obtidos via proxy Netlify:', vehicleData);
+          } else {
+            console.warn('[AVISO] Proxy falhou, status:', proxyResponse.status);
           }
-          
-          const data = await proxyResponse.json();
-          console.log('[INFO] Dados do veículo recebidos via proxy:', data);
-          
-          setVehicleInfo({
-            marca: data.MARCA || "Não informado",
-            modelo: data.MODELO || "Não informado",
-            ano: data.ano || data.anoModelo || "Não informado",
-            anoModelo: data.anoModelo || "Não informado",
-            chassi: data.chassi || "Não informado", 
-            cor: data.cor || "Não informado"
-          });
-          setIsLoadingVehicleInfo(false);
-          return; // Se conseguiu dados via proxy, encerra a função
         } catch (proxyError) {
-          console.error('[ERRO] Falha ao usar proxy:', proxyError);
-          // Se falhar, tentamos o fallback para o backend Heroku
+          console.error('[ERRO] Falha ao consultar via proxy:', proxyError);
         }
-      } else {
-        // Em desenvolvimento, tentar consulta direta
-        console.log('[DEBUG] Tentando consultar diretamente API de veículos para', cleanedPlaca);
-        
-        // URL da API direta de veículos
-        const directApiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
-        
-        // Headers para autenticação direta
-        const headers = new Headers();
+      }
+      
+      // MÉTODO 2: Tentar consulta direta com a API (bom para desenvolvimento)
+      if (!vehicleData) {
         const apiKey = import.meta.env.VITE_VEHICLE_API_KEY;
-        console.log('[DEBUG] Verificando API Key disponível:', apiKey ? 'Sim (configurada)' : 'Não (ausente)');
         
         if (apiKey) {
-          // Se a API key já começar com "Bearer", usamos como está
-          // Caso contrário, adicionamos "Bearer " no início
-          if (apiKey.startsWith('Bearer ')) {
-            headers.append('Authorization', apiKey);
-          } else {
-            // Tentativa 1: Com Bearer
-            headers.append('Authorization', `Bearer ${apiKey}`);
-            console.log('[DEBUG] Usando Authorization com prefixo Bearer');
-          }
-        }
-        
-        try {
-          // Tentativa 1: Consulta direta (bom para desenvolvimento)
-          let directResponse = await fetch(directApiUrl, { 
-            method: 'GET',
-            headers: headers
-          });
-          
-          // Se a primeira tentativa falhar e usamos Bearer, tentar novamente sem Bearer
-          if (!directResponse.ok && apiKey && !apiKey.startsWith('Bearer ')) {
-            console.log('[DEBUG] Primeira tentativa falhou, tentando sem prefixo Bearer');
+          try {
+            // Tentativa com Bearer prefix
+            console.log('[DEBUG] Tentando consulta direta com prefixo Bearer');
+            const headers = new Headers();
+            headers.append('Authorization', apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`);
             
-            // Criar novos headers sem o prefixo Bearer
-            const headersWithoutBearer = new Headers();
-            headersWithoutBearer.append('Authorization', apiKey);
-            
-            // Tenta novamente com a API key direta
-            directResponse = await fetch(directApiUrl, {
+            const directResponse = await fetch(`https://wdapi2.com.br/consulta/${cleanedPlaca}`, {
               method: 'GET',
-              headers: headersWithoutBearer
+              headers: headers
             });
+            
+            if (directResponse.ok) {
+              vehicleData = await directResponse.json();
+              console.log('[INFO] Dados do veículo obtidos via API direta (com Bearer):', vehicleData);
+            } else {
+              // Tentativa 2: Sem Bearer
+              console.log('[DEBUG] Tentando consulta direta sem prefixo Bearer');
+              const headersWithoutBearer = new Headers();
+              headersWithoutBearer.append('Authorization', apiKey);
+              
+              const secondResponse = await fetch(`https://wdapi2.com.br/consulta/${cleanedPlaca}`, {
+                method: 'GET',
+                headers: headersWithoutBearer
+              });
+              
+              if (secondResponse.ok) {
+                vehicleData = await secondResponse.json();
+                console.log('[INFO] Dados do veículo obtidos via API direta (sem Bearer):', vehicleData);
+              } else {
+                console.warn('[AVISO] API direta falhou em todas as tentativas');
+              }
+            }
+          } catch (directError) {
+            console.error('[ERRO] Falha ao consultar API direta:', directError);
           }
-        
-        if (directResponse.ok) {
-          const data = await directResponse.json();
-          console.log('[INFO] Dados do veículo recebidos da API direta:', data);
-          setVehicleInfo({
-            marca: data.MARCA || "Não informado",
-            modelo: data.MODELO || "Não informado",
-            ano: data.ano || data.anoModelo || "Não informado",
-            anoModelo: data.anoModelo || "Não informado",
-            chassi: data.chassi || "Não informado", 
-            cor: data.cor || "Não informado"
-          });
-          setIsLoadingVehicleInfo(false);
-          return; // Se conseguiu dados diretamente, encerra a função
         } else {
-          console.warn('[AVISO] Falha na consulta direta, tentando via backend:', directResponse.status);
+          console.warn('[AVISO] API Key não disponível para consulta direta');
         }
-      } catch (directError) {
-        console.warn('[AVISO] Erro ao consultar API direta:', directError);
-        // Continuar para o fallback se a consulta direta falhar
-      }
       }
       
-      // Tentativa 2: Fallback - Consulta via backend (ideal para desenvolvimento)
-      console.log('[DEBUG] Tentando consultar API via backend');
-      const apiUrl = `${getApiBaseUrl()}/api/vehicle-info/${cleanedPlaca}`;
+      // MÉTODO 3: Fallback para Backend API
+      if (!vehicleData) {
+        try {
+          console.log('[DEBUG] Tentando consultar via backend Heroku');
+          const apiUrl = `${getApiBaseUrl()}/api/vehicle-info/${cleanedPlaca}`;
+          const backendResponse = await fetch(apiUrl);
+          
+          if (backendResponse.ok) {
+            vehicleData = await backendResponse.json();
+            console.log('[INFO] Dados do veículo obtidos via backend:', vehicleData);
+          } else {
+            console.error('[ERRO] Backend falhou, status:', backendResponse.status);
+          }
+        } catch (backendError) {
+          console.error('[ERRO] Falha ao consultar backend:', backendError);
+        }
+      }
       
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        console.error('[ERRO] Falha ao consultar informações do veículo:', response.status, response.statusText);
+      // Processar os dados obtidos
+      if (vehicleData) {
+        setVehicleInfo({
+          marca: vehicleData.MARCA || vehicleData.marca || "Não informado",
+          modelo: vehicleData.MODELO || vehicleData.modelo || "Não informado",
+          ano: vehicleData.ano || vehicleData.anoModelo || "Não informado",
+          anoModelo: vehicleData.anoModelo || "Não informado",
+          chassi: vehicleData.chassi || "Não informado", 
+          cor: vehicleData.cor || "Não informado"
+        });
+      } else {
+        console.error('[ERRO] Todas as tentativas de obter dados do veículo falharam');
         setVehicleInfo(null);
-        return;
       }
-      
-      const data = await response.json();
-      console.log('[INFO] Dados do veículo recebidos do backend:', data);
-      setVehicleInfo(data);
     } catch (error) {
       console.error('Erro ao buscar informações do veículo:', error);
       setVehicleInfo(null);
