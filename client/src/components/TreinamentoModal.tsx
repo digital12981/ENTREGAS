@@ -203,7 +203,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] h-[100dvh] max-h-[100dvh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] h-auto max-h-[90vh] overflow-y-auto scrollbar-thin" style={{ overscrollBehavior: 'contain' }}>
         {step === 'schedule' ? (
           <>
             <DialogHeader>
@@ -360,7 +360,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
               )}
 
               {!isLoading && paymentInfo && (
-                <div className="space-y-3">
+                <div className="space-y-3 pb-2">
                   <div className="bg-green-50 p-3 rounded-md border border-green-200">
                     <div className="flex items-start">
                       <CheckCircle2 className="h-5 w-5 text-green-600 mr-2 mt-0.5 shrink-0" />
