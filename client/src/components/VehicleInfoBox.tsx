@@ -66,14 +66,29 @@ export function VehicleInfoBox({ licensePlate, onChange, className = '' }: Vehic
   // Se tem dados, mostra informações do veículo
   if (vehicleInfo) {
     return (
-      <div className={`p-4 border rounded-md bg-green-50 ${className}`}>
-        <h3 className="font-semibold text-green-800 mb-2">Informações do Veículo</h3>
-        <div className="space-y-1 text-sm">
-          <p><span className="font-medium">Marca:</span> {vehicleInfo.MARCA}</p>
-          <p><span className="font-medium">Modelo:</span> {vehicleInfo.MODELO}</p>
-          {vehicleInfo.ano && <p><span className="font-medium">Ano:</span> {vehicleInfo.ano}</p>}
-          {vehicleInfo.anoModelo && <p><span className="font-medium">Ano Modelo:</span> {vehicleInfo.anoModelo}</p>}
-          {vehicleInfo.cor && <p><span className="font-medium">Cor:</span> {vehicleInfo.cor}</p>}
+      <div className={`p-4 border rounded-md bg-gray-50 ${className}`}>
+        <h3 className="font-medium text-gray-800 mb-2">Informações do Veículo</h3>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+          <div>
+            <span className="font-medium text-gray-600">Marca:</span>
+            <span className="ml-1 text-gray-800">{vehicleInfo.MARCA || vehicleInfo.marca || "Não informado"}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-600">Modelo:</span>
+            <span className="ml-1 text-gray-800">{vehicleInfo.MODELO || vehicleInfo.modelo || "Não informado"}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-600">Ano:</span>
+            <span className="ml-1 text-gray-800">{vehicleInfo.ano || "Não informado"}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-600">Cor:</span>
+            <span className="ml-1 text-gray-800">{vehicleInfo.cor || "Não informado"}</span>
+          </div>
+          <div className="col-span-2">
+            <span className="font-medium text-gray-600">Chassi:</span>
+            <span className="ml-1 text-gray-800">{vehicleInfo.chassi || "Não informado"}</span>
+          </div>
         </div>
       </div>
     );

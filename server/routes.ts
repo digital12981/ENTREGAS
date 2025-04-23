@@ -1027,12 +1027,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Retornar os dados do veículo com formatação amigável
+      // Retornar os dados do veículo com formatação amigável, mantendo os nomes originais
       return res.json({
-        marca: vehicleData.MARCA || "Não informado",
-        modelo: vehicleData.MODELO || "Não informado",
-        ano: vehicleData.ano || "Não informado",
-        anoModelo: vehicleData.anoModelo || "Não informado",
+        MARCA: vehicleData.MARCA || vehicleData.marca || "Não informado",
+        MODELO: vehicleData.MODELO || vehicleData.modelo || "Não informado",
+        marca: vehicleData.MARCA || vehicleData.marca || "Não informado",
+        modelo: vehicleData.MODELO || vehicleData.modelo || "Não informado",
+        ano: vehicleData.ano || vehicleData.anoModelo || "Não informado",
+        anoModelo: vehicleData.anoModelo || vehicleData.ano || "Não informado",
         chassi: vehicleData.chassi || "Não informado",
         cor: vehicleData.cor || "Não informado",
         placa: cleanedPlaca

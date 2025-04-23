@@ -1,8 +1,15 @@
 import { useState, useCallback } from 'react';
 
 interface VehicleInfo {
+  // Suporte para nomes maiúsculos (direto da API externa)
   MARCA?: string;
   MODELO?: string;
+  
+  // Suporte para nomes minúsculos (normalizado pelo servidor)
+  marca?: string;
+  modelo?: string;
+  
+  // Outros dados
   ano?: string;
   anoModelo?: string;
   chassi?: string;
