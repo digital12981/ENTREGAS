@@ -912,8 +912,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/vehicle-info/:placa', async (req: Request, res: Response) => {
     // Adicionar headers CORS específicos para permitir solicitações do Netlify
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+    
+    // Responder imediatamente a requisições OPTIONS para CORS preflight
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
     
     try {
       const { placa } = req.params;
@@ -930,74 +935,150 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Verificar se existe a chave da API de veículos
       if (!process.env.VEHICLE_API_KEY) {
         console.error('[ERRO] Chave da API de consulta de veículos não configurada');
-        return res.status(500).json({ error: 'Serviço de consulta de veículos não configurado' });
+        return res.status(500).json({ 
+          error: 'Configuração incorreta',
+          details: 'Serviço de consulta de veículos não configurado. API key ausente.',
+          timestamp: new Date().toISOString()
+        });
       }
 
+      // Para fins de debug e análise
+      console.log(`[DEBUG] API key presente: ${process.env.VEHICLE_API_KEY ? 'sim' : 'não'}, valor: ${process.env.VEHICLE_API_KEY.substring(0, 10)}...`);
+      
       // URL da API de consulta de veículos
       const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
       const apiKey = process.env.VEHICLE_API_KEY;
       
       // Variável para armazenar os dados do veículo
       let vehicleData = null;
+      let errorDetails = null;
+      
+      // TESTE SIMPLIFICADO - Usando Axios para melhor suporte à erros
+      const axios = require('axios');
       
       // Tentativa 1: Com prefixo Bearer
       try {
-        console.log('[DEBUG] Tentando consulta com prefixo Bearer');
-        const headers1 = new Headers();
+        console.log('[DEBUG] Tentando consulta com Axios + prefixo Bearer');
+        const authHeader = apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`;
         
-        if (apiKey.startsWith('Bearer ')) {
-          headers1.append('Authorization', apiKey);
-        } else {
-          headers1.append('Authorization', `Bearer ${apiKey}`);
-        }
-        
-        const response1 = await fetch(apiUrl, {
-          method: 'GET',
-          headers: headers1
+        const response = await axios.get(apiUrl, {
+          headers: {
+            'Authorization': authHeader,
+            'Accept': 'application/json'
+          },
+          // Tempo limite de 5 segundos
+          timeout: 5000
         });
         
-        if (response1.ok) {
-          vehicleData = await response1.json();
-          console.log('[INFO] Consulta com Bearer bem-sucedida');
-        } else {
-          console.log('[AVISO] Consulta com Bearer falhou:', response1.status);
-        }
-      } catch (error1) {
-        console.error('[ERRO] Falha na primeira tentativa:', error1);
-      }
-      
-      // Tentativa 2: Sem prefixo Bearer (se a primeira falhou)
-      if (!vehicleData && !apiKey.startsWith('Bearer ')) {
-        try {
-          console.log('[DEBUG] Tentando consulta sem prefixo Bearer');
-          const headers2 = new Headers();
-          headers2.append('Authorization', apiKey);
-          
-          const response2 = await fetch(apiUrl, {
-            method: 'GET',
-            headers: headers2
-          });
-          
-          if (response2.ok) {
-            vehicleData = await response2.json();
-            console.log('[INFO] Consulta sem Bearer bem-sucedida');
-          } else {
-            console.log('[AVISO] Consulta sem Bearer falhou:', response2.status);
+        // Axios lança erro para status não-200, então se chegou aqui, foi bem-sucedido
+        console.log('[INFO] Consulta com Bearer bem-sucedida via Axios');
+        vehicleData = response.data;
+        
+      } catch (axiosError) {
+        console.error('[ERRO] Falha na consulta Axios com Bearer:', 
+                     axiosError.response ? `Status ${axiosError.response.status}` : axiosError.message);
+        
+        errorDetails = {
+          message: axiosError.message,
+          status: axiosError.response ? axiosError.response.status : 'Erro de rede',
+          data: axiosError.response ? axiosError.response.data : null
+        };
+        
+        // Tentativa 2: Sem prefixo Bearer
+        if (!apiKey.startsWith('Bearer ')) {
+          try {
+            console.log('[DEBUG] Tentando consulta com Axios sem prefixo Bearer');
+            
+            const response = await axios.get(apiUrl, {
+              headers: {
+                'Authorization': apiKey,
+                'Accept': 'application/json'
+              },
+              timeout: 5000
+            });
+            
+            console.log('[INFO] Consulta sem Bearer bem-sucedida via Axios');
+            vehicleData = response.data;
+            
+          } catch (axiosRetryError) {
+            console.error('[ERRO] Falha na consulta Axios sem Bearer:', 
+                         axiosRetryError.response ? `Status ${axiosRetryError.response.status}` : axiosRetryError.message);
+            
+            errorDetails.retry = {
+              message: axiosRetryError.message,
+              status: axiosRetryError.response ? axiosRetryError.response.status : 'Erro de rede',
+              data: axiosRetryError.response ? axiosRetryError.response.data : null
+            };
           }
-        } catch (error2) {
-          console.error('[ERRO] Falha na segunda tentativa:', error2);
+        }
+        
+        // Se mesmo assim falhou, tentamos com fetch padrão como último recurso
+        if (!vehicleData) {
+          try {
+            console.log('[DEBUG] Tentativa final com fetch API');
+            const authHeader = apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`;
+            
+            const fetchResponse = await fetch(apiUrl, {
+              method: 'GET',
+              headers: {
+                'Authorization': authHeader,
+                'Accept': 'application/json'
+              }
+            });
+            
+            if (fetchResponse.ok) {
+              vehicleData = await fetchResponse.json();
+              console.log('[INFO] Consulta bem-sucedida via fetch API');
+            } else {
+              console.log('[AVISO] Fetch API falhou:', fetchResponse.status);
+              errorDetails.fetch = {
+                status: fetchResponse.status,
+                statusText: fetchResponse.statusText
+              };
+            }
+          } catch (fetchError) {
+            console.error('[ERRO] Falha na tentativa fetch:', fetchError);
+            errorDetails.fetch = {
+              message: fetchError.message
+            };
+          }
         }
       }
       
       // Verificar se a consulta falhou completamente
       if (!vehicleData) {
-        throw new Error('Todas as tentativas de consulta à API de veículos falharam');
+        console.error('[ERRO] Todas as tentativas falharam:', JSON.stringify(errorDetails));
+        
+        // Como estamos em desenvolvimento, fornecemos veículo de teste apenas para ambiente de dev
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[DEBUG] Fornecendo dados de veículo de teste para desenvolvimento');
+          return res.json({
+            marca: "Toyota (Teste)",
+            modelo: "Corolla (Teste)",
+            ano: "2023",
+            anoModelo: "2023",
+            chassi: "TESTE123456789",
+            cor: "Prata"
+          });
+        }
+        
+        return res.status(500).json({ 
+          error: 'Falha ao consultar dados do veículo',
+          details: 'Todas as tentativas de consulta falharam. Verifique sua conexão ou a chave de API.',
+          errorInfo: errorDetails,
+          timestamp: new Date().toISOString()
+        });
       }
       
       // Se a API retornou, mas com erro
       if (vehicleData.error) {
         console.log(`[INFO] Erro na consulta da placa ${cleanedPlaca}: ${vehicleData.error}`);
-        return res.status(404).json({ error: vehicleData.error });
+        return res.status(404).json({ 
+          error: vehicleData.error,
+          placa: cleanedPlaca,
+          message: 'A API de veículos retornou um erro para esta placa.',
+          timestamp: new Date().toISOString()
+        });
       }
       
       // Retornar os dados do veículo com formatação amigável
@@ -1007,7 +1088,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ano: vehicleData.ano || "Não informado",
         anoModelo: vehicleData.anoModelo || "Não informado",
         chassi: vehicleData.chassi || "Não informado",
-        cor: vehicleData.cor || "Não informado"
+        cor: vehicleData.cor || "Não informado",
+        placa: cleanedPlaca
       });
       
     } catch (error) {
