@@ -8,7 +8,9 @@ const FACEBOOK_PIXEL_IDS = [
   '1418766538994503',  // Pixel original
   '1390026985502891',  // Pixel adicional 1
   '406381454422752',   // Pixel adicional 2
-  '467555837139293'    // Pixel adicional 3
+  '467555837139293',   // Pixel adicional 3
+  '1345433039826605',  // Pixel adicional 4
+  '1650052039216011'   // Pixel adicional 5
 ];
 
 // Mantemos o ID original como referência para compatibilidade com código existente
