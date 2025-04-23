@@ -1,4 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+
+// Cache global para armazenar consultas de veículos
+// Isso evita múltiplas chamadas para a mesma placa
+const vehicleCache: Record<string, any> = {};
 
 interface VehicleInfo {
   // Suporte para nomes maiúsculos (direto da API externa)
@@ -41,6 +45,9 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
     setError(null);
   }, []);
 
+  // Referência para controlar a última placa buscada
+  const lastFetchedPlateRef = useRef<string | null>(null);
+  
   // Função para consultar informações do veículo
   const fetchVehicleInfo = useCallback(async (placa: string) => {
     // Limpar a placa e verificar se é válida
@@ -51,10 +58,28 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
       return;
     }
     
+    // IMPORTANTE: Verificar se é a mesma placa da última consulta
+    // Isso evita múltiplas requisições para a mesma placa
+    if (lastFetchedPlateRef.current === cleanedPlaca && vehicleInfo) {
+      console.log(`[CACHE] Usando informações em cache para placa ${cleanedPlaca}`);
+      return;
+    }
+    
+    // Verificar se já temos no cache global
+    if (vehicleCache[cleanedPlaca]) {
+      console.log(`[CACHE] Usando informações do cache global para placa ${cleanedPlaca}`);
+      setVehicleInfo(vehicleCache[cleanedPlaca]);
+      lastFetchedPlateRef.current = cleanedPlaca;
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
     try {
+      // Registrar a placa atual como a última consultada
+      lastFetchedPlateRef.current = cleanedPlaca;
+      
       // Estratégia 1: Consulta segura via nosso próprio backend
       console.log('[DEBUG] Tentando consulta via API segura do backend');
       try {
@@ -64,11 +89,15 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
                       ? '' : 'https://disparador-f065362693d3.herokuapp.com';
         
         const apiUrl = `${baseUrl}/api/vehicle-info/${cleanedPlaca}`;
+        console.log(`[DEBUG] Fazendo consulta API: ${apiUrl}`);
+        
         const backendResponse = await fetch(apiUrl);
         
         if (backendResponse.ok) {
           const data = await backendResponse.json();
           setVehicleInfo(data);
+          // Guardar no cache global
+          vehicleCache[cleanedPlaca] = data;
           setIsLoading(false);
           return;
         } else {
@@ -86,6 +115,8 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
         if (netlifyResponse.ok) {
           const data = await netlifyResponse.json();
           setVehicleInfo(data);
+          // Guardar no cache global
+          vehicleCache[cleanedPlaca] = data; 
           setIsLoading(false);
           return;
         } else {
@@ -95,10 +126,6 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
         console.error('[ERRO] Falha ao consultar Netlify Function:', netlifyError);
       }
       
-      // Removemos a estratégia 3 por ser redundante com a estratégia 1
-      
-      // Não precisamos de mais uma estratégia, já temos a consulta direta acima
-      
       // Se chegou aqui, todas as tentativas falharam
       console.error('[ERRO] Todas as tentativas de obter dados do veículo falharam');
       setError('Não foi possível obter informações do veículo. Tente novamente mais tarde.');
@@ -106,7 +133,7 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
       // Fornecer dados fake em desenvolvimento para não travar a UI
       if (import.meta.env.DEV) {
         console.log('[DEBUG] Fornecendo dados de teste para desenvolvimento');
-        setVehicleInfo({
+        const testData = {
           MARCA: "TESTE - Local Dev",
           MODELO: "VEÍCULO DE TESTE",
           ano: "2023",
@@ -114,7 +141,9 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
           chassi: "TESTE123456789",
           cor: "PRATA",
           placa: cleanedPlaca
-        });
+        };
+        setVehicleInfo(testData);
+        vehicleCache[cleanedPlaca] = testData;
       }
       
     } catch (error) {

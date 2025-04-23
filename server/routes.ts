@@ -908,6 +908,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Cache para evitar consultas duplicadas ao serviço externo
+  const vehicleInfoCache: Record<string, any> = {};
+
   // Endpoint para consultar informações do veículo pela placa
   app.get('/api/vehicle-info/:placa', async (req: Request, res: Response) => {
     // Adicionar headers CORS específicos para permitir solicitações do Netlify
@@ -928,9 +931,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Limpar a placa e deixar apenas letras e números
-      const cleanedPlaca = placa.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      const vehiclePlate = placa.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       
-      console.log(`[INFO] Consultando informações do veículo com placa: ${cleanedPlaca}`);
+      // Verificar se a informação já está em cache no servidor
+      if (vehicleInfoCache[vehiclePlate]) {
+        console.log(`[CACHE-SERVER] Usando dados em cache para placa: ${vehiclePlate}`);
+        return res.json(vehicleInfoCache[vehiclePlate]);
+      }
+      
+      console.log(`[INFO] Consultando informações do veículo com placa: ${vehiclePlate}`);
       
       // Verificar se existe a chave da API de veículos
       if (!process.env.VEHICLE_API_KEY) {
@@ -959,7 +968,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // URL da API de consulta de veículos (formato correto com chave na URL)
-      const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}/${apiKey}`;
+      const apiUrl = `https://wdapi2.com.br/consulta/${vehiclePlate}/${apiKey}`;
       
       // Variável para armazenar os dados do veículo
       let vehicleData = null;
@@ -1004,7 +1013,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             anoModelo: "2023",
             chassi: "TESTE123456789",
             cor: "Prata",
-            placa: cleanedPlaca
+            placa: vehiclePlate
           });
         }
         
@@ -1018,17 +1027,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Se a API retornou, mas com erro
       if (vehicleData.error) {
-        console.log(`[INFO] Erro na consulta da placa ${cleanedPlaca}: ${vehicleData.error}`);
+        console.log(`[INFO] Erro na consulta da placa ${vehiclePlate}: ${vehicleData.error}`);
         return res.status(404).json({ 
           error: vehicleData.error,
-          placa: cleanedPlaca,
+          placa: vehiclePlate,
           message: 'A API de veículos retornou um erro para esta placa.',
           timestamp: new Date().toISOString()
         });
       }
       
-      // Retornar os dados do veículo com formatação amigável, mantendo os nomes originais
-      return res.json({
+      // Criar objeto de resposta formatado
+      const responseData = {
         MARCA: vehicleData.MARCA || vehicleData.marca || "Não informado",
         MODELO: vehicleData.MODELO || vehicleData.modelo || "Não informado",
         marca: vehicleData.MARCA || vehicleData.marca || "Não informado",
@@ -1037,8 +1046,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         anoModelo: vehicleData.anoModelo || vehicleData.ano || "Não informado",
         chassi: vehicleData.chassi || "Não informado",
         cor: vehicleData.cor || "Não informado",
-        placa: cleanedPlaca
-      });
+        placa: vehiclePlate
+      };
+      
+      // Guardar no cache
+      vehicleInfoCache[vehiclePlate] = responseData;
+      console.log(`[CACHE-SERVER] Armazenando dados da placa ${vehiclePlate} em cache`);
+      
+      // Retornar os dados
+      return res.json(responseData);
       
     } catch (error) {
       console.error('Erro ao consultar informações do veículo:', error);
