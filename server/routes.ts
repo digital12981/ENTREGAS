@@ -482,6 +482,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const ip = req.ip || req.socket.remoteAddress || '0.0.0.0';
       
+      // Extrair dados do request body (nova versão envia mais detalhes)
+      const { deviceId, userAgent: clientUserAgent, isAboutBlank, screen } = req.body;
+      
       // Verificar se o IP já está na lista de exceções
       const ipBaseWithoutProxy = ip.split(',')[0].trim();
       if (neverBanIPs.some(whitelistedIP => ipBaseWithoutProxy.includes(whitelistedIP))) {
@@ -494,10 +497,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const userAgent = req.headers["user-agent"] || '';
+      // Se estiver usando about:blank, registramos explicitamente
+      let reportReason = "Acesso via desktop detectado pelo frontend";
+      if (isAboutBlank) {
+        reportReason = "Tentativa de contornar bloqueio via about:blank";
+        console.log(`[ALERTA] Tentativa de bypass via about:blank detectada no IP ${ip}`);
+      }
+      
+      const userAgent = req.headers["user-agent"] || clientUserAgent || '';
       const referer = req.headers.referer || '';
       const origin = req.headers.origin || '';
       const location = await getIpLocation(ip);
+      
+      // Criar informação da tela quando disponível
+      const screenSize = screen ? `${screen.width}x${screen.height}` : '';
       
       // Verificar se o IP já está registrado
       let bannedIp = await storage.getBannedIp(ip);
@@ -512,20 +525,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
           origin: origin || '',
           device: "Desktop (Frontend)",
           browserInfo: userAgent,
-          screenSize: "",
-          platform: "",
+          screenSize: screenSize,
+          platform: deviceId || '',  // Armazenar deviceId como identificador adicional
           language: req.headers["accept-language"] as string || '',
-          reason: "Acesso via desktop detectado pelo frontend",
+          reason: reportReason,
           location,
           accessUrl: req.originalUrl || req.url || '/'
         });
-        console.log(`[BLOQUEIO] Novo IP banido via frontend: ${ip}`);
+        console.log(`[BLOQUEIO] Novo IP banido via frontend: ${ip}${deviceId ? ' (DeviceID: ' + deviceId.substr(0, 10) + '...)' : ''}`);
       } 
       // Se já existir, mas não estiver banido, atualizar para banido
       else if (!bannedIp.isBanned) {
         bannedIp = await storage.updateBannedIpStatus(ip, true);
         console.log(`[BLOQUEIO] IP atualizado para banido via frontend: ${ip}`);
       }
+      
+      // Mesmo que já esteja banido, atualizamos o registro com o deviceId
+      // para usar em verificações futuras de novos acessos
+      broadcastToAll({
+        type: 'new_banned_ip', 
+        data: {
+          ip,
+          reason: reportReason,
+          userAgent: userAgent || '',
+          timestamp: new Date().toISOString()
+        }
+      });
       
       res.json({ 
         success: true, 
@@ -536,6 +561,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Erro ao banir IP:", error);
       res.status(500).json({ error: "Erro ao banir IP" });
+    }
+  });
+  
+  // Novo endpoint: Registrar deviceId para bloquear mesmo quando o IP mudar
+  app.post("/api/admin/register-device", async (req, res) => {
+    try {
+      const { deviceId } = req.body;
+      const ip = req.ip || req.socket.remoteAddress || '0.0.0.0';
+      
+      if (!deviceId) {
+        return res.status(400).json({ error: "DeviceID não fornecido" });
+      }
+      
+      // Verificar se o IP já está na lista de exceções
+      const ipBaseWithoutProxy = ip.split(',')[0].trim();
+      if (neverBanIPs.some(whitelistedIP => ipBaseWithoutProxy.includes(whitelistedIP))) {
+        console.log(`[PERMITIDO] IP ${ip} com DeviceID ${deviceId.substr(0, 8)} está na lista de exceções.`);
+        return res.json({ 
+          success: true, 
+          message: "IP está na lista de exceções",
+          ip: ip,
+          isBanned: false
+        });
+      }
+      
+      // Se o IP ainda não estiver na lista de banidos, vamos adicioná-lo
+      let bannedIp = await storage.getBannedIp(ip);
+      
+      if (!bannedIp) {
+        const userAgent = req.headers["user-agent"] || '';
+        const referer = req.headers.referer || '';
+        const origin = req.headers.origin || '';
+        const location = await getIpLocation(ip);
+        
+        // Criar novo registro com o deviceId como identificador
+        bannedIp = await storage.createBannedIp({
+          ip,
+          isBanned: true,
+          userAgent: userAgent || '',
+          referer: referer || '',
+          origin: origin || '',
+          device: "Mobile (Banned by DeviceID)",
+          browserInfo: userAgent,
+          screenSize: "",
+          platform: deviceId,  // Usar platform para armazenar o deviceId
+          language: req.headers["accept-language"] as string || '',
+          reason: "Acesso de dispositivo previamente banido (deviceId)",
+          location,
+          accessUrl: req.originalUrl || req.url || '/'
+        });
+        
+        console.log(`[BLOQUEIO] IP banido via DeviceID ${deviceId.substr(0, 8)}: ${ip}`);
+        
+        // Notificar o dashboard sobre o novo IP banido
+        broadcastToAll({
+          type: 'new_banned_ip', 
+          data: {
+            ip,
+            reason: "Dispositivo previamente banido",
+            userAgent: userAgent || '',
+            timestamp: new Date().toISOString()
+          }
+        });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: "Dispositivo registrado com sucesso",
+        ip: ip,
+        isBanned: true
+      });
+    } catch (error) {
+      console.error("Erro ao registrar dispositivo:", error);
+      res.status(500).json({ error: "Erro ao registrar dispositivo" });
     }
   });
   
