@@ -3,20 +3,30 @@
  * Implementação priorizada para execução no frontend (Netlify)
  */
 
-// Facebook Pixel ID fornecido
-const FACEBOOK_PIXEL_ID = '1418766538994503';
+// Lista de todos os Facebook Pixel IDs a serem utilizados
+const FACEBOOK_PIXEL_IDS = [
+  '1418766538994503',  // Pixel original
+  '1390026985502891',  // Pixel adicional 1
+  '406381454422752',   // Pixel adicional 2
+  '467555837139293'    // Pixel adicional 3
+];
+
+// Mantemos o ID original como referência para compatibilidade com código existente
+const FACEBOOK_PIXEL_ID = FACEBOOK_PIXEL_IDS[0];
 
 /**
  * Inicializa o Facebook Pixel
  */
 export function initFacebookPixel(): void {
-  console.log('[PIXEL] Inicializando Facebook Pixel');
+  console.log('[PIXEL] Inicializando Facebook Pixels');
   
   // Adicionar o script do Facebook Pixel à página
   if (typeof window !== 'undefined' && !window.fbq) {
     const head = document.head || document.getElementsByTagName('head')[0];
     const pixelScript = document.createElement('script');
     pixelScript.type = 'text/javascript';
+    
+    // Criar o código base do Facebook Pixel
     pixelScript.innerHTML = `
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -26,22 +36,33 @@ export function initFacebookPixel(): void {
       t.src=v;s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '${FACEBOOK_PIXEL_ID}');
-      fbq('track', 'PageView');
     `;
+    
+    // Adicionar inicialização para todos os Pixel IDs
+    FACEBOOK_PIXEL_IDS.forEach(pixelId => {
+      pixelScript.innerHTML += `
+      fbq('init', '${pixelId}');
+      `;
+    });
+    
+    // Adicionar o tracking de PageView
+    pixelScript.innerHTML += `fbq('track', 'PageView');`;
+    
     head.appendChild(pixelScript);
 
-    // Adicionar noscript fallback para rastreamento
-    const noscript = document.createElement('noscript');
-    const img = document.createElement('img');
-    img.height = 1;
-    img.width = 1;
-    img.style.display = 'none';
-    img.src = `https://www.facebook.com/tr?id=${FACEBOOK_PIXEL_ID}&ev=PageView&noscript=1`;
-    noscript.appendChild(img);
-    head.appendChild(noscript);
+    // Adicionar noscript fallback para rastreamento para todos os pixels
+    FACEBOOK_PIXEL_IDS.forEach(pixelId => {
+      const noscript = document.createElement('noscript');
+      const img = document.createElement('img');
+      img.height = 1;
+      img.width = 1;
+      img.style.display = 'none';
+      img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`;
+      noscript.appendChild(img);
+      head.appendChild(noscript);
+    });
     
-    console.log('[PIXEL] Facebook Pixel inicializado com sucesso.');
+    console.log(`[PIXEL] ${FACEBOOK_PIXEL_IDS.length} Facebook Pixels inicializados com sucesso.`);
   }
 }
 
@@ -111,38 +132,39 @@ export function trackPurchase(
     status: 'approved'
   });
   
-  // Método 3: Chamada direta ao pixel via imagem (funciona mesmo com bloqueadores)
-  try {
-    const img = new Image();
-    img.src = `https://www.facebook.com/tr?id=${FACEBOOK_PIXEL_ID}&ev=Purchase&cd[value]=${amount}&cd[currency]=${currency}&cd[content_name]=${encodeURIComponent(itemName)}&cd[content_type]=product&cd[content_ids]=${transactionId}&cd[transaction_id]=${transactionId}&noscript=1`;
-    console.log('[PIXEL] Evento de compra enviado via imagem pixel para garantir entrega.');
-  } catch (imgErr) {
-    console.error('[PIXEL] Erro ao enviar via imagem pixel:', imgErr);
-  }
-  
-  // Método 4: Enviar evento via beacon para garantir envio mesmo se página for fechada
-  try {
-    if (navigator.sendBeacon) {
-      const pixelUrl = `https://www.facebook.com/tr?id=${FACEBOOK_PIXEL_ID}&ev=Purchase&noscript=1&cd[value]=${amount}&cd[currency]=${currency}&cd[transaction_id]=${transactionId}`;
-      navigator.sendBeacon(pixelUrl);
-      console.log('[PIXEL] Evento de compra enviado via beacon para garantir entrega.');
+  // Métodos de backup para cada um dos pixels
+  FACEBOOK_PIXEL_IDS.forEach(pixelId => {
+    // Método 3: Chamada direta ao pixel via imagem (funciona mesmo com bloqueadores)
+    try {
+      const img = new Image();
+      img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Purchase&cd[value]=${amount}&cd[currency]=${currency}&cd[content_name]=${encodeURIComponent(itemName)}&cd[content_type]=product&cd[content_ids]=${transactionId}&cd[transaction_id]=${transactionId}&noscript=1`;
+    } catch (imgErr) {
+      console.error(`[PIXEL] Erro ao enviar via imagem pixel para ID ${pixelId}:`, imgErr);
     }
-  } catch (err) {
-    console.error('[PIXEL] Erro ao enviar via beacon:', err);
-  }
+    
+    // Método 4: Enviar evento via beacon para garantir envio mesmo se página for fechada
+    try {
+      if (navigator.sendBeacon) {
+        const pixelUrl = `https://www.facebook.com/tr?id=${pixelId}&ev=Purchase&noscript=1&cd[value]=${amount}&cd[currency]=${currency}&cd[transaction_id]=${transactionId}`;
+        navigator.sendBeacon(pixelUrl);
+      }
+    } catch (err) {
+      console.error(`[PIXEL] Erro ao enviar via beacon para ID ${pixelId}:`, err);
+    }
+    
+    // Método 5: Enviar evento via iframe (alternativa para casos onde outros métodos falham)
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Purchase&cd[value]=${amount}&cd[currency]=${currency}&noscript=1`;
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 1000);
+    } catch (iframeErr) {
+      console.error(`[PIXEL] Erro ao enviar via iframe para ID ${pixelId}:`, iframeErr);
+    }
+  });
   
-  // Método 5: Enviar evento via iframe (alternativa para casos onde outros métodos falham)
-  try {
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = `https://www.facebook.com/tr?id=${FACEBOOK_PIXEL_ID}&ev=Purchase&cd[value]=${amount}&cd[currency]=${currency}&noscript=1`;
-    document.body.appendChild(iframe);
-    setTimeout(() => document.body.removeChild(iframe), 1000);
-    console.log('[PIXEL] Evento de compra enviado via iframe.');
-  } catch (iframeErr) {
-    console.error('[PIXEL] Erro ao enviar via iframe:', iframeErr);
-  }
-  
+  console.log(`[PIXEL] Evento de compra enviado para ${FACEBOOK_PIXEL_IDS.length} pixels do Facebook`);
   return true;
 }
 
@@ -198,13 +220,13 @@ export async function checkPaymentStatus(paymentId: string, apiKey: string): Pro
       console.log('[PIXEL] Pagamento APROVADO! Rastreando evento de conversão...');
       
       // Obter o valor da transação ou usar o valor padrão
-      const amount = data.amount ? parseFloat(data.amount) / 100 : 119.70; // Dividindo por 100 se vier em centavos
+      const amount = data.amount ? parseFloat(data.amount) / 100 : 64.90; // Dividindo por 100 se vier em centavos
       
       // Enviar evento de conversão de forma robusta
       trackPurchase(paymentId, amount);
       
       // Registrar o sucesso do evento
-      console.log('[PIXEL] Evento de conversão enviado com sucesso para Facebook Pixel ID:', FACEBOOK_PIXEL_ID);
+      console.log('[PIXEL] Evento de conversão enviado com sucesso para todos os Facebook Pixel IDs:', FACEBOOK_PIXEL_IDS);
       
       return { success: true, data, approved: true };
     }
