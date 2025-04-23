@@ -91,7 +91,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         email: "compradecurso@gmail.com",
         cpf: "83054235149",
         phone: "11998346572",
-        amount: 4990,
+        amount: 49.90,
         items: [
           {
             title: "Crachá Shopee + Treinamento Exclusivo",

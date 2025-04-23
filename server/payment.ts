@@ -61,6 +61,7 @@ export class PaymentService {
       
       // Converter valor para centavos (exigido pela API)
       const amountInCents = Math.round(data.amount * 100);
+      console.log(`[DEBUG-PAYMENT] Valor original: ${data.amount}, em centavos: ${amountInCents}`);
       
       // Formato do telefone (remover caracteres não numéricos)
       const phone = data.phone ? data.phone.replace(/\D/g, '') : this.generateRandomPhone();

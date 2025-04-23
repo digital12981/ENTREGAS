@@ -1440,7 +1440,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Processando pagamento de treinamento de R$ ${paymentAmount} para ${name}, CPF ${cpf}`);
       
       // Processar pagamento via For4Payments
-      const paymentResult = await paymentService.createPixPayment({
+      console.log(`[DEBUG] Enviando para For4Payments: nome=${name}, email=${userEmail}, cpf=${cpf}, valor=${paymentAmount}`);
+      
+      const paymentParams = {
         name,
         email: userEmail,
         cpf,
@@ -1452,7 +1454,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           unitPrice: 4990,
           tangible: false
         }]
-      });
+      };
+      
+      console.log('[DEBUG] Parâmetros completos:', JSON.stringify(paymentParams));
+      
+      const paymentResult = await paymentService.createPixPayment(paymentParams);
       
       console.log('Resultado do pagamento de treinamento For4Payments:', paymentResult);
       
