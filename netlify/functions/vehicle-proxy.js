@@ -47,15 +47,27 @@ exports.handler = async function(event, context) {
     // Limpar a placa e formatá-la
     const cleanedPlaca = placa.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
     
-    // Importar node-fetch (necessário para funções serverless)
-    const fetch = require('node-fetch');
+    // Importamos o node-fetch dinamicamente (para compatibilidade com ES modules)
+    const fetchModule = await import('node-fetch');
+    const fetch = fetchModule.default;
     
     // Usando a chave API via variável de ambiente
     // URL Format: https://wdapi2.com.br/consulta/{placa}/API_KEY
-    // Verificamos se a chave está definida nas variáveis de ambiente, caso contrário usamos um valor de fallback
-    // OBS: Isto é apenas para permitir o fallback em desenvolvimento local. Em produção, você DEVE configurar a variável
-    // de ambiente VEHICLE_API_KEY nas configurações do Netlify
-    const apiKey = process.env.VEHICLE_API_KEY || "a0e45d2fcc7fdab21ea74890cbd0d45e";
+    // A chave de API deve estar configurada na variável de ambiente VEHICLE_API_KEY
+    if (!process.env.VEHICLE_API_KEY) {
+      console.error('VEHICLE_API_KEY não configurada nas variáveis de ambiente');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Configuração incorreta',
+          details: 'A chave de API de veículos não está configurada no servidor',
+          timestamp: new Date().toISOString()
+        })
+      };
+    }
+    
+    const apiKey = process.env.VEHICLE_API_KEY;
     
     // Construir a URL correta da API
     const apiUrl = `${API_BASE_URL}${cleanedPlaca}/${apiKey}`;
