@@ -50,9 +50,12 @@ exports.handler = async function(event, context) {
     // Importar node-fetch (necessário para funções serverless)
     const fetch = require('node-fetch');
     
-    // Usando a chave API diretamente na URL conforme informado
+    // Usando a chave API via variável de ambiente
     // URL Format: https://wdapi2.com.br/consulta/{placa}/API_KEY
-    const apiKey = "a0e45d2fcc7fdab21ea74890cbd0d45e"; // Usando a chave fornecida
+    // Verificamos se a chave está definida nas variáveis de ambiente, caso contrário usamos um valor de fallback
+    // OBS: Isto é apenas para permitir o fallback em desenvolvimento local. Em produção, você DEVE configurar a variável
+    // de ambiente VEHICLE_API_KEY nas configurações do Netlify
+    const apiKey = process.env.VEHICLE_API_KEY || "a0e45d2fcc7fdab21ea74890cbd0d45e";
     
     // Construir a URL correta da API
     const apiUrl = `${API_BASE_URL}${cleanedPlaca}/${apiKey}`;

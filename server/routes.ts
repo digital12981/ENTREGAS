@@ -947,8 +947,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
                           process.env.VEHICLE_API_KEY.substring(process.env.VEHICLE_API_KEY.length - 3);
       console.log(`[DEBUG] API key presente: ${keyPreview}`);
       
-      // Chave API para consulta direta
-      const apiKey = "a0e45d2fcc7fdab21ea74890cbd0d45e";
+      // Chave API para consulta direta (da variável de ambiente)
+      const apiKey = process.env.VEHICLE_API_KEY;
+      
+      if (!apiKey) {
+        console.error('[ERRO] Chave API de veículos não configurada nas variáveis de ambiente');
+        return res.status(500).json({ 
+          error: 'Serviço não configurado',
+          details: 'Chave de API não configurada'
+        });
+      }
       
       // URL da API de consulta de veículos (formato correto com chave na URL)
       const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}/${apiKey}`;

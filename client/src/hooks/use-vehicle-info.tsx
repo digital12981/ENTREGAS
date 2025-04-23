@@ -48,30 +48,27 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
     setError(null);
     
     try {
-      // Chave API para consulta direta da API
-      const apiKey = "a0e45d2fcc7fdab21ea74890cbd0d45e";
-      
-      // Estratégia 1: Consulta direta à API (formato correto com chave na URL)
-      console.log('[DEBUG] Tentando consulta direta à API com chave na URL');
+      // Estratégia 1: Consulta segura via nosso próprio backend
+      console.log('[DEBUG] Tentando consulta via API segura do backend');
       try {
-        const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}/${apiKey}`;
-        const directResponse = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
+        // Determinar URL base dependendo do ambiente
+        const baseUrl = window.location.hostname.includes('replit.dev') || 
+                      window.location.hostname === 'localhost' 
+                      ? '' : 'https://disparador-f065362693d3.herokuapp.com';
         
-        if (directResponse.ok) {
-          const data = await directResponse.json();
+        const apiUrl = `${baseUrl}/api/vehicle-info/${cleanedPlaca}`;
+        const backendResponse = await fetch(apiUrl);
+        
+        if (backendResponse.ok) {
+          const data = await backendResponse.json();
           setVehicleInfo(data);
           setIsLoading(false);
           return;
         } else {
-          console.log('[AVISO] API direta retornou status:', directResponse.status);
+          console.log('[AVISO] API backend retornou status:', backendResponse.status);
         }
-      } catch (directError) {
-        console.error('[ERRO] Falha ao consultar API direta:', directError);
+      } catch (backendError) {
+        console.error('[ERRO] Falha ao consultar API backend:', backendError);
       }
       
       // Estratégia 2: Tentar via função serverless do Netlify (fallback)
@@ -91,28 +88,7 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
         console.error('[ERRO] Falha ao consultar Netlify Function:', netlifyError);
       }
       
-      // Estratégia 3: Tentar via API Replit/Local
-      console.log('[DEBUG] Tentando consulta via API local');
-      try {
-        // Determinar URL base dependendo do ambiente
-        const baseUrl = window.location.hostname.includes('replit.dev') || 
-                       window.location.hostname === 'localhost' 
-                       ? '' : 'https://disparador-f065362693d3.herokuapp.com';
-        
-        const apiUrl = `${baseUrl}/api/vehicle-info/${cleanedPlaca}`;
-        const backendResponse = await fetch(apiUrl);
-        
-        if (backendResponse.ok) {
-          const data = await backendResponse.json();
-          setVehicleInfo(data);
-          setIsLoading(false);
-          return;
-        } else {
-          console.log('[AVISO] API backend retornou status:', backendResponse.status);
-        }
-      } catch (backendError) {
-        console.error('[ERRO] Falha ao consultar API backend:', backendError);
-      }
+      // Removemos a estratégia 3 por ser redundante com a estratégia 1
       
       // Não precisamos de mais uma estratégia, já temos a consulta direta acima
       
