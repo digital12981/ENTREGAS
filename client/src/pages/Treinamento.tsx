@@ -1,11 +1,14 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import Header from '../components/Header';
 import kitTreinamentoImage from '@assets/a0e45d2fcc7fdab21ea74890cbd0d45e (1).png';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
+import TreinamentoModal from '../components/TreinamentoModal';
 
 const Treinamento: FC = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  
   return (
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
@@ -93,7 +96,10 @@ const Treinamento: FC = () => {
                       <li>Seu kit de segurança será entregue, mas você <strong>NÃO poderá</strong> iniciar suas atividades</li>
                     </ul>
                   </div>
-                  <Button className="w-full bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3">
+                  <Button 
+                    className="w-full bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3"
+                    onClick={() => setModalOpen(true)}
+                  >
                     Iniciar Treinamento Agora
                   </Button>
                 </div>
@@ -232,13 +238,19 @@ const Treinamento: FC = () => {
                 ATENÇÃO: Sem a conclusão do treinamento, seu cadastro permanecerá pendente e você não poderá
                 iniciar suas atividades como entregador Shopee.
               </p>
-              <Button className="bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3 px-8">
+              <Button 
+                className="bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3 px-8"
+                onClick={() => setModalOpen(true)}
+              >
                 Iniciar Treinamento Agora
               </Button>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Modal de agendamento do treinamento */}
+      <TreinamentoModal open={modalOpen} onOpenChange={setModalOpen} />
     </div>
   );
 };

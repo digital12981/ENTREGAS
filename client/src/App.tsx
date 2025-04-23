@@ -12,6 +12,7 @@ import Entrega from "@/pages/Entrega";
 import Dashboard from "@/pages/Dashboard";
 import Payment from "@/pages/Payment";
 import Treinamento from "@/pages/Treinamento";
+import PagamentoInstrutor from "@/pages/PagamentoInstrutor";
 import { useAppContext } from "@/contexts/AppContext";
 import { useDesktopProtection } from "@/hooks/use-desktop-protection";
 import FacebookPixelInitializer from "@/components/FacebookPixelInitializer";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/payment" component={Payment} />
       <Route path="/treinamento" component={Treinamento} />
+      <Route path="/pagamento-instrutor" component={PagamentoInstrutor} />
       <Route component={NotFound} />
     </Switch>
   );
