@@ -7,6 +7,12 @@ interface PaymentRequest {
   cpf: string;
   phone?: string;
   amount: number;
+  items?: Array<{
+    title: string;
+    quantity: number;
+    unitPrice: number;
+    tangible: boolean;
+  }>;
 }
 
 // Interface para a resposta de pagamento
@@ -16,6 +22,8 @@ interface PaymentResponse {
   pixQrCode: string;
   status?: string;
   error?: string;
+  emailSent?: boolean;
+  emailError?: string;
 }
 
 /**
@@ -65,7 +73,7 @@ export class PaymentService {
         phone: phone,
         paymentMethod: 'PIX',
         amount: amountInCents,
-        items: [{
+        items: data.items || [{
           title: 'Kit de Segurança Shopee',
           quantity: 1,
           unitPrice: amountInCents,

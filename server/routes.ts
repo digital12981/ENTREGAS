@@ -1123,6 +1123,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rota principal para processar pagamentos
+  app.post('/api/payments', async (req, res) => {
+    try {
+      // Verificar se a API For4Payments está configurada
+      if (!process.env.FOR4PAYMENTS_SECRET_KEY) {
+        console.error('ERRO: FOR4PAYMENTS_SECRET_KEY não configurada');
+        return res.status(500).json({
+          error: 'Serviço de pagamento não configurado. Configure a chave de API For4Payments.',
+        });
+      }
+
+      console.log('Dados de pagamento recebidos:', req.body);
+      
+      // Validar dados da requisição
+      const { name, email, cpf, phone, amount, items } = req.body;
+      
+      // Validação básica
+      if (!name) {
+        return res.status(400).json({ error: 'Nome é obrigatório.' });
+      }
+      
+      if (!cpf) {
+        return res.status(400).json({ error: 'CPF é obrigatório.' });
+      }
+      
+      // Usar o valor fornecido ou o valor padrão
+      const paymentAmount = amount || 119.70;
+      
+      // Usar o email fornecido ou gerar um
+      const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
+      
+      console.log(`Processando pagamento de R$ ${paymentAmount/100} para ${name}, CPF ${cpf}`);
+      
+      // Processar pagamento via For4Payments
+      const paymentResult = await paymentService.createPixPayment({
+        name,
+        email: userEmail,
+        cpf,
+        phone: phone || '',
+        amount: paymentAmount/100,
+        items
+      });
+      
+      console.log('Resultado do pagamento For4Payments:', paymentResult);
+      
+      // Se o pagamento foi processado com sucesso, enviar email
+      if (paymentResult.pixCode && paymentResult.pixQrCode) {
+        // Importar o serviço de email
+        const { emailService } = await import('./email-service');
+        
+        // Formatar o valor para exibição
+        const formattedAmount = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(paymentAmount/100);
+        
+        // Construir o link para a página de pagamento
+        const clientHost = getClientHost(req);
+        const paymentLink = `${clientHost}/payment?id=${paymentResult.id}&email=${encodeURIComponent(userEmail)}`;
+        
+        // Enviar o email de confirmação
+        try {
+          const emailSent = await emailService.sendPaymentConfirmationEmail({
+            email: userEmail,
+            name,
+            pixCode: paymentResult.pixCode,
+            pixQrCode: paymentResult.pixQrCode,
+            amount: paymentAmount/100,
+            formattedAmount,
+            paymentLink
+          });
+          
+          paymentResult.emailSent = emailSent;
+          
+          if (emailSent) {
+            console.log(`Email de confirmação enviado com sucesso para ${userEmail}`);
+          } else {
+            console.error(`Falha ao enviar email de confirmação para ${userEmail}`);
+          }
+        } catch (emailError) {
+          console.error('Erro ao enviar email de confirmação:', emailError);
+          paymentResult.emailSent = false;
+          paymentResult.emailError = 'Falha ao enviar email de confirmação';
+        }
+      }
+      
+      // Retornar resultado para o frontend
+      res.status(200).json(paymentResult);
+    } catch (error: any) {
+      console.error('Erro ao processar pagamento:', error);
+      res.status(500).json({ 
+        error: error.message || 'Falha ao processar pagamento.'
+      });
+    }
+  });
+  
   // Rota para processar pagamento PIX (usando TS API For4Payments)
   app.post('/api/payments/pix', async (req, res) => {
     try {
