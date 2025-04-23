@@ -333,7 +333,7 @@ const Payment: React.FC = () => {
       {isApproved && (
         <ConversionTracker 
           transactionId={paymentInfo.id} 
-          amount={119.70} 
+          amount={64.90} 
           enabled={true} 
         />
       )}
@@ -401,7 +401,7 @@ const Payment: React.FC = () => {
                     </div>
                     <div className="flex-grow">
                       <h3 className="text-sm font-medium text-gray-800">Kit de Segurança Oficial</h3>
-                      <p className="text-lg font-bold text-[#E83D22]">R$ 119,70</p>
+                      <p className="text-lg font-bold text-[#E83D22]">R$ 64,90</p>
                       
                       <div className="w-full mt-1">
                         <p className="text-sm text-gray-600">
