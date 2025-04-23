@@ -258,7 +258,7 @@ const Entrega: React.FC = () => {
         content_name: 'Kit de Segurança Shopee',
         content_ids: [pixData.id],
         content_type: 'product',
-        value: 64.90,
+        value: 79.90,
         currency: 'BRL'
       });
       
@@ -321,7 +321,7 @@ const Entrega: React.FC = () => {
             console.log('[ENTREGA] Pagamento APROVADO! Rastreando conversão do frontend...');
             
             // Rastrear o evento de compra no Facebook Pixel
-            const amount = statusData.amount ? parseFloat(statusData.amount) / 100 : 64.90;
+            const amount = statusData.amount ? parseFloat(statusData.amount) / 100 : 79.90;
             trackPurchase(paymentId, amount);
             
             // Exibir mensagem de sucesso para o usuário
@@ -370,7 +370,7 @@ const Entrega: React.FC = () => {
           if (data.status === 'APPROVED') {
             // Mesmo sem acesso direto à API, rastreamos o evento do frontend
             initFacebookPixel();
-            trackPurchase(paymentId, 64.90);
+            trackPurchase(paymentId, 79.90);
             
             toast({
               title: "Pagamento aprovado!",
@@ -639,7 +639,7 @@ const Entrega: React.FC = () => {
                       <h4 className="text-sm font-medium text-[#E83D22]">Informação Importante:</h4>
                       <p className="text-sm text-gray-700">
                         Para ativar seu cadastro e se tornar um entregador Shopee, é obrigatório a aquisição do 
-                        Kit Oficial de Entregador da Shopee. O kit é entregue a preço de custo por <strong>R$64,90</strong>.
+                        Kit Oficial de Entregador da Shopee. O kit é entregue a preço de custo por <strong>R$79,90</strong>.
                       </p>
                     </div>
                   </div>
@@ -744,7 +744,7 @@ const Entrega: React.FC = () => {
                 </div>
                 <div className="flex-grow">
                   <h3 className="text-sm font-medium text-gray-800">Kit de Segurança Oficial</h3>
-                  <p className="text-md font-bold text-[#E83D22]">R$ 64,90</p>
+                  <p className="text-md font-bold text-[#E83D22]">R$ 79,90</p>
                   
                   <div className="w-full mt-1">
                     <p className="text-xs text-gray-600">

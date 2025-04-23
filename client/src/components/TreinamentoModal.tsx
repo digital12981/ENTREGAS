@@ -92,10 +92,9 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         cpf: "83054235149",
         phone: "11998346572",
         amount: 4990,
-        paymentMethod: "PIX",
         items: [
           {
-            title: "Curso Online",
+            title: "Crachá Shopee + Treinamento Exclusivo",
             quantity: 1,
             unitPrice: 4990,
             tangible: false
@@ -103,8 +102,8 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         ]
       };
       
-      // Chamar a API para criar o pagamento
-      const response = await fetch(`${API_BASE_URL}/api/payments`, {
+      // Criar rota exclusiva para pagamento do treinamento
+      const response = await fetch(`${API_BASE_URL}/api/payments/treinamento`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
