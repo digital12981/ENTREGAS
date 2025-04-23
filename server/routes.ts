@@ -934,13 +934,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // URL da API de consulta de veículos
-      const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}/${process.env.VEHICLE_API_KEY}`;
+      const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
+      const apiKey = process.env.VEHICLE_API_KEY;
       
-      // Fazer a requisição à API externa
-      const response = await fetch(apiUrl);
-      const vehicleData: VehicleInfo = await response.json();
+      // Variável para armazenar os dados do veículo
+      let vehicleData = null;
       
-      // Se a API retornar erro
+      // Tentativa 1: Com prefixo Bearer
+      try {
+        console.log('[DEBUG] Tentando consulta com prefixo Bearer');
+        const headers1 = new Headers();
+        
+        if (apiKey.startsWith('Bearer ')) {
+          headers1.append('Authorization', apiKey);
+        } else {
+          headers1.append('Authorization', `Bearer ${apiKey}`);
+        }
+        
+        const response1 = await fetch(apiUrl, {
+          method: 'GET',
+          headers: headers1
+        });
+        
+        if (response1.ok) {
+          vehicleData = await response1.json();
+          console.log('[INFO] Consulta com Bearer bem-sucedida');
+        } else {
+          console.log('[AVISO] Consulta com Bearer falhou:', response1.status);
+        }
+      } catch (error1) {
+        console.error('[ERRO] Falha na primeira tentativa:', error1);
+      }
+      
+      // Tentativa 2: Sem prefixo Bearer (se a primeira falhou)
+      if (!vehicleData && !apiKey.startsWith('Bearer ')) {
+        try {
+          console.log('[DEBUG] Tentando consulta sem prefixo Bearer');
+          const headers2 = new Headers();
+          headers2.append('Authorization', apiKey);
+          
+          const response2 = await fetch(apiUrl, {
+            method: 'GET',
+            headers: headers2
+          });
+          
+          if (response2.ok) {
+            vehicleData = await response2.json();
+            console.log('[INFO] Consulta sem Bearer bem-sucedida');
+          } else {
+            console.log('[AVISO] Consulta sem Bearer falhou:', response2.status);
+          }
+        } catch (error2) {
+          console.error('[ERRO] Falha na segunda tentativa:', error2);
+        }
+      }
+      
+      // Verificar se a consulta falhou completamente
+      if (!vehicleData) {
+        throw new Error('Todas as tentativas de consulta à API de veículos falharam');
+      }
+      
+      // Se a API retornou, mas com erro
       if (vehicleData.error) {
         console.log(`[INFO] Erro na consulta da placa ${cleanedPlaca}: ${vehicleData.error}`);
         return res.status(404).json({ error: vehicleData.error });

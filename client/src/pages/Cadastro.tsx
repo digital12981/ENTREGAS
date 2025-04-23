@@ -522,7 +522,6 @@ const Cadastro: React.FC = () => {
                     onChange={handlePlacaChange}
                     placeholder="ABC-1234 ou ABC1D23"
                     className={`${errors.placa ? 'border-red-500' : ''} ${isLoadingVehicleInfo ? 'pr-10' : ''}`}
-                    pattern="[A-Za-z0-9-]*"
                     inputMode="text"
                     type="search" 
                     autoCapitalize="characters"
