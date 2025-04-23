@@ -100,6 +100,15 @@ const Cadastro: React.FC = () => {
 
   const cpfValue = watch('cpf');
   const telefoneValue = watch('telefone');
+  const placaValue = watch('placa');
+  const [debouncedPlaca] = useDebounce(placaValue, 1000);
+  
+  // Efeito para buscar informações do veículo quando a placa mudar
+  useEffect(() => {
+    if (debouncedPlaca && debouncedPlaca.length >= 7) {
+      fetchVehicleInfo(debouncedPlaca);
+    }
+  }, [debouncedPlaca]);
 
   // Formatação de CPF
   const formatCpf = (value: string) => {
@@ -161,6 +170,45 @@ const Cadastro: React.FC = () => {
   const handlePlacaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPlaca(e.target.value);
     setValue('placa', formatted);
+  };
+
+  // Função para buscar informações do veículo pela placa
+  const fetchVehicleInfo = async (placa: string) => {
+    if (!placa || placa.length < 7) {
+      setVehicleInfo(null);
+      return;
+    }
+
+    // Limpar a placa - remover hífen para consulta
+    const cleanedPlaca = placa.replace('-', '');
+    
+    if (cleanedPlaca.length < 7) {
+      return;
+    }
+
+    try {
+      setIsLoadingVehicleInfo(true);
+      const response = await fetch(`/api/vehicle-info/${cleanedPlaca}`);
+      
+      if (!response.ok) {
+        setVehicleInfo(null);
+        return;
+      }
+      
+      const data = await response.json();
+      setVehicleInfo(data);
+    } catch (error) {
+      console.error('Erro ao buscar informações do veículo:', error);
+      setVehicleInfo(null);
+    } finally {
+      setIsLoadingVehicleInfo(false);
+    }
+  };
+
+  // Limpar o campo de placa e informações do veículo
+  const handleClearPlate = () => {
+    setValue('placa', '');
+    setVehicleInfo(null);
   };
 
   const handleLoadingComplete = () => {
@@ -374,6 +422,54 @@ const Cadastro: React.FC = () => {
                 />
                 {errors.placa && (
                   <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
+                )}
+                
+                {/* Área para mostrar as informações do veículo */}
+                {isLoadingVehicleInfo && (
+                  <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
+                      <p className="text-sm text-gray-600">Buscando informações do veículo...</p>
+                    </div>
+                  </div>
+                )}
+                
+                {vehicleInfo && !isLoadingVehicleInfo && (
+                  <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
+                      <button 
+                        type="button"
+                        onClick={handleClearPlate}
+                        className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
+                      >
+                        NÃO É MEU VEÍCULO
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-600">Marca:</span>
+                        <span className="ml-1 text-gray-800">{vehicleInfo.marca}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Modelo:</span>
+                        <span className="ml-1 text-gray-800">{vehicleInfo.modelo}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Ano:</span>
+                        <span className="ml-1 text-gray-800">{vehicleInfo.ano}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Cor:</span>
+                        <span className="ml-1 text-gray-800">{vehicleInfo.cor}</span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="font-medium text-gray-600">Chassi:</span>
+                        <span className="ml-1 text-gray-800">{vehicleInfo.chassi}</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
