@@ -215,9 +215,9 @@ const Municipios: React.FC = () => {
       
       <div className="flex-grow container mx-auto py-8 w-full">
         <div className="w-full mx-auto p-6 mb-8">
-          <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">Municípios para Entrega</h1>
+          <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">Escolha onde retirar os pedidos</h1>
           <p className="text-center text-gray-600 mb-6">
-            Selecione as cidades onde você <span className="font-medium">PODE</span> realizar entregas. Quanto mais cidades você selecionar, maior será sua oportunidade de ganhos.
+            Selecione as cidades onde você pode retirar os pedidos no Centro de distribuição da Shopee. Em cada cidade abaixo está localizado um centro de distribuição e de acordo com a sua disponibilidade pode estar escolhendo mais de 1 centro para retirar os pedidos.
           </p>
           
           <div className="mb-4 flex justify-between items-center">
