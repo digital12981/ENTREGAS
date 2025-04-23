@@ -48,9 +48,11 @@ const Treinamento: FC = () => {
                   </div>
                   
                   <div className="mt-6">
-                    <p className="text-sm text-gray-600">
-                      Sua jornada como Motorista Parceiro Shopee está quase completa! Para finalizar o processo, 
-                      você precisa concluir o treinamento online oficial Shopee para entregadores.
+                    <p className="text-sm text-gray-700 font-medium">
+                      Sua jornada como Motorista Parceiro Shopee está quase completa! <strong>PARA FINALIZAR O PROCESSO 
+                      E LIBERAR SEU ACESSO AO SISTEMA</strong>, você precisa concluir o treinamento online oficial 
+                      de 3 horas da Shopee para entregadores. 
+                      <span className="block mt-2 text-red-600">O treinamento é OBRIGATÓRIO para receber suas credenciais e acessar o aplicativo.</span>
                     </p>
                   </div>
                 </div>
@@ -78,11 +80,18 @@ const Treinamento: FC = () => {
                     Este treinamento essencial capacita você com todos os conhecimentos e habilidades 
                     necessários para atuar como um parceiro Shopee de excelência.
                   </p>
-                  <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200 mb-4">
-                    <p className="text-sm text-yellow-800">
-                      <strong>Importante:</strong> É obrigatório concluir este treinamento para 
-                      começar a receber solicitações de entregas no aplicativo Shopee.
+                  <div className="bg-red-50 p-4 rounded-md border border-red-200 mb-4">
+                    <h5 className="text-red-700 font-bold text-md mb-2">⚠️ ATENÇÃO: TREINAMENTO OBRIGATÓRIO</h5>
+                    <p className="text-sm text-red-800">
+                      Este treinamento é <strong>OBRIGATÓRIO</strong> para começar a trabalhar como Entregador Shopee. 
+                      Sem a conclusão do curso online de 3 horas:
                     </p>
+                    <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-red-800">
+                      <li>Você <strong>NÃO receberá</strong> as credenciais para acessar o aplicativo</li>
+                      <li>Seu cadastro ficará <strong>PENDENTE</strong> no sistema</li>
+                      <li>Você <strong>NÃO poderá</strong> receber ou realizar entregas</li>
+                      <li>Seu kit de segurança será entregue, mas você <strong>NÃO poderá</strong> iniciar suas atividades</li>
+                    </ul>
                   </div>
                   <Button className="w-full bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3">
                     Iniciar Treinamento Agora
@@ -191,11 +200,20 @@ const Treinamento: FC = () => {
                 </AccordionItem>
               </Accordion>
               
-              <div className="mt-8 bg-gray-50 p-4 rounded-md border border-gray-200">
-                <h4 className="text-md font-medium text-gray-700 mb-2">Certificação Shopee para Entregadores</h4>
-                <p className="text-gray-600 text-sm">
+              <div className="mt-8 bg-orange-50 p-4 rounded-md border border-orange-200">
+                <h4 className="text-md font-bold text-orange-700 mb-2">Certificação Shopee para Entregadores</h4>
+                <p className="text-orange-700 text-sm mb-2">
                   Ao completar o treinamento, você receberá o Certificado Oficial Shopee para Entregadores, 
-                  que lhe dará acesso completo ao sistema de entregas e solicitações em sua região.
+                  que é <strong>OBRIGATÓRIO</strong> para:
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-sm text-orange-700">
+                  <li>Receber as credenciais de acesso ao aplicativo Shopee Entregas</li>
+                  <li>Ativar seu cadastro como entregador oficial</li>
+                  <li>Começar a receber solicitações de entrega na sua região</li>
+                  <li>Ter seu primeiro pagamento processado</li>
+                </ul>
+                <p className="text-orange-700 text-sm mt-2 font-bold">
+                  Atenção: Sem a conclusão do treinamento de 3 horas, seu acesso ao sistema permanecerá bloqueado.
                 </p>
               </div>
             </div>
@@ -206,8 +224,13 @@ const Treinamento: FC = () => {
             <div className="text-center">
               <h3 className="text-[#E83D22] text-xl font-bold mb-3">Ganhe dinheiro sendo um Motorista Parceiro Shopee</h3>
               <p className="text-gray-700 mb-4">
-                Estamos felizes em tê-lo como parte da nossa equipe de entregadores. Complete seu treinamento 
-                e comece a receber solicitações de entrega na sua região!
+                Estamos felizes em tê-lo como parte da nossa equipe de entregadores. <strong>Lembre-se:</strong> 
+                você precisa concluir este treinamento obrigatório de 3 horas para liberar seu acesso ao aplicativo 
+                e começar a receber solicitações de entrega na sua região!
+              </p>
+              <p className="text-red-600 text-sm font-bold mb-4">
+                ATENÇÃO: Sem a conclusão do treinamento, seu cadastro permanecerá pendente e você não poderá
+                iniciar suas atividades como entregador Shopee.
               </p>
               <Button className="bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3 px-8">
                 Iniciar Treinamento Agora
