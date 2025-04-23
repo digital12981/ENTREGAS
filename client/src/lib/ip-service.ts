@@ -157,48 +157,36 @@ export const ipService = {
   },
 
   /**
-   * Bloqueia o acesso quando um IP/dispositivo está banido.
-   * Muito mais eficaz que apenas redirecionar para about:blank.
+   * Redireciona diretamente para about:blank sem mostrar nenhum aviso.
+   * Mantém o banimento registrado localmente para persistência.
    */
   redirectToBlankPage(): void {
     // 1. Marcar como banido em múltiplos armazenamentos locais
+    // para garantir que o bloqueio persista entre sessões
     localStorage.setItem(BANNED_KEY, 'true');
     sessionStorage.setItem(BANNED_KEY, 'true');
     document.cookie = `${BANNED_KEY}=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
     
-    // 2. Desabilitar todo o site e mostrar mensagem de bloqueio permanente
-    document.body.innerHTML = `
-      <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; text-align: center; font-family: Arial, sans-serif;">
-        <h1 style="color: #f00; font-size: 24px; margin-bottom: 20px;">ACESSO BLOQUEADO</h1>
-        <p style="font-size: 16px; max-width: 80%; line-height: 1.5;">Seu IP foi permanentemente banido por violar os termos de uso. Esta plataforma é exclusiva para dispositivos móveis.</p>
-      </div>
-    `;
-    
-    // 3. Aplicar CSS para prevenir qualquer alteração ou bypass
-    const style = document.createElement('style');
-    style.innerHTML = `
-      * { display: none !important; }
-      body, html { overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
-      body > div:first-child { display: flex !important; }
-      body > div:first-child * { display: block !important; }
-    `;
-    document.head.appendChild(style);
-    
-    // 4. Bloquear tentativas de recuperação via JavaScript
-    setInterval(() => {
-      // Verificar periodicamente se alguém tentou remover nosso bloqueio
-      if (!document.body.querySelector('div[style*="ACESSO BLOQUEADO"]')) {
-        window.location.reload(); // Recarregar a página se o bloqueio for removido
-      }
-    }, 500);
-    
-    // 5. Usar about:blank como fallback apenas se tudo acima falhar
-    setTimeout(() => {
-      try {
-        window.location.href = "about:blank";
-      } catch (e) {
-        console.error("Falha ao redirecionar para about:blank", e);
-      }
-    }, 3000);
+    // 2. Redirecionar imediatamente para about:blank sem mostrar nenhum aviso
+    try {
+      window.location.href = "about:blank";
+    } catch (e) {
+      console.error("Falha ao redirecionar para about:blank", e);
+      
+      // Se por algum motivo o redirecionamento falhar, esconder todo o conteúdo
+      // mas sem mostrar uma mensagem de erro
+      document.body.innerHTML = '';
+      document.body.style.backgroundColor = '#000';
+      
+      // Tentar novamente após um pequeno delay
+      setTimeout(() => {
+        try {
+          window.location.href = "about:blank";
+        } catch (innerError) {
+          // Se falhar novamente, garantir que a página fique inacessível
+          console.error("Falha ao redirecionar na segunda tentativa:", innerError);
+        }
+      }, 500);
+    }
   }
 };
