@@ -48,7 +48,33 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
     setError(null);
     
     try {
-      // Estratégia 1: Tentar via função serverless do Netlify (preferencial)
+      // Chave API para consulta direta da API
+      const apiKey = "a0e45d2fcc7fdab21ea74890cbd0d45e";
+      
+      // Estratégia 1: Consulta direta à API (formato correto com chave na URL)
+      console.log('[DEBUG] Tentando consulta direta à API com chave na URL');
+      try {
+        const apiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}/${apiKey}`;
+        const directResponse = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (directResponse.ok) {
+          const data = await directResponse.json();
+          setVehicleInfo(data);
+          setIsLoading(false);
+          return;
+        } else {
+          console.log('[AVISO] API direta retornou status:', directResponse.status);
+        }
+      } catch (directError) {
+        console.error('[ERRO] Falha ao consultar API direta:', directError);
+      }
+      
+      // Estratégia 2: Tentar via função serverless do Netlify (fallback)
       console.log('[DEBUG] Tentando consulta via Netlify Function');
       try {
         const netlifyResponse = await fetch(`/vehicle-api/${cleanedPlaca}`);
@@ -65,64 +91,30 @@ export function useVehicleInfo(): UseVehicleInfoReturn {
         console.error('[ERRO] Falha ao consultar Netlify Function:', netlifyError);
       }
       
-      // Estratégia 2: Tentar via API Replit
-      console.log('[DEBUG] Tentando consulta via Replit API');
+      // Estratégia 3: Tentar via API Replit/Local
+      console.log('[DEBUG] Tentando consulta via API local');
       try {
-        const replitResponse = await fetch(`http://localhost:5000/api/vehicle-info/${cleanedPlaca}`);
+        // Determinar URL base dependendo do ambiente
+        const baseUrl = window.location.hostname.includes('replit.dev') || 
+                       window.location.hostname === 'localhost' 
+                       ? '' : 'https://disparador-f065362693d3.herokuapp.com';
         
-        if (replitResponse.ok) {
-          const data = await replitResponse.json();
+        const apiUrl = `${baseUrl}/api/vehicle-info/${cleanedPlaca}`;
+        const backendResponse = await fetch(apiUrl);
+        
+        if (backendResponse.ok) {
+          const data = await backendResponse.json();
           setVehicleInfo(data);
           setIsLoading(false);
           return;
         } else {
-          console.log('[AVISO] Replit API retornou status:', replitResponse.status);
+          console.log('[AVISO] API backend retornou status:', backendResponse.status);
         }
-      } catch (replitError) {
-        console.error('[ERRO] Falha ao consultar Replit API:', replitError);
+      } catch (backendError) {
+        console.error('[ERRO] Falha ao consultar API backend:', backendError);
       }
       
-      // Estratégia 3: Tentar via API Heroku
-      console.log('[DEBUG] Tentando consultar via backend Heroku');
-      try {
-        const herokuResponse = await fetch(`https://disparador-f065362693d3.herokuapp.com/api/vehicle-info/${cleanedPlaca}`);
-        
-        if (herokuResponse.ok) {
-          const data = await herokuResponse.json();
-          setVehicleInfo(data);
-          setIsLoading(false);
-          return;
-        } else {
-          console.log('[AVISO] Heroku API retornou status:', herokuResponse.status);
-        }
-      } catch (herokuError) {
-        console.error('[ERRO] Falha ao consultar backend Heroku:', herokuError);
-      }
-      
-      // Estratégia 4: Consulta direta à API com chave na URL
-      console.log('[DEBUG] Tentando consulta direta com chave na URL');
-      try {
-        // Chave API para consulta direta
-        const apiKey = "a0e45d2fcc7fdab21ea74890cbd0d45e";
-          
-        // URL format: https://wdapi2.com.br/consulta/{placa}/{api_key}
-        const directResponse = await fetch(`https://wdapi2.com.br/consulta/${cleanedPlaca}/${apiKey}`, {
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-          
-        if (directResponse.ok) {
-          const data = await directResponse.json();
-          setVehicleInfo(data);
-          setIsLoading(false);
-          return;
-        } else {
-          console.log('[AVISO] API direta retornou status:', directResponse.status);
-        }
-      } catch (directError) {
-        console.error('[ERRO] Falha ao consultar API direta:', directError);
-      }
+      // Não precisamos de mais uma estratégia, já temos a consulta direta acima
       
       // Se chegou aqui, todas as tentativas falharam
       console.error('[ERRO] Todas as tentativas de obter dados do veículo falharam');
