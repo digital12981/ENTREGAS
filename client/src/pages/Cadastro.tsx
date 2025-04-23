@@ -201,9 +201,75 @@ const Cadastro: React.FC = () => {
     try {
       setIsLoadingVehicleInfo(true);
       
-      // Construir URL da API com a URL base correta
+      // Primeiro tenta consultar diretamente na API de veículos (modo Netlify)
+      console.log('[DEBUG] Tentando consultar diretamente API de veículos para', cleanedPlaca);
+      
+      // URL da API direta de veículos (usada no Netlify)
+      const directApiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
+      
+      // Headers para autenticação direta
+      const headers = new Headers();
+      const apiKey = import.meta.env.VITE_VEHICLE_API_KEY;
+      console.log('[DEBUG] Verificando API Key disponível:', apiKey ? 'Sim (configurada)' : 'Não (ausente)');
+      
+      if (apiKey) {
+        // Se a API key já começar com "Bearer", usamos como está
+        // Caso contrário, adicionamos "Bearer " no início
+        if (apiKey.startsWith('Bearer ')) {
+          headers.append('Authorization', apiKey);
+        } else {
+          // Tentativa 1: Com Bearer
+          headers.append('Authorization', `Bearer ${apiKey}`);
+          console.log('[DEBUG] Usando Authorization com prefixo Bearer');
+        }
+      }
+      
+      try {
+        // Tentativa 1: Consulta direta (ideal para Netlify)
+        let directResponse = await fetch(directApiUrl, { 
+          method: 'GET',
+          headers: headers
+        });
+        
+        // Se a primeira tentativa falhar e usamos Bearer, tentar novamente sem Bearer
+        if (!directResponse.ok && apiKey && !apiKey.startsWith('Bearer ')) {
+          console.log('[DEBUG] Primeira tentativa falhou, tentando sem prefixo Bearer');
+          
+          // Criar novos headers sem o prefixo Bearer
+          const headersWithoutBearer = new Headers();
+          headersWithoutBearer.append('Authorization', apiKey);
+          
+          // Tenta novamente com a API key direta
+          directResponse = await fetch(directApiUrl, {
+            method: 'GET',
+            headers: headersWithoutBearer
+          });
+        }
+        
+        if (directResponse.ok) {
+          const data = await directResponse.json();
+          console.log('[INFO] Dados do veículo recebidos da API direta:', data);
+          setVehicleInfo({
+            marca: data.MARCA || "Não informado",
+            modelo: data.MODELO || "Não informado",
+            ano: data.ano || data.anoModelo || "Não informado",
+            anoModelo: data.anoModelo || "Não informado",
+            chassi: data.chassi || "Não informado", 
+            cor: data.cor || "Não informado"
+          });
+          setIsLoadingVehicleInfo(false);
+          return; // Se conseguiu dados diretamente, encerra a função
+        } else {
+          console.warn('[AVISO] Falha na consulta direta, tentando via backend:', directResponse.status);
+        }
+      } catch (directError) {
+        console.warn('[AVISO] Erro ao consultar API direta:', directError);
+        // Continuar para o fallback se a consulta direta falhar
+      }
+      
+      // Tentativa 2: Fallback - Consulta via backend (ideal para desenvolvimento)
+      console.log('[DEBUG] Tentando consultar API via backend');
       const apiUrl = `${getApiBaseUrl()}/api/vehicle-info/${cleanedPlaca}`;
-      console.log('[DEBUG] Consultando API de veículos:', apiUrl);
       
       const response = await fetch(apiUrl);
       
@@ -214,7 +280,7 @@ const Cadastro: React.FC = () => {
       }
       
       const data = await response.json();
-      console.log('[INFO] Dados do veículo recebidos:', data);
+      console.log('[INFO] Dados do veículo recebidos do backend:', data);
       setVehicleInfo(data);
     } catch (error) {
       console.error('Erro ao buscar informações do veículo:', error);
