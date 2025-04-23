@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Loader2, CheckCircle2 } from "lucide-react";
+import { CalendarIcon, Loader2, CheckCircle2, Copy as CopyIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -183,7 +183,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] h-[100dvh] max-h-[100dvh] overflow-y-auto">
         {step === 'schedule' ? (
           <>
             <DialogHeader>
@@ -370,26 +370,34 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
                     <p className="text-xs text-gray-600 text-center mb-2">
                       Escaneie o QR Code ou copie o código PIX
                     </p>
-                    <div className="flex">
-                      <input 
-                        type="text" 
-                        value={paymentInfo.pixCode} 
-                        readOnly 
-                        className="flex-1 border border-gray-300 rounded-l-md px-2 py-1 text-xs"
-                      />
-                      <Button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(paymentInfo.pixCode);
-                          toast({
-                            title: "Código copiado!",
-                            description: "O código PIX foi copiado para a área de transferência."
-                          });
-                        }} 
-                        className="rounded-l-none border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800 h-7 text-xs px-2"
-                        size="sm"
-                      >
-                        Copiar
-                      </Button>
+                    <input 
+                      type="text" 
+                      value={paymentInfo.pixCode} 
+                      readOnly 
+                      className="w-full border border-gray-300 rounded-md px-2 py-2 text-xs mb-2"
+                    />
+                    <Button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(paymentInfo.pixCode);
+                        toast({
+                          title: "Código copiado!",
+                          description: "O código PIX foi copiado para a área de transferência."
+                        });
+                      }} 
+                      className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300 py-1 text-xs flex items-center justify-center gap-2"
+                      size="sm"
+                    >
+                      <CopyIcon className="h-4 w-4" />
+                      Copiar código PIX
+                    </Button>
+                    
+                    <div className="flex flex-col items-center mt-3 bg-blue-50 p-2 rounded-md border border-blue-100">
+                      <div className="flex items-center justify-center space-x-1 mb-1">
+                        <div className="w-2 h-2 bg-[#E83D22] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-[#E83D22] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-[#E83D22] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                      <p className="text-xs text-blue-800 font-medium">Aguardando pagamento</p>
                     </div>
                   </div>
 
