@@ -201,50 +201,94 @@ const Cadastro: React.FC = () => {
     try {
       setIsLoadingVehicleInfo(true);
       
-      // Primeiro tenta consultar diretamente na API de veículos (modo Netlify)
-      console.log('[DEBUG] Tentando consultar diretamente API de veículos para', cleanedPlaca);
+      // No Netlify, vamos usar nossa função serverless como proxy para resolver o CORS
+      // Em desenvolvimento (localhost/Replit), vamos usar o endpoint normal do backend
+      let shouldUseProxy = false;
       
-      // URL da API direta de veículos (usada no Netlify)
-      const directApiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
-      
-      // Headers para autenticação direta
-      const headers = new Headers();
-      const apiKey = import.meta.env.VITE_VEHICLE_API_KEY;
-      console.log('[DEBUG] Verificando API Key disponível:', apiKey ? 'Sim (configurada)' : 'Não (ausente)');
-      
-      if (apiKey) {
-        // Se a API key já começar com "Bearer", usamos como está
-        // Caso contrário, adicionamos "Bearer " no início
-        if (apiKey.startsWith('Bearer ')) {
-          headers.append('Authorization', apiKey);
-        } else {
-          // Tentativa 1: Com Bearer
-          headers.append('Authorization', `Bearer ${apiKey}`);
-          console.log('[DEBUG] Usando Authorization com prefixo Bearer');
-        }
+      // Em produção, usar a função serverless
+      if (window.location.hostname.includes('netlify.app') || 
+          window.location.hostname.includes('shopee-parceiro.com')) {
+        shouldUseProxy = true;
       }
       
-      try {
-        // Tentativa 1: Consulta direta (ideal para Netlify)
-        let directResponse = await fetch(directApiUrl, { 
-          method: 'GET',
-          headers: headers
-        });
+      if (shouldUseProxy) {
+        console.log('[DEBUG] Usando proxy Netlify para consulta de placa', cleanedPlaca);
         
-        // Se a primeira tentativa falhar e usamos Bearer, tentar novamente sem Bearer
-        if (!directResponse.ok && apiKey && !apiKey.startsWith('Bearer ')) {
-          console.log('[DEBUG] Primeira tentativa falhou, tentando sem prefixo Bearer');
+        // URL do proxy em produção (função serverless)
+        const proxyUrl = `/vehicle-api/${cleanedPlaca}`;
+        
+        try {
+          // Consulta através do nosso proxy (sem necessidade de headers, pois a função cuida disso)
+          const proxyResponse = await fetch(proxyUrl);
           
-          // Criar novos headers sem o prefixo Bearer
-          const headersWithoutBearer = new Headers();
-          headersWithoutBearer.append('Authorization', apiKey);
+          if (!proxyResponse.ok) {
+            const errorData = await proxyResponse.json();
+            console.error('[ERRO] Falha ao consultar via proxy:', proxyResponse.status, errorData);
+            throw new Error(`Erro de proxy: ${proxyResponse.status}`);
+          }
           
-          // Tenta novamente com a API key direta
-          directResponse = await fetch(directApiUrl, {
-            method: 'GET',
-            headers: headersWithoutBearer
+          const data = await proxyResponse.json();
+          console.log('[INFO] Dados do veículo recebidos via proxy:', data);
+          
+          setVehicleInfo({
+            marca: data.MARCA || "Não informado",
+            modelo: data.MODELO || "Não informado",
+            ano: data.ano || data.anoModelo || "Não informado",
+            anoModelo: data.anoModelo || "Não informado",
+            chassi: data.chassi || "Não informado", 
+            cor: data.cor || "Não informado"
           });
+          setIsLoadingVehicleInfo(false);
+          return; // Se conseguiu dados via proxy, encerra a função
+        } catch (proxyError) {
+          console.error('[ERRO] Falha ao usar proxy:', proxyError);
+          // Se falhar, tentamos o fallback para o backend Heroku
         }
+      } else {
+        // Em desenvolvimento, tentar consulta direta
+        console.log('[DEBUG] Tentando consultar diretamente API de veículos para', cleanedPlaca);
+        
+        // URL da API direta de veículos
+        const directApiUrl = `https://wdapi2.com.br/consulta/${cleanedPlaca}`;
+        
+        // Headers para autenticação direta
+        const headers = new Headers();
+        const apiKey = import.meta.env.VITE_VEHICLE_API_KEY;
+        console.log('[DEBUG] Verificando API Key disponível:', apiKey ? 'Sim (configurada)' : 'Não (ausente)');
+        
+        if (apiKey) {
+          // Se a API key já começar com "Bearer", usamos como está
+          // Caso contrário, adicionamos "Bearer " no início
+          if (apiKey.startsWith('Bearer ')) {
+            headers.append('Authorization', apiKey);
+          } else {
+            // Tentativa 1: Com Bearer
+            headers.append('Authorization', `Bearer ${apiKey}`);
+            console.log('[DEBUG] Usando Authorization com prefixo Bearer');
+          }
+        }
+        
+        try {
+          // Tentativa 1: Consulta direta (bom para desenvolvimento)
+          let directResponse = await fetch(directApiUrl, { 
+            method: 'GET',
+            headers: headers
+          });
+          
+          // Se a primeira tentativa falhar e usamos Bearer, tentar novamente sem Bearer
+          if (!directResponse.ok && apiKey && !apiKey.startsWith('Bearer ')) {
+            console.log('[DEBUG] Primeira tentativa falhou, tentando sem prefixo Bearer');
+            
+            // Criar novos headers sem o prefixo Bearer
+            const headersWithoutBearer = new Headers();
+            headersWithoutBearer.append('Authorization', apiKey);
+            
+            // Tenta novamente com a API key direta
+            directResponse = await fetch(directApiUrl, {
+              method: 'GET',
+              headers: headersWithoutBearer
+            });
+          }
         
         if (directResponse.ok) {
           const data = await directResponse.json();
@@ -265,6 +309,7 @@ const Cadastro: React.FC = () => {
       } catch (directError) {
         console.warn('[AVISO] Erro ao consultar API direta:', directError);
         // Continuar para o fallback se a consulta direta falhar
+      }
       }
       
       // Tentativa 2: Fallback - Consulta via backend (ideal para desenvolvimento)
