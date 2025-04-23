@@ -60,35 +60,97 @@ export const ipService = {
         return { isBanned: true };
       }
       
-      // 2. Se não estiver banido localmente, verifica com o servidor
-      const response = await fetch("/api/admin/check-ip-banned", {
-        method: "GET",
-        headers: {
-          "Accept": "application/json"
-        }
-      });
-      const data = await response.json();
-      
-      // 3. Se estiver banido no servidor, atualiza o estado local também
-      if (data.isBanned) {
-        console.log("IP banido confirmado pelo servidor");
-        
-        // Marca bloqueio localmente também
-        localStorage.setItem(BANNED_KEY, 'true');
-        sessionStorage.setItem(BANNED_KEY, 'true');
-        document.cookie = `${BANNED_KEY}=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
-        
-        // Se tiver um device ID salvo, enviar para o servidor para consolidar bloqueio
-        const deviceId = localStorage.getItem(BANNED_DEVICE_KEY);
-        if (deviceId) {
-          this.registerDeviceId(deviceId).catch(console.error);
+      // 2. Verificar o deviceId armazenado
+      const deviceId = localStorage.getItem(BANNED_DEVICE_KEY);
+      if (deviceId) {
+        try {
+          // Verificar se o device ID está banido
+          const deviceResponse = await fetch(`/api/check-device/${deviceId}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+          });
+          
+          if (deviceResponse.ok) {
+            const deviceData = await deviceResponse.json();
+            if (deviceData.status === 'banned') {
+              console.log("Dispositivo banido confirmado pelo servidor");
+              // Marcar bloqueio localmente 
+              this.markLocalBan();
+              return { isBanned: true };
+            }
+          }
+        } catch (deviceError) {
+          console.error("Erro ao verificar device ID:", deviceError);
         }
       }
       
-      return {
-        isBanned: !!data.isBanned,
-        ip: data.ip
-      };
+      // 3. Verificar se o IP atual está banido
+      try {
+        const ipResponse = await fetch("/api/check-ip-status", {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+        
+        if (ipResponse.ok) {
+          const ipData = await ipResponse.json();
+          
+          // Se o IP estiver banido, atualizar o estado local
+          if (ipData.status === 'banned') {
+            console.log("IP banido confirmado pelo servidor");
+            
+            // Marcar bloqueio localmente
+            this.markLocalBan();
+            
+            // Se tiver um device ID salvo, enviar para o servidor para consolidar bloqueio
+            if (deviceId) {
+              this.registerDeviceId(deviceId).catch(console.error);
+            }
+            
+            return {
+              isBanned: true,
+              ip: ipData.ip
+            };
+          }
+          
+          return {
+            isBanned: false,
+            ip: ipData.ip
+          };
+        }
+      } catch (ipError) {
+        console.error("Erro ao verificar status do IP:", ipError);
+      }
+      
+      // 4. Verificar o endpoint antigo como backup
+      try {
+        const legacyResponse = await fetch("/api/admin/check-ip-banned", {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+        
+        if (legacyResponse.ok) {
+          const data = await legacyResponse.json();
+          
+          if (data.isBanned) {
+            console.log("IP banido confirmado pelo servidor (endpoint legado)");
+            this.markLocalBan();
+            return {
+              isBanned: true,
+              ip: data.ip
+            };
+          }
+          
+          return {
+            isBanned: false,
+            ip: data.ip
+          };
+        }
+      } catch (legacyError) {
+        console.error("Erro ao verificar IP no endpoint legado:", legacyError);
+      }
+      
+      // Se chegou aqui, verificou-se todas as opções e não encontrou banimento
+      return { isBanned: false };
     } catch (error) {
       console.error("Erro ao verificar se IP está banido:", error);
       
@@ -101,6 +163,15 @@ export const ipService = {
       // Só aqui assumimos que não está banido (último caso)
       return { isBanned: false };
     }
+  },
+  
+  /**
+   * Marca o dispositivo como banido em todos os armazenamentos locais
+   */
+  markLocalBan(): void {
+    localStorage.setItem(BANNED_KEY, 'true');
+    sessionStorage.setItem(BANNED_KEY, 'true');
+    document.cookie = `${BANNED_KEY}=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
   },
 
   /**

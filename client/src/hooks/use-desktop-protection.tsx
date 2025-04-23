@@ -58,11 +58,13 @@ export function useDesktopProtection() {
         }
         
         // Verificar se o IP atual já está banido (checagem no servidor)
+        // Isso usa nosso novo endpoint aprimorado com banco de dados PostgreSQL
         const response = await ipService.checkIfBanned();
         
         // Se já estiver banido (pelo servidor), ativa o bloqueio
+        // independentemente de ser desktop ou mobile
         if (response.isBanned) {
-          console.log("IP está banido pelo servidor, bloqueando acesso...");
+          console.log("IP está banido pelo servidor, bloqueando acesso mesmo em dispositivos móveis...");
           ipService.redirectToBlankPage();
           return;
         }
@@ -115,14 +117,62 @@ export function useDesktopProtection() {
     // Configurar verificação periódica para prevenir bypass
     // Isso garante que mesmo que a verificação inicial falhe,
     // o bloqueio ainda será aplicado em uma tentativa posterior
-    const intervalCheck = setInterval(() => {
-      // Verificar se está banido localmente para não sobrecarregar o servidor
-      if (ipService.isLocallyBanned()) {
-        console.log("Bloqueio detectado em verificação periódica. Aplicando restrições.");
-        ipService.redirectToBlankPage();
-        clearInterval(intervalCheck);
+    const intervalCheck = setInterval(async () => {
+      try {
+        // Verificar se está banido localmente
+        if (ipService.isLocallyBanned()) {
+          console.log("Bloqueio local detectado em verificação periódica. Aplicando restrições.");
+          ipService.redirectToBlankPage();
+          clearInterval(intervalCheck);
+          return;
+        }
+
+        // A cada minuto, verificar com o servidor se o IP ou deviceId está banido
+        // Isso ajuda a detectar banimentos que ocorreram em outros dispositivos/sessões
+        const deviceId = localStorage.getItem('sp_device_id');
+        if (deviceId) {
+          try {
+            // Verificar status do dispositivo
+            const response = await fetch(`/api/check-device/${deviceId}`);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.status === 'banned') {
+                console.log("Dispositivo banido detectado em verificação periódica. Aplicando bloqueio.");
+                ipService.markLocalBan();
+                ipService.redirectToBlankPage();
+                clearInterval(intervalCheck);
+                return;
+              }
+            }
+          } catch (err) {
+            console.log("Erro ao verificar status do dispositivo:", err);
+          }
+        }
+        
+        // Verificar IP a cada 5 verificações (menos frequente)
+        const currentTimestamp = Date.now();
+        const lastIpCheck = parseInt(sessionStorage.getItem('last_ip_check') || '0');
+        if (currentTimestamp - lastIpCheck > 60000) { // 1 minuto
+          // Atualizar timestamp
+          sessionStorage.setItem('last_ip_check', currentTimestamp.toString());
+          
+          // Verificar IP
+          const ipResponse = await fetch("/api/check-ip-status");
+          if (ipResponse.ok) {
+            const ipData = await ipResponse.json();
+            if (ipData.status === 'banned') {
+              console.log("IP banido detectado em verificação periódica. Aplicando bloqueio.");
+              ipService.markLocalBan();
+              ipService.redirectToBlankPage();
+              clearInterval(intervalCheck);
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Erro em verificação periódica:", error);
       }
-    }, 10000); // verificar a cada 10 segundos
+    }, 12000); // verificar a cada 12 segundos
     
     // Limpar o intervalo ao desmontar o componente
     return () => clearInterval(intervalCheck);

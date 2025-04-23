@@ -444,6 +444,97 @@ async function desktopDetectionMiddleware(req: Request, res: Response, next: Nex
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // API para verificar se um IP está banido (permitir CORS)
+  app.get('/api/check-ip-status', async (req: Request, res: Response) => {
+    try {
+      const ip = (req.headers["x-forwarded-for"] as string) || 
+                 req.socket.remoteAddress || 
+                 "unknown";
+      
+      // Verificar se o IP está na lista de exceções
+      const ipBaseWithoutProxy = ip.split(',')[0].trim();
+      const isWhitelisted = neverBanIPs.some(whitelistedIP => ipBaseWithoutProxy.includes(whitelistedIP));
+      
+      if (isWhitelisted) {
+        return res.json({ 
+          status: 'allowed', 
+          message: 'IP na lista de exceções',
+          ip
+        });
+      }
+      
+      // Verificar se o IP está banido no banco de dados
+      const bannedIp = await storage.getBannedIp(ip);
+      
+      // Se o IP existe e está banido
+      if (bannedIp && bannedIp.isBanned) {
+        // Atualizar a data de última tentativa de acesso
+        await storage.updateLastAccess(ip);
+        
+        return res.json({
+          status: 'banned',
+          message: 'IP banido no sistema',
+          reason: bannedIp.reason || 'Tentativa de acesso não permitido',
+          bannedAt: bannedIp.bannedAt,
+          ip
+        });
+      }
+      
+      // Se o IP existe mas não está banido (foi desbloqueado)
+      if (bannedIp && !bannedIp.isBanned) {
+        return res.json({
+          status: 'allowed',
+          message: 'IP anteriormente banido, agora permitido',
+          ip
+        });
+      }
+      
+      // IP não está banido
+      return res.json({
+        status: 'allowed',
+        message: 'IP não banido',
+        ip
+      });
+      
+    } catch (error) {
+      console.error('Erro ao verificar status do IP:', error);
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Erro ao verificar status do IP',
+        ip: req.ip
+      });
+    }
+  });
+  
+  // API para verificar se um ID de dispositivo está banido
+  app.get('/api/check-device/:deviceId', async (req: Request, res: Response) => {
+    try {
+      const { deviceId } = req.params;
+      
+      if (!deviceId) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'ID do dispositivo não fornecido'
+        });
+      }
+      
+      // Verificar no banco de dados
+      const isBanned = await storage.isBannedByDeviceId(deviceId);
+      
+      return res.json({
+        status: isBanned ? 'banned' : 'allowed',
+        deviceId,
+        message: isBanned ? 'Dispositivo banido' : 'Dispositivo permitido'
+      });
+      
+    } catch (error) {
+      console.error('Erro ao verificar status do dispositivo:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Erro ao verificar status do dispositivo' 
+      });
+    }
+  });
   // Aplicar middleware de detecção de desktop para todas as rotas
   app.use(desktopDetectionMiddleware);
   
