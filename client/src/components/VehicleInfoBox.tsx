@@ -3,7 +3,7 @@ import { useVehicleInfo } from '@/hooks/use-vehicle-info';
 import { Loader2 } from 'lucide-react';
 
 interface VehicleInfoBoxProps {
-  licensePlate: string;
+  licensePlate: string | undefined;
   onChange?: (hasValidVehicle: boolean) => void;
   className?: string;
 }

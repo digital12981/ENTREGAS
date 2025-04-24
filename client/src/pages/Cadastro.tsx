@@ -376,6 +376,22 @@ const Cadastro: React.FC = () => {
     setValue('placa', '');
     setVehicleInfo(null);
   };
+  
+  // Handler para a opção de carro alugado
+  const handleRentedCarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setIsRentedCar(checked);
+    setValue('isRentedCar', checked);
+    
+    // Se marcar como alugado, limpar a placa e as informações do veículo
+    if (checked) {
+      setValue('placa', '');
+      setVehicleInfo(null);
+      setVehicleIsValid(true); // Considerar como válido para permitir o envio do formulário
+    } else {
+      setVehicleIsValid(false); // Voltar a validação normal da placa
+    }
+  };
 
   const handleLoadingComplete = () => {
     setShowLoadingModal(false);
@@ -397,6 +413,16 @@ const Cadastro: React.FC = () => {
       toast({
         title: "Erro de validação",
         description: "Informações de CEP não encontradas. Por favor, recarregue a página.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Verifica se precisa validar a placa (não precisa se for carro alugado)
+    if (!isRentedCar && !vehicleIsValid) {
+      toast({
+        title: "Erro de validação",
+        description: "Por favor, insira uma placa válida para verificar as informações do veículo ou selecione a opção 'Carro alugado'",
         variant: "destructive",
       });
       return;
@@ -573,58 +599,93 @@ const Cadastro: React.FC = () => {
               </div>
 
               <div className="pt-2">
-                <label htmlFor="placa" className="block text-base font-medium text-gray-800 mb-2">
-                  Placa do Veículo
-                </label>
-                <div className="relative">
-                  <Input
-                    id="placa"
-                    {...register('placa')}
-                    onChange={handlePlacaChange}
-                    placeholder="ABC-1234 ou ABC1D23"
-                    className={`${errors.placa ? 'border-red-500' : ''} ${isLoadingVehicleInfo ? 'pr-10' : ''}`}
-                    inputMode="text"
-                    type="search" 
-                    autoCapitalize="characters"
+                {/* Opção de Carro alugado */}
+                <div className="flex items-center mb-4">
+                  <input
+                    id="isRentedCar"
+                    type="checkbox"
+                    checked={isRentedCar}
+                    onChange={handleRentedCarChange}
+                    className="w-5 h-5 text-[#E83D22] rounded border-gray-300 focus:ring-[#E83D22]"
                   />
-                  {isLoadingVehicleInfo && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
-                    </div>
-                  )}
+                  <label
+                    htmlFor="isRentedCar"
+                    className="ml-2 text-base font-medium text-gray-800"
+                  >
+                    Carro alugado
+                  </label>
                 </div>
-                {errors.placa && (
-                  <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
+
+                {/* Campo de placa - exibido apenas se não for carro alugado */}
+                {!isRentedCar && (
+                  <>
+                    <label htmlFor="placa" className="block text-base font-medium text-gray-800 mb-2">
+                      Placa do Veículo
+                    </label>
+                    <div className="relative">
+                      <Input
+                        id="placa"
+                        {...register('placa')}
+                        onChange={handlePlacaChange}
+                        placeholder="ABC-1234 ou ABC1D23"
+                        className={`${errors.placa ? 'border-red-500' : ''} ${isLoadingVehicleInfo ? 'pr-10' : ''}`}
+                        inputMode="text"
+                        type="search" 
+                        autoCapitalize="characters"
+                      />
+                      {isLoadingVehicleInfo && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
+                        </div>
+                      )}
+                    </div>
+                    {errors.placa && (
+                      <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
+                    )}
+                  </>
                 )}
                 
-                {/* Área para mostrar as informações do veículo usando o componente VehicleInfoBox */}
-                <div className="mt-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
-                    {vehicleInfo && (
-                      <button 
-                        type="button"
-                        onClick={handleClearPlate}
-                        className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
-                      >
-                        NÃO É MEU VEÍCULO
-                      </button>
-                    )}
+                {/* Área para mostrar as informações do veículo - exibida apenas se não for carro alugado */}
+                {!isRentedCar ? (
+                  <div className="mt-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
+                      {vehicleInfo && (
+                        <button 
+                          type="button"
+                          onClick={handleClearPlate}
+                          className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
+                        >
+                          NÃO É MEU VEÍCULO
+                        </button>
+                      )}
+                    </div>
+                    
+                    {/* Usar o componente VehicleInfoBox */}
+                    <VehicleInfoBox
+                      licensePlate={placaValue}
+                      onChange={(isValid) => {
+                        // Se o veículo é válido, atualizar o estado
+                        setVehicleIsValid(isValid);
+                        if (isValid) {
+                          // O componente já buscará as informações do veículo
+                          setIsLoadingVehicleInfo(false);
+                        }
+                      }}
+                      className="w-full"
+                    />
                   </div>
-                  
-                  {/* Usar o componente VehicleInfoBox */}
-                  <VehicleInfoBox
-                    licensePlate={placaValue}
-                    onChange={(isValid) => {
-                      // Se o veículo é válido, atualizar o estado
-                      if (isValid) {
-                        // O componente já buscará as informações do veículo
-                        setIsLoadingVehicleInfo(false);
-                      }
-                    }}
-                    className="w-full"
-                  />
-                </div>
+                ) : (
+                  // Mensagem quando é carro alugado
+                  <div className="mt-3 p-4 bg-green-50 text-green-700 border border-green-200 rounded-md">
+                    <p className="flex items-center">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Opção de carro alugado selecionada. Não é necessário informar a placa.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
