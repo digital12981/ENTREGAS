@@ -338,7 +338,7 @@ const Cadastro: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
-      {/* Header personalizado - mantendo o novo cabeçalho */}
+      {/* Header com sombreamento adequado */}
       <header className="bg-white shadow-lg py-2 px-4 flex items-center rounded-b-sm">
         <a href="/" className="text-[#EF4444] text-xl">
           <i className="fas fa-arrow-left"></i>
