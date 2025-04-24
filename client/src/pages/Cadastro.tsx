@@ -464,19 +464,16 @@ const Cadastro: React.FC = () => {
   return (
     <div className="custom-layout min-h-screen flex flex-col">
       {/* Header personalizado */}
-      <header className="custom-header">
-        <a href="#" className="text-[#EF4444] text-xl">
+      <header className="flex items-center justify-between bg-[#E83D22] p-4 text-white">
+        <a href="#" className="text-white text-xl">
           <i className="fas fa-arrow-left"></i>
         </a>
-        <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Cadastro Entregador</h1>
+        <h1 className="text-lg font-medium text-center flex-grow">Cadastro Entregador</h1>
+        <div className="w-4"></div> {/* Espaçador para alinhar o título */}
       </header>
       
       {/* Seção de boas-vindas */}
       <div className="bg-white">
-        <div className="custom-section-header">
-          <p className="custom-section-title">Entregador Parceiro Shopee</p>
-        </div>
-        
         <div className="p-3 border-b border-gray-200">
           <h2 className="text-base font-medium text-[#212121] mb-2">Bem-vindo ao cadastro de entregadores</h2>
           <p className="text-sm text-[#6E6E6E]">Preencha os dados abaixo para se tornar um entregador parceiro da Shopee.</p>
@@ -490,7 +487,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de dados pessoais */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title">Dados Pessoais</p>
+            <p className="text-lg font-semibold px-3 py-2 border-b border-gray-200 bg-gray-50">Dados Pessoais</p>
           </div>
 
           {/* CPF */}
@@ -558,7 +555,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de Tipo de Veículo */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title">Tipo de Veículo</p>
+            <p className="text-lg font-semibold px-3 py-2 border-b border-gray-200 bg-gray-50">Tipo de Veículo</p>
           </div>
 
           <div className="custom-input-field">
@@ -620,7 +617,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de Veículo */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title">Informações do Veículo</p>
+            <p className="text-lg font-semibold px-3 py-2 border-b border-gray-200 bg-gray-50">Informações do Veículo</p>
           </div>
 
           {/* Opção de Carro alugado */}
