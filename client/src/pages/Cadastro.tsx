@@ -487,7 +487,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de dados pessoais */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title text-lg font-medium">Dados Pessoais</p>
+            <p className="custom-section-title text-xl font-semibold">Dados Pessoais</p>
           </div>
 
           {/* CPF */}
@@ -555,7 +555,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de Tipo de Veículo */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title text-lg font-medium">Tipo de Veículo</p>
+            <p className="custom-section-title text-xl font-semibold">Tipo de Veículo</p>
           </div>
 
           <div className="custom-input-field">
@@ -617,7 +617,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de Veículo */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title text-lg font-medium">Informações do Veículo</p>
+            <p className="custom-section-title text-xl font-semibold">Informações do Veículo</p>
           </div>
 
           {/* Opção de Carro alugado */}
