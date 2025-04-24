@@ -38,6 +38,7 @@ const formSchema = z.object({
       return numericValue.length >= 10 && numericValue.length <= 11;
     }, "Telefone deve ter 10 ou 11 dígitos"),
   email: z.string().email("Email inválido"),
+  isRentedCar: z.boolean().optional().default(false),
   placa: z.string()
     .min(7, "Placa inválida")
     .max(9, "Placa inválida")
@@ -52,8 +53,26 @@ const formSchema = z.object({
       const mercosulRegex = /^[A-Za-z]{3}[0-9][A-Za-z][0-9]{2}$/;
       
       return antigoRegex.test(cleanValue) || mercosulRegex.test(cleanValue);
-    }, "Formato deve ser ABC-1234 (antigo) ou ABC1D23 (Mercosul)"),
-});
+    }, "Formato deve ser ABC-1234 (antigo) ou ABC1D23 (Mercosul)")
+    .optional()
+    .or(z.literal('')) // Permitir string vazia
+})
+// Adiciona validação condicional para placa
+.refine(
+  (data) => {
+    // Se marcou como carro alugado, não precisa de placa
+    if (data.isRentedCar) {
+      return true;
+    }
+    
+    // Se não é carro alugado, precisa ter placa válida
+    return data.placa && data.placa.length >= 7;
+  },
+  {
+    message: "Informe a placa do veículo ou selecione a opção 'Carro alugado'",
+    path: ["placa"]
+  }
+);
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -72,6 +91,7 @@ const Cadastro: React.FC = () => {
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [isLoadingVehicleInfo, setIsLoadingVehicleInfo] = useState(false);
   const [vehicleIsValid, setVehicleIsValid] = useState(false);
+  const [isRentedCar, setIsRentedCar] = useState(false);
   const [vehicleInfo, setVehicleInfo] = useState<{
     marca?: string;
     modelo?: string;
