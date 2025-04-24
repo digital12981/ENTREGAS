@@ -550,7 +550,7 @@ const Cadastro: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#F5F5F5] h-[10px]"></div>
+        <div className="h-[10px]"></div>
 
         {/* Seção de Tipo de Veículo */}
         <div className="bg-white">
@@ -612,7 +612,7 @@ const Cadastro: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#F5F5F5] h-[10px]"></div>
+        <div className="h-[10px]"></div>
 
         {/* Seção de Veículo */}
         <div className="bg-white">

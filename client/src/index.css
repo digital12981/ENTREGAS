@@ -79,8 +79,9 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased text-foreground;
     font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5;
   }
 
   /* Remover outline laranja dos inputs quando em foco */
@@ -248,8 +249,12 @@ ol.list-decimal > li::marker {
 
 .custom-input-field {
   padding: 0.75rem;
-  border-bottom: 1px solid #E5E7EB;
   background-color: white;
+}
+
+/* Apenas aplicar borda em campos de input que não são os últimos dentro de uma seção */
+.custom-input-field:not(:last-child) {
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .custom-input {
