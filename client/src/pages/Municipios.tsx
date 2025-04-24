@@ -354,34 +354,28 @@ const Municipios: React.FC = () => {
       {/* Modal de seleção de data de início */}
       <Dialog open={showStartDateModal} onOpenChange={setShowStartDateModal}>
         <DialogContent className="p-0 sm:max-w-none w-full h-full max-h-screen overflow-hidden border-none shadow-none">
+          <DialogTitle className="sr-only">Oportunidade de Trabalho</DialogTitle>
+          <DialogDescription className="sr-only">Selecione quando você pode começar a trabalhar</DialogDescription>
           <div className="absolute top-0 left-0 w-full h-full bg-[#F5F5F5] z-0"></div>
           
           <div className="relative flex flex-col h-screen bg-transparent z-10 max-w-md mx-auto px-4 py-6">
-            <header 
-              className="bg-white py-2 px-4 flex items-center rounded-sm mb-4"
-              style={{ 
-                boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
-              }}
-            >
-              <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">
-                <i className="fas fa-exclamation-circle mr-2 text-[#EF4444]"></i>
-                Oportunidade de Trabalho
-              </h1>
-            </header>
-            
             <div className="bg-white rounded-sm shadow-lg mt-2">
-              <div className="p-3 border-b border-gray-200">
+              <div className="custom-section-header">
+                <p className="custom-section-title">Oportunidade de Trabalho</p>
+              </div>
+              
+              <div className="custom-input-field">
                 <p className="text-[#212121] text-sm text-center">
                   Na região que você escolheu, estamos com <span className="font-medium text-[#EF4444]">URGENTE</span> necessidade
                   de novos entregadores, pois a demanda de entregas está alta e temos poucos entregadores cadastrados.
                 </p>
               </div>
               
-              <div className="bg-[#F5F5F5] p-3">
-                <p className="text-[#6E6E6E] text-xs translate-y-1">Quando você pode começar?</p>
+              <div className="custom-section-header">
+                <p className="custom-section-title">Quando você pode começar?</p>
               </div>
               
-              <div className="p-3 border-b border-gray-200">
+              <div className="custom-input-field">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                   {getNextThreeDays().map((date, index) => (
                     <button
@@ -410,18 +404,18 @@ const Municipios: React.FC = () => {
                 >
                   Outro dia
                 </button>
+                
+                <div className="custom-button-container mt-4">
+                  <button 
+                    type="button" 
+                    onClick={handleStartDateContinue}
+                    className="custom-button"
+                    disabled={!selectedStartDate}
+                  >
+                    Continuar
+                  </button>
+                </div>
               </div>
-            </div>
-            
-            <div className="p-3 mt-2">
-              <button 
-                type="button" 
-                onClick={handleStartDateContinue}
-                className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
-                disabled={!selectedStartDate}
-              >
-                Continuar
-              </button>
             </div>
           </div>
         </DialogContent>
