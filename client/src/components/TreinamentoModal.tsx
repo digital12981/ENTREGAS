@@ -92,7 +92,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
       const paymentData = {
         name: "Marina Souza",
         email: "compradecurso@gmail.com",
-        cpf: "83054235149",
+        cpf: "83054235149", // CPF já sem formatação
         phone: "11998346572",
         amount: 67.00
       };
