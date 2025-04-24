@@ -320,10 +320,7 @@ const Municipios: React.FC = () => {
         </div>
       </div>
       
-      <footer className="bg-white p-4 shadow-lg text-center text-[#6E6E6E] text-xs mt-auto">
-        <p>© {new Date().getFullYear()} Shopee. Todos os direitos reservados.</p>
-        <p className="mt-1">Parceiro de entregas oficial</p>
-      </footer>
+      <Footer />
       
       <LoadingModal
         isOpen={showLoadingModal}
