@@ -197,3 +197,110 @@ ol.list-decimal > li::marker {
     transform: translateY(0);
   }
 }
+
+/* Estilos personalizados para o novo layout */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+.custom-layout {
+  background-color: #F5F5F5;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.875rem;
+}
+
+.custom-header {
+  background-color: white;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 0 0 0.125rem 0.125rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.custom-section-header {
+  background-color: #F5F5F5;
+  padding: 0.75rem;
+}
+
+.custom-section-title {
+  color: #6E6E6E;
+  font-size: 0.75rem;
+  transform: translateY(0.25rem);
+}
+
+.custom-input-field {
+  padding: 0.75rem;
+  border-bottom: 1px solid #E5E7EB;
+  background-color: white;
+}
+
+.custom-input {
+  width: 100%;
+  color: #212121;
+  background-color: transparent;
+}
+
+.custom-input::placeholder {
+  color: #969696;
+}
+
+.custom-input:focus {
+  outline: none;
+}
+
+.custom-button-container {
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.custom-button {
+  width: 100%;
+  background-color: #EF4444;
+  color: white;
+  padding: 0.5rem 0;
+  border-radius: 0.125rem;
+}
+
+.custom-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+.custom-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.custom-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 28px;
+}
+
+.custom-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .custom-slider {
+  background-color: #a7e8c5;
+}
+
+input:checked + .custom-slider:before {
+  transform: translateX(22px);
+}
