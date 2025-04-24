@@ -82,6 +82,25 @@
     @apply font-sans antialiased bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
   }
+
+  /* Remover outline laranja dos inputs quando em foco */
+  input:focus, 
+  select:focus, 
+  textarea:focus, 
+  button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Remover bordas dos componentes shadcn em foco */
+  .ring-offset-background:focus-visible,
+  *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+    ring-offset-width: 0 !important;
+    --ring-offset-width: 0 !important;
+  }
 }
 
 /* Shopee Custom Styles */
