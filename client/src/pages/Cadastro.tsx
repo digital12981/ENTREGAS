@@ -604,8 +604,7 @@ const Cadastro: React.FC = () => {
                   <h3 className="font-medium text-[#E83D22] mb-2">Opção para Veículo Alugado</h3>
                   <p className="text-gray-700 text-sm mb-3">
                     Se você trabalha com um veículo alugado ou emprestado, selecione esta opção 
-                    para prosseguir sem a necessidade de informar a placa. Os veículos alugados 
-                    serão verificados posteriormente durante o processo de credenciamento.
+                    para prosseguir sem a necessidade de informar a placa do veículo.
                   </p>
                   <div className="flex items-center">
                     <input
@@ -617,17 +616,11 @@ const Cadastro: React.FC = () => {
                     />
                     <label
                       htmlFor="isRentedCar"
-                      className="ml-2 text-base font-medium text-gray-800"
+                      className="ml-2 text-base font-bold text-[#E83D22] leading-tight"
                     >
                       Estou utilizando um veículo alugado ou emprestado
                     </label>
                   </div>
-                  {isRentedCar && (
-                    <p className="mt-2 text-sm text-[#E83D22]">
-                      <i className="fas fa-info-circle mr-1"></i>
-                      Você deverá apresentar o contrato de aluguel ou autorização de uso do veículo durante o credenciamento.
-                    </p>
-                  )}
                 </div>
 
                 {/* Campo de placa - exibido apenas se não for carro alugado */}
