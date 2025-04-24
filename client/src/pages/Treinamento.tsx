@@ -87,7 +87,7 @@ const Treinamento: FC = () => {
                 </ul>
               </div>
               <Button 
-                className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+                className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
                 onClick={() => setModalOpen(true)}
               >
                 Iniciar Treinamento Agora
@@ -203,7 +203,7 @@ const Treinamento: FC = () => {
           </div>
           
           <Button 
-            className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+            className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
             onClick={() => setModalOpen(true)}
           >
             Iniciar Treinamento Agora

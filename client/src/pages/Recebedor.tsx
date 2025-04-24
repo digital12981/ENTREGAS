@@ -283,7 +283,7 @@ const Recebedor: React.FC = () => {
               <div className="p-3">
                 <Button
                   type="submit"
-                  className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+                  className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Processando...' : 'Confirmar PIX'}
@@ -379,7 +379,7 @@ const Recebedor: React.FC = () => {
               <div className="p-3">
                 <Button
                   type="submit"
-                  className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+                  className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Processando...' : 'Confirmar dados bancários'}
