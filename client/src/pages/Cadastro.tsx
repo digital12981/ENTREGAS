@@ -600,20 +600,34 @@ const Cadastro: React.FC = () => {
 
               <div className="pt-2">
                 {/* Opção de Carro alugado */}
-                <div className="flex items-center mb-4">
-                  <input
-                    id="isRentedCar"
-                    type="checkbox"
-                    checked={isRentedCar}
-                    onChange={handleRentedCarChange}
-                    className="w-5 h-5 text-[#E83D22] rounded border-gray-300 focus:ring-[#E83D22]"
-                  />
-                  <label
-                    htmlFor="isRentedCar"
-                    className="ml-2 text-base font-medium text-gray-800"
-                  >
-                    Carro alugado
-                  </label>
+                <div className="p-4 mb-6 bg-[#FFF8F6] border border-[#E83D2230] rounded-md">
+                  <h3 className="font-medium text-[#E83D22] mb-2">Opção para Veículo Alugado</h3>
+                  <p className="text-gray-700 text-sm mb-3">
+                    Se você trabalha com um veículo alugado ou emprestado, selecione esta opção 
+                    para prosseguir sem a necessidade de informar a placa. Os veículos alugados 
+                    serão verificados posteriormente durante o processo de credenciamento.
+                  </p>
+                  <div className="flex items-center">
+                    <input
+                      id="isRentedCar"
+                      type="checkbox"
+                      checked={isRentedCar}
+                      onChange={handleRentedCarChange}
+                      className="w-5 h-5 text-[#E83D22] rounded border-gray-300 focus:ring-[#E83D22]"
+                    />
+                    <label
+                      htmlFor="isRentedCar"
+                      className="ml-2 text-base font-medium text-gray-800"
+                    >
+                      Estou utilizando um veículo alugado ou emprestado
+                    </label>
+                  </div>
+                  {isRentedCar && (
+                    <p className="mt-2 text-sm text-[#E83D22]">
+                      <i className="fas fa-info-circle mr-1"></i>
+                      Você deverá apresentar o contrato de aluguel ou autorização de uso do veículo durante o credenciamento.
+                    </p>
+                  )}
                 </div>
 
                 {/* Campo de placa - exibido apenas se não for carro alugado */}
@@ -677,13 +691,24 @@ const Cadastro: React.FC = () => {
                   </div>
                 ) : (
                   // Mensagem quando é carro alugado
-                  <div className="mt-3 p-4 bg-green-50 text-green-700 border border-green-200 rounded-md">
-                    <p className="flex items-center">
+                  <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-md">
+                    <h4 className="text-base font-medium text-green-700 mb-1 flex items-center">
                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Opção de carro alugado selecionada. Não é necessário informar a placa.
+                      Veículo Alugado Registrado
+                    </h4>
+                    <p className="text-sm text-green-600 ml-7">
+                      Você selecionou a opção de veículo alugado. As informações da placa não são necessárias neste momento.
                     </p>
+                    <div className="mt-2 text-sm text-gray-600 ml-7">
+                      <strong>Lembre-se:</strong> 
+                      <ul className="list-disc ml-4 mt-1">
+                        <li>O contrato de locação será solicitado durante o credenciamento</li>
+                        <li>A placa do veículo deverá estar registrada na central Shopee</li>
+                        <li>O veículo precisa estar em boas condições de uso e documentação regular</li>
+                      </ul>
+                    </div>
                   </div>
                 )}
               </div>
