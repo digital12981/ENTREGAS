@@ -565,7 +565,7 @@ const Cadastro: React.FC = () => {
             <p className="text-[#212121] mb-3 text-sm">Selecione o tipo de veículo que você utiliza:</p>
             <div className="flex justify-between gap-4">
               <div 
-                className={`flex-1 p-3 border rounded-sm flex items-center justify-center cursor-pointer transition-colors ${tipoVeiculo === TipoVeiculo.MOTO ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200'}`}
+                className={`flex-1 p-3 border-2 rounded-sm flex flex-col items-center justify-center cursor-pointer transition-colors ${tipoVeiculo === TipoVeiculo.MOTO ? 'border-[#E83D22]' : 'border-gray-200'}`}
                 onClick={() => setTipoVeiculo(TipoVeiculo.MOTO)}
               >
                 <input
@@ -574,15 +574,22 @@ const Cadastro: React.FC = () => {
                   name="tipoVeiculo"
                   checked={tipoVeiculo === TipoVeiculo.MOTO}
                   onChange={() => setTipoVeiculo(TipoVeiculo.MOTO)}
-                  className="mr-2 hidden"
+                  className="hidden"
                 />
-                <label htmlFor="moto" className={`text-sm font-medium ${tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#EF4444]' : 'text-[#212121]'}`}>
+                <div className="mb-2 w-full h-24 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={shopeeMotoImage} 
+                    alt="Entregador com Moto" 
+                    className="max-h-full object-contain"
+                  />
+                </div>
+                <label htmlFor="moto" className={`text-sm font-medium ${tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#E83D22]' : 'text-[#212121]'}`}>
                   Moto
                 </label>
               </div>
               
               <div 
-                className={`flex-1 p-3 border rounded-sm flex items-center justify-center cursor-pointer transition-colors ${tipoVeiculo === TipoVeiculo.CARRO ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200'}`}
+                className={`flex-1 p-3 border-2 rounded-sm flex flex-col items-center justify-center cursor-pointer transition-colors ${tipoVeiculo === TipoVeiculo.CARRO ? 'border-[#E83D22]' : 'border-gray-200'}`}
                 onClick={() => setTipoVeiculo(TipoVeiculo.CARRO)}
               >
                 <input
@@ -591,9 +598,16 @@ const Cadastro: React.FC = () => {
                   name="tipoVeiculo"
                   checked={tipoVeiculo === TipoVeiculo.CARRO}
                   onChange={() => setTipoVeiculo(TipoVeiculo.CARRO)}
-                  className="mr-2 hidden"
+                  className="hidden"
                 />
-                <label htmlFor="carro" className={`text-sm font-medium ${tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#EF4444]' : 'text-[#212121]'}`}>
+                <div className="mb-2 w-full h-24 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={shopeeCarsImage} 
+                    alt="Entregador com Carro" 
+                    className="max-h-full object-contain"
+                  />
+                </div>
+                <label htmlFor="carro" className={`text-sm font-medium ${tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#E83D22]' : 'text-[#212121]'}`}>
                   Carro
                 </label>
               </div>
@@ -722,6 +736,12 @@ const Cadastro: React.FC = () => {
           </button>
         </div>
       </form>
+      
+      {/* Rodapé */}
+      <div className="mt-6 mb-2 text-center">
+        <p className="text-xs text-gray-500">© 2025 Shopee Brasil. Todos os direitos reservados.</p>
+        <p className="text-xs text-gray-500 mt-1">Oportunidade para entregadores parceiros.</p>
+      </div>
       
       {/* Modal de carregamento */}
       <LoadingModal
