@@ -487,7 +487,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de dados pessoais */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title text-base font-medium">Dados Pessoais</p>
+            <p className="custom-section-title text-lg font-medium">Dados Pessoais</p>
           </div>
 
           {/* CPF */}
@@ -555,7 +555,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de Tipo de Veículo */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title text-base font-medium">Tipo de Veículo</p>
+            <p className="custom-section-title text-lg font-medium">Tipo de Veículo</p>
           </div>
 
           <div className="custom-input-field">
@@ -617,7 +617,7 @@ const Cadastro: React.FC = () => {
         {/* Seção de Veículo */}
         <div className="bg-white">
           <div className="custom-section-header">
-            <p className="custom-section-title text-base font-medium">Informações do Veículo</p>
+            <p className="custom-section-title text-lg font-medium">Informações do Veículo</p>
           </div>
 
           {/* Opção de Carro alugado */}
@@ -640,7 +640,7 @@ const Cadastro: React.FC = () => {
                 </label>
                 <label
                   htmlFor="isRentedCar"
-                  className="ml-2 text-base font-bold text-[#E83D22] leading-tight"
+                  className="ml-2 text-sm font-bold text-[#E83D22] leading-tight"
                 >
                   Estou utilizando um veículo alugado ou emprestado
                 </label>
@@ -720,22 +720,22 @@ const Cadastro: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Botão de envio */}
-        <div className="custom-button-container">
-          <button
-            type="submit"
-            className="custom-button py-3"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Processando...' : 'Prosseguir'}
-          </button>
+          
+          {/* Botão de envio */}
+          <div className="custom-button-container px-4 py-5">
+            <button
+              type="submit"
+              className="custom-button py-3"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Processando...' : 'Prosseguir'}
+            </button>
+          </div>
         </div>
       </form>
       
       {/* Rodapé */}
-      <div className="mt-6 mb-2 text-center">
+      <div className="mt-10 mb-4 text-center">
         <p className="text-xs text-gray-500">© 2025 Shopee Brasil. Todos os direitos reservados.</p>
         <p className="text-xs text-gray-500 mt-1">Oportunidade para entregadores parceiros.</p>
       </div>
