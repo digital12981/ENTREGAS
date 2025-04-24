@@ -196,7 +196,12 @@ const Municipios: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
-      <header className="bg-white shadow-lg py-2 px-4 flex items-center rounded-b-sm">
+      <header 
+        className="bg-white py-2 px-4 flex items-center rounded-b-sm"
+        style={{ 
+          boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
+        }}
+      >
         <a href="/" className="text-[#EF4444] text-xl">
           <i className="fas fa-arrow-left"></i>
         </a>
@@ -342,7 +347,12 @@ const Municipios: React.FC = () => {
           <div className="absolute top-0 left-0 w-full h-full bg-[#F5F5F5] z-0"></div>
           
           <div className="relative flex flex-col h-screen bg-transparent z-10 max-w-md mx-auto px-4 py-6">
-            <header className="bg-white shadow-lg py-2 px-4 flex items-center rounded-sm mb-4">
+            <header 
+              className="bg-white py-2 px-4 flex items-center rounded-sm mb-4"
+              style={{ 
+                boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
+              }}
+            >
               <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">
                 <i className="fas fa-exclamation-circle mr-2 text-[#EF4444]"></i>
                 Oportunidade de Trabalho

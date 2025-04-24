@@ -339,7 +339,12 @@ const Cadastro: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
       {/* Header com sombreamento adequado */}
-      <header className="bg-white shadow-lg py-2 px-4 flex items-center rounded-b-sm">
+      <header 
+        className="bg-white py-2 px-4 flex items-center rounded-b-sm"
+        style={{ 
+          boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
+        }}
+      >
         <a href="/" className="text-[#EF4444] text-xl">
           <i className="fas fa-arrow-left"></i>
         </a>
