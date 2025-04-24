@@ -526,7 +526,7 @@ const Cadastro: React.FC = () => {
               {...register('telefone')} 
               value={telefoneValue}
               onChange={handleTelefoneChange}
-              placeholder="Telefone ((00) 00000-0000)" 
+              placeholder="Telefone (00) 00000-0000" 
               className={`custom-input ${errors.telefone ? 'border-red-500' : 'border-0'}`}
               inputMode="tel"
             />
@@ -640,7 +640,7 @@ const Cadastro: React.FC = () => {
                 </label>
                 <label
                   htmlFor="isRentedCar"
-                  className="ml-2 text-sm font-bold text-[#E83D22] leading-tight"
+                  className="ml-2 text-sm font-normal text-[#6e6e6e] leading-tight"
                 >
                   Estou utilizando um veículo alugado ou emprestado
                 </label>
