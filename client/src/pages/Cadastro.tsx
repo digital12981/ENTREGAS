@@ -351,14 +351,6 @@ const Cadastro: React.FC = () => {
         <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Motorista Parceiro Shopee</h1>
       </header>
       
-      {/* Seção de boas-vindas */}
-      <div className="bg-white">
-        <div className="p-3 border-b border-gray-200">
-          <h2 className="text-base font-medium text-[#212121] mb-2">Bem-vindo ao cadastro de entregadores</h2>
-          <p className="text-sm text-[#6E6E6E]">Preencha os dados abaixo para se tornar um entregador parceiro da Shopee.</p>
-        </div>
-      </div>
-      
       <div className="bg-[#F5F5F5] h-[10px]"></div>
 
       {/* Formulário */}
