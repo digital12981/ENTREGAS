@@ -679,7 +679,7 @@ const Cadastro: React.FC = () => {
             {!isRentedCar ? (
               <div className="mt-3">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-medium text-[#212121] text-sm">Informações do Veículo</h3>
+                  <h3 className="font-normal text-[#212121] text-sm">Informações do Veículo</h3>
                   {vehicleInfo && (
                     <button 
                       type="button"
