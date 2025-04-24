@@ -605,6 +605,8 @@ const Cadastro: React.FC = () => {
         </div>
       </form>
       
+      <div className="pb-[50px]"></div>
+      
       {/* Rodapé */}
       <Footer />
       

@@ -271,7 +271,7 @@ const Municipios: React.FC = () => {
                 <p className="text-[#6E6E6E] text-xs translate-y-1">Previsão de Entregas</p>
               </div>
               
-              <div className="p-3 border-b border-gray-200">
+              <div className="p-3">
                 <p className="text-[#212121] text-sm mb-3">Quantidade média diária de entregas que podem ser destinadas a você:</p>
                 <div className="p-3 bg-[#FFF8F6] border border-[#EF4444]/20 rounded-sm mb-3">
                   <div className="text-center">
@@ -313,7 +313,7 @@ const Municipios: React.FC = () => {
           )}
         </div>
         
-        <div className="p-3 mt-2 mb-8">
+        <div className="p-3 mt-2">
           <button
             type="button"
             onClick={handleSubmit}
@@ -324,6 +324,8 @@ const Municipios: React.FC = () => {
           </button>
         </div>
       </div>
+      
+      <div className="pb-[50px]"></div>
       
       <Footer />
       
