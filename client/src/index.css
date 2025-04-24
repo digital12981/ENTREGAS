@@ -252,7 +252,7 @@ ol.list-decimal > li::marker {
 }
 
 .custom-input-field {
-  padding: 0.75rem;
+  padding: 0.5rem 0.5rem;
   background-color: white;
 }
 
@@ -265,6 +265,8 @@ ol.list-decimal > li::marker {
   width: 100%;
   color: #212121;
   background-color: transparent;
+  text-align: left;
+  padding-left: 0.25rem;
 }
 
 .custom-input::placeholder {
