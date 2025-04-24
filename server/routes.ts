@@ -1458,14 +1458,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Processar pagamento via For4Payments
       console.log(`[DEBUG] Enviando para For4Payments: nome=${name}, email=${userEmail}, cpf=${cpf}, valor=${paymentAmount}`);
       
-      // Remover caracteres não numéricos do CPF
-      const cleanedCpf = cpf.replace(/[^0-9]/g, '');
-      
       const paymentParams = {
         name,
         email: userEmail,
-        cpf: cleanedCpf, // CPF limpo sem pontuação
-        phone: phone ? phone.replace(/\D/g, '') : '', // Telefone limpo sem formatação
+        cpf,
+        phone: phone || '',
         amount: paymentAmount,
         items: items || [{
           title: "Crachá Shopee + Treinamento Exclusivo",
@@ -1611,8 +1608,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const paymentResult = await paymentService.createPixPayment({
         name: nome,
         email: userEmail,
-        cpf: cpf.replace(/[^0-9]/g, ''), // Remover caracteres não numéricos
-        phone: telefone ? telefone.replace(/\D/g, '') : '', // Telefone limpo
+        cpf: cpf,
+        phone: telefone || '',
         amount: paymentAmount
       });
       
@@ -1641,7 +1638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       global._paymentCache[paymentResult.id] = {
         ...paymentResult,
         name: nome,
-        cpf: cpf.replace(/[^0-9]/g, ''), // Armazenar CPF limpo no cache também
+        cpf: cpf,
         email: userEmail,
         amount: paymentAmount,
         timestamp: new Date().toISOString()
