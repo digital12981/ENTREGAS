@@ -308,7 +308,7 @@ const Municipios: React.FC = () => {
           )}
         </div>
         
-        <div className="p-3 mt-2">
+        <div className="p-3 mt-2 mb-8">
           <button
             type="button"
             onClick={handleSubmit}
@@ -320,7 +320,10 @@ const Municipios: React.FC = () => {
         </div>
       </div>
       
-      <Footer />
+      <footer className="bg-white p-4 shadow-lg text-center text-[#6E6E6E] text-xs mt-auto">
+        <p>© {new Date().getFullYear()} Shopee. Todos os direitos reservados.</p>
+        <p className="mt-1">Parceiro de entregas oficial</p>
+      </footer>
       
       <LoadingModal
         isOpen={showLoadingModal}
