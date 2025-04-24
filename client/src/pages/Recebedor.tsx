@@ -166,231 +166,216 @@ const Recebedor: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
-      <header 
-        className="bg-white py-2 px-4 flex items-center rounded-b-sm"
-        style={{ 
-          boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
-        }}
-      >
-        <a href="/" className="text-[#EF4444] text-xl">
-          <i className="fas fa-arrow-left"></i>
-        </a>
-        <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Motorista Parceiro Shopee</h1>
-      </header>
+    <div className="bg-white min-h-screen flex flex-col">
+      <Header />
       
-      <div className="bg-[#F5F5F5] h-[10px]"></div>
-      
-      <div className="w-full bg-white">
-        <div className="bg-[#F5F5F5] p-3">
-          <p className="text-[#6E6E6E] text-xs translate-y-1">Método de Recebimento</p>
-        </div>
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        {/* Meia-lua no canto direito */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
         
-        <div className="p-3 border-b border-gray-200">
-          <p className="text-[#212121] text-sm mb-4">
-            Como você deseja receber os pagamentos das suas entregas?
-          </p>
-        </div>
-        
-        <div className="p-3 border-b border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div 
-              className={`cursor-pointer transition-all p-3 border rounded-sm flex flex-col items-center text-center ${
-                metodo === MetodoPagamento.PIX ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200 hover:bg-gray-50'
-              }`}
-              onClick={() => setMetodo(MetodoPagamento.PIX)}
-            >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                <img 
-                  src="https://img.icons8.com/fluent/512/pix.png" 
-                  alt="Ícone PIX" 
-                  className="w-12 h-12"
-                />
-              </div>
-              <h3 className="text-sm font-medium text-[#212121] mb-1">Via PIX</h3>
-              <p className="text-[#6E6E6E] text-xs">
-                Receba o pagamento diretamente na sua conta via PIX.
-                Transferência instantânea e sem taxas.
-              </p>
-            </div>
-            
-            <div 
-              className={`cursor-pointer transition-all p-3 border rounded-sm flex flex-col items-center text-center ${
-                metodo === MetodoPagamento.TED ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200 hover:bg-gray-50'
-              }`}
-              onClick={() => setMetodo(MetodoPagamento.TED)}
-            >
-              <div className="w-12 h-12 bg-[#EF4444] rounded-full flex items-center justify-center mb-3 text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                  <line x1="2" y1="10" x2="22" y2="10"></line>
-                </svg>
-              </div>
-              <h3 className="text-sm font-medium text-[#212121] mb-1">Via TED Bancária</h3>
-              <p className="text-[#6E6E6E] text-xs">
-                Receba o pagamento na sua conta bancária por transferência eletrônica.
-                Disponível para todos os bancos.
-              </p>
-            </div>
+        <div className="flex items-center relative z-10">
+          <div className="text-white mr-3">
+            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
+          </div>
+          <div className="leading-none">
+            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
           </div>
         </div>
-        
-        {metodo === MetodoPagamento.PIX && (
-          <>
-            <div className="bg-[#F5F5F5] p-3">
-              <p className="text-[#6E6E6E] text-xs translate-y-1">Informações PIX</p>
-            </div>
+      </div>
+      
+      <div className="flex-grow container mx-auto px-2 py-8 w-full">
+        <div className="w-full mx-auto p-6 mb-8">
+          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Método de Recebimento</h1>
+          
+          <p className="text-center text-gray-600 mb-8">
+            Como você deseja receber os pagamentos das suas entregas?
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <Card 
+              className={`cursor-pointer transition-all p-6 ${metodo === MetodoPagamento.PIX ? 'border-[#E83D22] border-2 bg-[#FFF8F6]' : 'border-gray-200 hover:border-[#E83D2280]'}`}
+              onClick={() => setMetodo(MetodoPagamento.PIX)}
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                  <img 
+                    src="https://img.icons8.com/fluent/512/pix.png" 
+                    alt="Ícone PIX" 
+                    className="w-16 h-16"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Via PIX</h3>
+                <p className="text-gray-600 text-sm">
+                  Receba o pagamento diretamente na sua conta via PIX.
+                  Transferência instantânea e sem taxas.
+                </p>
+              </div>
+            </Card>
             
-            <form onSubmit={pixForm.handleSubmit(handlePixSubmit)}>
-              <div className="p-3 border-b border-gray-200">
-                <label htmlFor="tipoChave" className="block text-[#212121] text-sm mb-2">
-                  Tipo de chave
-                </label>
-                <Select
-                  onValueChange={(value) => pixForm.setValue('tipoChave', value as any)}
-                  defaultValue={pixForm.watch('tipoChave')}
-                >
-                  <SelectTrigger className="w-full text-[#212121] border-gray-200">
-                    <SelectValue placeholder="Selecione o tipo de chave PIX" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cpf">CPF</SelectItem>
-                    <SelectItem value="email">E-mail</SelectItem>
-                    <SelectItem value="telefone">Telefone</SelectItem>
-                    <SelectItem value="aleatoria">Chave Aleatória</SelectItem>
-                  </SelectContent>
-                </Select>
+            <Card 
+              className={`cursor-pointer transition-all p-6 ${metodo === MetodoPagamento.TED ? 'border-[#E83D22] border-2 bg-[#FFF8F6]' : 'border-gray-200 hover:border-[#E83D2280]'}`}
+              onClick={() => setMetodo(MetodoPagamento.TED)}
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-[#E83D22] rounded-full flex items-center justify-center mb-4 text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Via TED Bancária</h3>
+                <p className="text-gray-600 text-sm">
+                  Receba o pagamento na sua conta bancária por transferência eletrônica.
+                  Disponível para todos os bancos.
+                </p>
               </div>
+            </Card>
+          </div>
+          
+          {metodo === MetodoPagamento.PIX && (
+            <div className="mt-6 p-4 bg-white border rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Informe sua chave PIX</h3>
               
-              <div className="p-3 border-b border-gray-200">
-                <label htmlFor="chave" className="block text-[#212121] text-sm mb-2">
-                  Chave PIX
-                </label>
-                <Input
-                  id="chave"
-                  {...pixForm.register('chave')}
-                  placeholder="Digite sua chave PIX"
-                  className={`text-[#212121] placeholder-[#969696] bg-transparent focus:outline-none ${
-                    pixForm.formState.errors.chave ? 'border-red-500' : 'border-gray-200'
-                  }`}
-                  inputMode={getInputMode(pixForm.watch('tipoChave')) as any}
-                />
-                {pixForm.formState.errors.chave && (
-                  <p className="mt-1 text-xs text-red-600">{pixForm.formState.errors.chave.message}</p>
-                )}
-              </div>
-              
-              <div className="p-3">
+              <form onSubmit={pixForm.handleSubmit(handlePixSubmit)} className="space-y-4">
+                <div>
+                  <label htmlFor="tipoChave" className="block text-base font-medium text-gray-800 mb-2">
+                    Tipo de chave
+                  </label>
+                  <Select
+                    onValueChange={(value) => pixForm.setValue('tipoChave', value as any)}
+                    defaultValue={pixForm.watch('tipoChave')}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione o tipo de chave PIX" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cpf">CPF</SelectItem>
+                      <SelectItem value="email">E-mail</SelectItem>
+                      <SelectItem value="telefone">Telefone</SelectItem>
+                      <SelectItem value="aleatoria">Chave Aleatória</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label htmlFor="chave" className="block text-base font-medium text-gray-800 mb-2">
+                    Chave PIX
+                  </label>
+                  <Input
+                    id="chave"
+                    {...pixForm.register('chave')}
+                    placeholder="Digite sua chave PIX"
+                    className={pixForm.formState.errors.chave ? 'border-red-500' : ''}
+                    inputMode={getInputMode(pixForm.watch('tipoChave')) as any}
+                  />
+                  {pixForm.formState.errors.chave && (
+                    <p className="mt-1 text-sm text-red-600">{pixForm.formState.errors.chave.message}</p>
+                  )}
+                </div>
+                
                 <Button
                   type="submit"
-                  className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
+                  className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
                   disabled={isSubmitting}
+                  style={{ height: '50px' }}
                 >
                   {isSubmitting ? 'Processando...' : 'Confirmar PIX'}
                 </Button>
-              </div>
-            </form>
-          </>
-        )}
-        
-        {metodo === MetodoPagamento.TED && (
-          <>
-            <div className="bg-[#F5F5F5] p-3">
-              <p className="text-[#6E6E6E] text-xs translate-y-1">Dados Bancários</p>
+              </form>
             </div>
-            
-            <form onSubmit={tedForm.handleSubmit(handleTedSubmit)}>
-              <div className="p-3 border-b border-gray-200">
-                <label htmlFor="banco" className="block text-[#212121] text-sm mb-2">
-                  Banco
-                </label>
-                <Select
-                  onValueChange={(value) => tedForm.setValue('banco', value)}
-                  defaultValue={tedForm.watch('banco')}
-                >
-                  <SelectTrigger className="w-full text-[#212121] border-gray-200">
-                    <SelectValue placeholder="Selecione seu banco" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {principaisBancos.map((banco, index) => (
-                      <SelectItem key={index} value={banco}>{banco}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {tedForm.formState.errors.banco && (
-                  <p className="mt-1 text-xs text-red-600">{tedForm.formState.errors.banco.message}</p>
-                )}
-              </div>
+          )}
+          
+          {metodo === MetodoPagamento.TED && (
+            <div className="mt-6 p-4 bg-white border rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Informe seus dados bancários</h3>
               
-              <div className="p-3 border-b border-gray-200">
-                <label htmlFor="agencia" className="block text-[#212121] text-sm mb-2">
-                  Agência
-                </label>
-                <Input
-                  id="agencia"
-                  {...tedForm.register('agencia')}
-                  placeholder="Número da agência (sem dígito)"
-                  className={`text-[#212121] placeholder-[#969696] bg-transparent focus:outline-none ${
-                    tedForm.formState.errors.agencia ? 'border-red-500' : 'border-gray-200'
-                  }`}
-                  inputMode="numeric"
-                />
-                {tedForm.formState.errors.agencia && (
-                  <p className="mt-1 text-xs text-red-600">{tedForm.formState.errors.agencia.message}</p>
-                )}
-              </div>
-              
-              <div className="p-3 border-b border-gray-200">
-                <label htmlFor="conta" className="block text-[#212121] text-sm mb-2">
-                  Conta
-                </label>
-                <Input
-                  id="conta"
-                  {...tedForm.register('conta')}
-                  placeholder="Número da conta com dígito"
-                  className={`text-[#212121] placeholder-[#969696] bg-transparent focus:outline-none ${
-                    tedForm.formState.errors.conta ? 'border-red-500' : 'border-gray-200'
-                  }`}
-                  inputMode="numeric"
-                />
-                {tedForm.formState.errors.conta && (
-                  <p className="mt-1 text-xs text-red-600">{tedForm.formState.errors.conta.message}</p>
-                )}
-              </div>
-              
-              <div className="p-3 border-b border-gray-200">
-                <label htmlFor="tipoConta" className="block text-[#212121] text-sm mb-2">
-                  Tipo de conta
-                </label>
-                <Select
-                  onValueChange={(value) => tedForm.setValue('tipoConta', value as any)}
-                  defaultValue={tedForm.watch('tipoConta')}
-                >
-                  <SelectTrigger className="w-full text-[#212121] border-gray-200">
-                    <SelectValue placeholder="Selecione o tipo de conta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="corrente">Conta Corrente</SelectItem>
-                    <SelectItem value="poupanca">Conta Poupança</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="p-3">
+              <form onSubmit={tedForm.handleSubmit(handleTedSubmit)} className="space-y-4">
+                <div>
+                  <label htmlFor="banco" className="block text-base font-medium text-gray-800 mb-2">
+                    Banco
+                  </label>
+                  <Select
+                    onValueChange={(value) => tedForm.setValue('banco', value)}
+                    defaultValue={tedForm.watch('banco')}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione seu banco" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {principaisBancos.map((banco, index) => (
+                        <SelectItem key={index} value={banco}>{banco}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {tedForm.formState.errors.banco && (
+                    <p className="mt-1 text-sm text-red-600">{tedForm.formState.errors.banco.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="agencia" className="block text-base font-medium text-gray-800 mb-2">
+                    Agência
+                  </label>
+                  <Input
+                    id="agencia"
+                    {...tedForm.register('agencia')}
+                    placeholder="Número da agência (sem dígito)"
+                    className={tedForm.formState.errors.agencia ? 'border-red-500' : ''}
+                    inputMode="numeric"
+                  />
+                  {tedForm.formState.errors.agencia && (
+                    <p className="mt-1 text-sm text-red-600">{tedForm.formState.errors.agencia.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="conta" className="block text-base font-medium text-gray-800 mb-2">
+                    Conta
+                  </label>
+                  <Input
+                    id="conta"
+                    {...tedForm.register('conta')}
+                    placeholder="Número da conta com dígito"
+                    className={tedForm.formState.errors.conta ? 'border-red-500' : ''}
+                    inputMode="numeric"
+                  />
+                  {tedForm.formState.errors.conta && (
+                    <p className="mt-1 text-sm text-red-600">{tedForm.formState.errors.conta.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="tipoConta" className="block text-base font-medium text-gray-800 mb-2">
+                    Tipo de conta
+                  </label>
+                  <Select
+                    onValueChange={(value) => tedForm.setValue('tipoConta', value as any)}
+                    defaultValue={tedForm.watch('tipoConta')}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione o tipo de conta" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="corrente">Conta Corrente</SelectItem>
+                      <SelectItem value="poupanca">Conta Poupança</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
                 <Button
                   type="submit"
-                  className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
+                  className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
                   disabled={isSubmitting}
+                  style={{ height: '50px' }}
                 >
                   {isSubmitting ? 'Processando...' : 'Confirmar dados bancários'}
                 </Button>
-              </div>
-            </form>
-          </>
-        )}
+              </form>
+            </div>
+          )}
+        </div>
       </div>
-      
-      <div className="pb-[50px]"></div>
       
       <Footer />
       

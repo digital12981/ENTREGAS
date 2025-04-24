@@ -195,145 +195,130 @@ const Municipios: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
-      <header 
-        className="bg-white py-2 px-4 flex items-center rounded-b-sm"
-        style={{ 
-          boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
-        }}
-      >
-        <a href="/" className="text-[#EF4444] text-xl">
-          <i className="fas fa-arrow-left"></i>
-        </a>
-        <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Motorista Parceiro Shopee</h1>
-      </header>
+    <div className="bg-white min-h-screen flex flex-col">
+      <Header />
       
-      <div className="bg-[#F5F5F5] h-[10px]"></div>
-      
-      <div className="flex-grow w-full">
-        <div className="w-full mx-auto bg-white">
-          <div className="custom-section-header">
-            <p className="custom-section-title">Escolha onde retirar os pedidos</p>
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        {/* Meia-lua no canto direito */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+        
+        <div className="flex items-center relative z-10">
+          <div className="text-white mr-3">
+            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
           </div>
+          <div className="leading-none">
+            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex-grow container mx-auto py-8 w-full">
+        <div className="w-full mx-auto p-6 mb-8">
+          <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">Escolha onde retirar os pedidos</h1>
+          <p className="text-center text-gray-600 mb-6">
+            Selecione as cidades onde você pode retirar os pedidos no Centro de distribuição da Shopee. Em cada cidade abaixo está localizado um centro de distribuição e de acordo com a sua disponibilidade pode estar escolhendo mais de 1 centro para retirar os pedidos.
+          </p>
           
-          <div className="custom-input-field">
-            <p className="text-[#212121] text-sm mb-4">
-              Selecione as cidades onde você pode retirar os pedidos no Centro de distribuição da Shopee. Em cada cidade abaixo está localizado um centro de distribuição e de acordo com a sua disponibilidade pode estar escolhendo mais de 1 centro para retirar os pedidos.
+          <div className="mb-4 flex justify-between items-center">
+            <p className="text-sm font-medium text-gray-700">
+              {cepData?.state ? `Estado: ${cepData.state}` : 'Estado não identificado'}
             </p>
-            
-            <div className="mb-4 flex justify-between items-center">
-              <p className="text-[#212121]">
-                {cepData?.state ? `Estado: ${cepData.state}` : 'Estado não identificado'}
-              </p>
-              <button 
-                type="button"
-                onClick={toggleAllMunicipios}
-                className="text-xs py-2 px-3 rounded-sm border border-gray-200 bg-white hover:bg-gray-50"
-              >
-                {municipios.every(m => m.selecionado) ? 'Desmarcar Todos' : 'Marcar Todos'}
-              </button>
-            </div>
+            <Button 
+              variant="outline" 
+              type="button"
+              onClick={toggleAllMunicipios}
+              className="text-xs py-1 h-8"
+            >
+              {municipios.every(m => m.selecionado) ? 'Desmarcar Todos' : 'Marcar Todos'}
+            </Button>
           </div>
           
-          <div className="custom-section-header">
-            <p className="custom-section-title">Lista de Municípios</p>
-          </div>
-          
-          <div className="custom-input-field">
-            {/* Lista de municípios e conteúdo adicional em um container */}
-            <div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4 max-h-[400px] overflow-y-auto p-1">
+          <div className="border rounded-[3px] overflow-hidden p-4 relative">
+            <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {municipios.map((municipio, index) => (
                   <div 
                     key={index} 
-                    className={`p-3 border rounded-sm cursor-pointer hover:bg-gray-50 transition-colors ${
-                      municipio.selecionado ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200'
+                    className={`p-2 sm:p-4 border rounded-[3px] cursor-pointer hover:bg-gray-50 transition-colors ${
+                      municipio.selecionado ? 'border-[#EE4E2E] bg-[#FFF8F6]' : 'border-gray-200'
                     }`}
                     onClick={() => toggleMunicipio(index)}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-[#212121] truncate max-w-[75%]">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[75%] sm:max-w-[80%]">
                         {municipio.nome}
                       </span>
                       <Checkbox
                         checked={municipio.selecionado}
                         onCheckedChange={() => toggleMunicipio(index)}
-                        className="h-4 w-4 border-gray-300 rounded data-[state=checked]:bg-[#EF4444] data-[state=checked]:text-white"
+                        className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 rounded data-[state=checked]:bg-[#EE4E2E] data-[state=checked]:text-white"
                       />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            
-            {/* Estatísticas de entregas */}
-            {municipios.filter(m => m.selecionado).length > 0 ? (
-              <>
-                <div className="custom-section-header">
-                  <p className="custom-section-title">Previsão de Entregas</p>
-                </div>
-                
-                <div className="mb-4 px-3">
-                  <p className="text-[#212121] text-sm mb-3">Quantidade média diária de entregas que podem ser destinadas a você:</p>
-                  <div className="p-3 bg-[#FFF8F6] border border-[#EF4444]/20 rounded-sm mb-3">
-                    <div className="text-center">
-                      <span className="font-medium text-[#EF4444]">A Shopee paga R$ 12,00 por entrega realizada</span>
+          </div>
+          
+          {/* Estatísticas de entregas */}
+          {municipios.filter(m => m.selecionado).length > 0 && (
+            <Card className="mt-6 mb-6 p-4 border border-[#E83D2240] bg-[#FFF8F6]">
+              <div className="flex flex-col">
+                <h3 className="font-medium text-gray-800 mb-2">Previsão de Entregas</h3>
+                <div className="text-sm text-gray-700">
+                  <p>Quantidade média diária de entregas que podem ser destinadas a você:</p>
+                  <div className="mt-2 p-3 bg-white rounded-[3px] border border-[#E83D2220]">
+                    <div className="text-center mb-3 bg-[#FFF8F6] p-2 rounded-[3px]">
+                      <span className="font-medium text-[#E83D22]">A Shopee paga R$ 12,00 por entrega realizada</span>
                     </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-sm">
+                    
                     {municipios.filter(m => m.selecionado).map((m, index) => (
-                      <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 last:mb-0">
-                        <span className="text-sm text-[#212121] md:col-span-1">{m.nome}:</span>
-                        <span className="text-sm font-medium text-[#EF4444] md:col-span-1">
-                          {m.entregas} <span className="font-normal text-[#6e6e6e]">entregas</span>
+                      <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2 last:mb-0">
+                        <span className="font-medium md:col-span-1">{m.nome}:</span>
+                        <span className="font-bold text-[#E83D22] md:col-span-1">
+                          {m.entregas} <span className="font-normal text-gray-700">entregas</span>
                         </span>
-                        <span className="text-sm font-medium text-green-600 md:col-span-1">
-                          R$ {(m.entregas * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
+                        <span className="font-medium text-green-600 md:col-span-1">
+                          R$ {(m.entregas * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-gray-700">/dia</span>
                         </span>
                       </div>
                     ))}
                     
                     {municipios.filter(m => m.selecionado).length > 1 && (
-                      <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <span className="text-sm font-medium text-[#212121]">Total diário:</span>
-                        <span className="text-sm font-medium text-[#EF4444]">
+                      <div className="mt-3 pt-3 border-t border-[#E83D2220] grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <span className="font-semibold">Total diário:</span>
+                        <span className="font-bold text-[#E83D22]">
                           {municipios
                             .filter(m => m.selecionado)
-                            .reduce((acc, m) => acc + m.entregas, 0)} <span className="font-normal text-[#6e6e6e]">entregas</span>
+                            .reduce((acc, m) => acc + m.entregas, 0)} <span className="font-normal text-gray-700">entregas</span>
                         </span>
-                        <span className="text-sm font-medium text-green-600">
+                        <span className="font-semibold text-green-600">
                           R$ {(municipios
                             .filter(m => m.selecionado)
-                            .reduce((acc, m) => acc + m.entregas, 0) * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
+                            .reduce((acc, m) => acc + m.entregas, 0) * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-gray-700">/dia</span>
                         </span>
                       </div>
                     )}
                   </div>
-                  
-                  {/* Botão Prosseguir dentro da seção de estatísticas de entregas */}
-                  <div className="custom-button-container mt-4">
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      className="custom-button"
-                      disabled={submitting}
-                    >
-                      {submitting ? 'Processando...' : 'Prosseguir'}
-                    </button>
-                  </div>
                 </div>
-              </>
-            ) : (
-              <div className="p-4 text-center text-[#6e6e6e]">
-                Selecione pelo menos um município para ver a previsão de ganhos
               </div>
-            )}
+            </Card>
+          )}
+          
+          <div className="mt-6">
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
+              disabled={submitting}
+              style={{ height: '50px' }}
+            >
+              {submitting ? 'Processando...' : 'Prosseguir'}
+            </Button>
           </div>
         </div>
       </div>
-      
-      <div className="pb-[50px]"></div>
       
       <Footer />
       
@@ -353,69 +338,57 @@ const Municipios: React.FC = () => {
       
       {/* Modal de seleção de data de início */}
       <Dialog open={showStartDateModal} onOpenChange={setShowStartDateModal}>
-        <DialogContent className="p-0 sm:max-w-none w-full h-full max-h-screen overflow-hidden border-none shadow-none">
-          <DialogTitle className="sr-only">Oportunidade de Trabalho</DialogTitle>
-          <DialogDescription className="sr-only">Selecione quando você pode começar a trabalhar</DialogDescription>
-          <div className="absolute top-0 left-0 w-full h-full bg-[#F5F5F5] z-0"></div>
+        <DialogContent className="p-0 sm:max-w-none w-full h-full max-h-screen overflow-hidden border-none shadow-none bg-white">
+          <div className="absolute top-0 left-0 w-full h-full bg-white z-0"></div>
           
-          <div className="relative flex flex-col h-screen bg-transparent z-10 max-w-md mx-auto px-4 py-6">
-            <div className="bg-white rounded-sm shadow-lg mt-2">
-              <div className="custom-section-header">
-                <p className="custom-section-title">Oportunidade de Trabalho</p>
-              </div>
+          <div className="relative flex flex-col justify-center items-center h-screen bg-transparent z-10 p-6 max-w-md mx-auto">
+            <DialogTitle className="text-2xl font-bold text-[#E83D22] text-center mb-4">
+              <i className="fas fa-exclamation-circle mr-2"></i>
+              Atenção! Oportunidade de Trabalho
+            </DialogTitle>
+            
+            <DialogDescription className="text-base text-center text-gray-700 py-3 mb-4 bg-[#FFF8F6] rounded-lg border border-[#E83D2220] p-4">
+              Na região que você escolheu, estamos com <span className="font-bold text-[#E83D22]">URGENTE</span> necessidade
+              de novos entregadores, pois a demanda de entregas está alta e temos poucos entregadores cadastrados.
+            </DialogDescription>
+            
+            <div className="my-6 w-full">
+              <h3 className="font-medium text-gray-800 mb-4 text-center text-lg">Quando você pode começar?</h3>
               
-              <div className="custom-input-field">
-                <p className="text-[#212121] text-sm text-center">
-                  Na região que você escolheu, estamos com <span className="font-medium text-[#EF4444]">URGENTE</span> necessidade
-                  de novos entregadores, pois a demanda de entregas está alta e temos poucos entregadores cadastrados.
-                </p>
-              </div>
-              
-              <div className="custom-section-header">
-                <p className="custom-section-title">Quando você pode começar?</p>
-              </div>
-              
-              <div className="custom-input-field">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                  {getNextThreeDays().map((date, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      onClick={() => handleStartDateSelection(date.value)}
-                      className={`py-2 px-2 h-auto rounded-sm text-sm border ${
-                        selectedStartDate === date.value 
-                          ? 'bg-[#EF4444] hover:bg-[#EF4444]/90 text-white border-[#EF4444]' 
-                          : 'bg-white hover:bg-gray-50 border-gray-200 text-[#212121]'
-                      }`}
-                    >
-                      {date.full}
-                    </button>
-                  ))}
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={() => handleStartDateSelection('outro')}
-                  className={`w-full py-2 px-2 text-sm rounded-sm border ${
-                    selectedStartDate === 'outro' 
-                      ? 'bg-[#EF4444] hover:bg-[#EF4444]/90 text-white border-[#EF4444]' 
-                      : 'bg-white hover:bg-gray-50 border-gray-200 text-[#212121]'
-                  }`}
-                >
-                  Outro dia
-                </button>
-                
-                <div className="custom-button-container mt-4">
-                  <button 
-                    type="button" 
-                    onClick={handleStartDateContinue}
-                    className="custom-button"
-                    disabled={!selectedStartDate}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+                {getNextThreeDays().map((date, index) => (
+                  <Button
+                    key={index}
+                    type="button"
+                    variant={selectedStartDate === date.value ? "default" : "outline"}
+                    onClick={() => handleStartDateSelection(date.value)}
+                    className={`py-4 px-2 h-auto text-base ${selectedStartDate === date.value ? 'bg-[#E83D22] hover:bg-[#d73920] border-[#E83D22] shadow-md' : 'border-gray-300 hover:border-[#E83D22] hover:text-[#E83D22]'}`}
                   >
-                    Continuar
-                  </button>
-                </div>
+                    {date.full}
+                  </Button>
+                ))}
               </div>
+              
+              <Button
+                type="button"
+                variant={selectedStartDate === 'outro' ? "default" : "outline"}
+                onClick={() => handleStartDateSelection('outro')}
+                className={`w-full mt-4 py-4 h-auto text-base ${selectedStartDate === 'outro' ? 'bg-[#E83D22] hover:bg-[#d73920] border-[#E83D22] shadow-md' : 'border-gray-300 hover:border-[#E83D22] hover:text-[#E83D22]'}`}
+              >
+                Outro dia
+              </Button>
+            </div>
+            
+            <div className="mt-6 w-full">
+              <Button 
+                type="button" 
+                onClick={handleStartDateContinue}
+                className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium text-lg py-6" 
+                style={{ height: '60px' }}
+                disabled={!selectedStartDate}
+              >
+                Continuar
+              </Button>
             </div>
           </div>
         </DialogContent>

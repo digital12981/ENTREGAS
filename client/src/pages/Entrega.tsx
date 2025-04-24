@@ -401,20 +401,23 @@ const Entrega: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
-      <header 
-        className="bg-white py-2 px-4 flex items-center rounded-b-sm"
-        style={{ 
-          boxShadow: "0 4px 10px -3px rgba(0, 0, 0, 0.2)"
-        }}
-      >
-        <a href="/" className="text-[#EF4444] text-xl">
-          <i className="fas fa-arrow-left"></i>
-        </a>
-        <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Motorista Parceiro Shopee</h1>
-      </header>
+    <div className="bg-white min-h-screen flex flex-col">
+      <Header />
       
-      <div className="bg-[#F5F5F5] h-[10px]"></div>
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        {/* Meia-lua no canto direito */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+        
+        <div className="flex items-center relative z-10">
+          <div className="text-white mr-3">
+            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
+          </div>
+          <div className="leading-none">
+            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
+          </div>
+        </div>
+      </div>
       
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="w-full max-w-4xl mx-auto">

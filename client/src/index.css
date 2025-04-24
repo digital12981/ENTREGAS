@@ -29,24 +29,24 @@
 
 :root {
   --background: 0 0% 100%;
-  --foreground: 0 0% 13%; /* #212121 */
+  --foreground: 20 14.3% 4.1%;
   --muted: 60 4.8% 95.9%;
-  --muted-foreground: 0 0% 59%; /* #969696 */
+  --muted-foreground: 25 5.3% 44.7%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 13%; /* #212121 */
+  --popover-foreground: 20 14.3% 4.1%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 13%; /* #212121 */
+  --card-foreground: 20 14.3% 4.1%;
   --border: 20 5.9% 90%;
   --input: 20 5.9% 90%;
   --primary: 207 90% 54%;
   --primary-foreground: 211 100% 99%;
   --secondary: 60 4.8% 95.9%;
-  --secondary-foreground: 0 0% 13%; /* #212121 */
+  --secondary-foreground: 24 9.8% 10%;
   --accent: 60 4.8% 95.9%;
-  --accent-foreground: 0 0% 13%; /* #212121 */
+  --accent-foreground: 24 9.8% 10%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 60 9.1% 97.8%;
-  --ring: 0 0% 13%; /* #212121 */
+  --ring: 20 14.3% 4.1%;
   --radius: 0.5rem;
 }
 
@@ -54,7 +54,7 @@
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   --muted: 240 3.7% 15.9%;
-  --muted-foreground: 0 0% 59%; /* #969696 */
+  --muted-foreground: 240 5% 64.9%;
   --popover: 240 10% 3.9%;
   --popover-foreground: 0 0% 98%;
   --card: 240 10% 3.9%;
@@ -79,29 +79,8 @@
   }
 
   body {
-    @apply font-sans antialiased text-foreground;
-    font-family: 'Roboto', sans-serif;
-    background-color: #f5f5f5;
-    color: #212121;
-  }
-
-  /* Remover outline laranja dos inputs quando em foco */
-  input:focus, 
-  select:focus, 
-  textarea:focus, 
-  button:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  
-  /* Remover bordas dos componentes shadcn em foco */
-  .ring-offset-background:focus-visible,
-  *:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: transparent !important;
-    ring-offset-width: 0 !important;
-    --ring-offset-width: 0 !important;
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Poppins', sans-serif;
   }
 }
 
@@ -117,10 +96,6 @@
 }
 .text-custom-orange {
   color: #EE4D2D;
-}
-/* Adicionando sombreamento forte para os cabeçalhos */
-header.shadow-lg {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 }
 .hamburger-line {
   width: 24px;
@@ -208,7 +183,7 @@ ol.list-decimal > li::marker {
 }
 
 .status-item.active .status-text {
-  color: #212121;
+  color: #111827;
   font-weight: bold;
 }
 
@@ -221,117 +196,4 @@ ol.list-decimal > li::marker {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Estilos personalizados para o novo layout */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
-
-.custom-layout {
-  background-color: #F5F5F5;
-  font-family: 'Roboto', sans-serif;
-  font-size: 0.875rem;
-}
-
-.custom-header {
-  background-color: white;
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  border-radius: 0 0 0.125rem 0.125rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.custom-section-header {
-  background-color: #F5F5F5;
-  padding: 0.5rem 0.75rem;
-}
-
-.custom-section-title {
-  color: #6E6E6E;
-  font-size: 0.95rem;
-  font-weight: 400;
-}
-
-.custom-input-field {
-  padding: 0.5rem 0.5rem;
-  background-color: white;
-}
-
-/* Apenas aplicar borda em campos de input que não são os últimos dentro de uma seção */
-.custom-input-field:not(:last-child) {
-  border-bottom: 1px solid #E5E7EB;
-}
-
-.custom-input {
-  width: 100%;
-  color: #212121;
-  background-color: transparent;
-  text-align: left;
-  padding-left: 0.25rem;
-}
-
-.custom-input::placeholder {
-  color: #969696;
-}
-
-.custom-input:focus {
-  outline: none;
-}
-
-.custom-button-container {
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-.custom-button {
-  width: 100%;
-  background-color: #EF4444;
-  color: white;
-  padding: 0.5rem 0;
-  border-radius: 0.125rem;
-}
-
-.custom-toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
-}
-
-.custom-toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.custom-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 28px;
-}
-
-.custom-slider:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .custom-slider {
-  background-color: #a7e8c5;
-}
-
-input:checked + .custom-slider:before {
-  transform: translateX(22px);
 }
