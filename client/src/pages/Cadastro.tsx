@@ -337,7 +337,7 @@ const Cadastro: React.FC = () => {
   };
 
   return (
-    <div className="custom-layout min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-sm font-['Roboto',sans-serif]">
       {/* Header personalizado - mantendo o novo cabeçalho */}
       <header className="bg-white shadow-lg py-2 px-4 flex items-center rounded-b-sm">
         <a href="/" className="text-[#EF4444] text-xl">
@@ -609,10 +609,7 @@ const Cadastro: React.FC = () => {
       </form>
       
       {/* Rodapé */}
-      <div className="mt-10 mb-4 text-center">
-        <p className="text-xs text-gray-500">© 2025 Shopee Brasil. Todos os direitos reservados.</p>
-        <p className="text-xs text-gray-500 mt-1">Oportunidade para entregadores parceiros.</p>
-      </div>
+      <Footer />
       
       {/* Modal de carregamento */}
       <LoadingModal
