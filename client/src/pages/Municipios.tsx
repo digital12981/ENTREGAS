@@ -240,9 +240,9 @@ const Municipios: React.FC = () => {
           </div>
           
           <div className="custom-input-field">
-            {/* Lista de municípios e conteúdo adicional em um container com altura fixa e scroll */}
-            <div className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 250px)' }}>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+            {/* Lista de municípios e conteúdo adicional em um container */}
+            <div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4 max-h-[400px] overflow-y-auto p-1">
                 {municipios.map((municipio, index) => (
                   <div 
                     key={index} 
@@ -264,67 +264,71 @@ const Municipios: React.FC = () => {
                   </div>
                 ))}
               </div>
-          
-              {/* Estatísticas de entregas */}
-              {municipios.filter(m => m.selecionado).length > 0 && (
-                <>
-                  <div className="custom-section-header">
-                    <p className="custom-section-title">Previsão de Entregas</p>
-                  </div>
-                  
-                  <div className="mb-4 px-3">
-                    <p className="text-[#212121] text-sm mb-3">Quantidade média diária de entregas que podem ser destinadas a você:</p>
-                    <div className="p-3 bg-[#FFF8F6] border border-[#EF4444]/20 rounded-sm mb-3">
-                      <div className="text-center">
-                        <span className="font-medium text-[#EF4444]">A Shopee paga R$ 12,00 por entrega realizada</span>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white rounded-sm">
-                      {municipios.filter(m => m.selecionado).map((m, index) => (
-                        <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 last:mb-0">
-                          <span className="text-sm text-[#212121] md:col-span-1">{m.nome}:</span>
-                          <span className="text-sm font-medium text-[#EF4444] md:col-span-1">
-                            {m.entregas} <span className="font-normal text-[#6e6e6e]">entregas</span>
-                          </span>
-                          <span className="text-sm font-medium text-green-600 md:col-span-1">
-                            R$ {(m.entregas * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
-                          </span>
-                        </div>
-                      ))}
-                      
-                      {municipios.filter(m => m.selecionado).length > 1 && (
-                        <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-2">
-                          <span className="text-sm font-medium text-[#212121]">Total diário:</span>
-                          <span className="text-sm font-medium text-[#EF4444]">
-                            {municipios
-                              .filter(m => m.selecionado)
-                              .reduce((acc, m) => acc + m.entregas, 0)} <span className="font-normal text-[#6e6e6e]">entregas</span>
-                          </span>
-                          <span className="text-sm font-medium text-green-600">
-                            R$ {(municipios
-                              .filter(m => m.selecionado)
-                              .reduce((acc, m) => acc + m.entregas, 0) * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
             </div>
             
-            {/* Botão Prosseguir fora da área de scroll para estar sempre visível */}
-            <div className="custom-button-container sticky bottom-0 bg-white pt-2 pb-2 border-t border-gray-100">
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="custom-button"
-                disabled={submitting}
-              >
-                {submitting ? 'Processando...' : 'Prosseguir'}
-              </button>
-            </div>
+            {/* Estatísticas de entregas */}
+            {municipios.filter(m => m.selecionado).length > 0 ? (
+              <>
+                <div className="custom-section-header">
+                  <p className="custom-section-title">Previsão de Entregas</p>
+                </div>
+                
+                <div className="mb-4 px-3">
+                  <p className="text-[#212121] text-sm mb-3">Quantidade média diária de entregas que podem ser destinadas a você:</p>
+                  <div className="p-3 bg-[#FFF8F6] border border-[#EF4444]/20 rounded-sm mb-3">
+                    <div className="text-center">
+                      <span className="font-medium text-[#EF4444]">A Shopee paga R$ 12,00 por entrega realizada</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-sm">
+                    {municipios.filter(m => m.selecionado).map((m, index) => (
+                      <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 last:mb-0">
+                        <span className="text-sm text-[#212121] md:col-span-1">{m.nome}:</span>
+                        <span className="text-sm font-medium text-[#EF4444] md:col-span-1">
+                          {m.entregas} <span className="font-normal text-[#6e6e6e]">entregas</span>
+                        </span>
+                        <span className="text-sm font-medium text-green-600 md:col-span-1">
+                          R$ {(m.entregas * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
+                        </span>
+                      </div>
+                    ))}
+                    
+                    {municipios.filter(m => m.selecionado).length > 1 && (
+                      <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <span className="text-sm font-medium text-[#212121]">Total diário:</span>
+                        <span className="text-sm font-medium text-[#EF4444]">
+                          {municipios
+                            .filter(m => m.selecionado)
+                            .reduce((acc, m) => acc + m.entregas, 0)} <span className="font-normal text-[#6e6e6e]">entregas</span>
+                        </span>
+                        <span className="text-sm font-medium text-green-600">
+                          R$ {(municipios
+                            .filter(m => m.selecionado)
+                            .reduce((acc, m) => acc + m.entregas, 0) * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Botão Prosseguir dentro da seção de estatísticas de entregas */}
+                  <div className="custom-button-container mt-4">
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      className="custom-button"
+                      disabled={submitting}
+                    >
+                      {submitting ? 'Processando...' : 'Prosseguir'}
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="p-4 text-center text-[#6e6e6e]">
+                Selecione pelo menos um município para ver a previsão de ganhos
+              </div>
+            )}
           </div>
         </div>
       </div>
