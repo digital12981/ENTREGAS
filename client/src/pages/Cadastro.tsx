@@ -471,29 +471,15 @@ const Cadastro: React.FC = () => {
         <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Cadastro Entregador</h1>
       </header>
       
-      {/* Seção de imagens */}
+      {/* Seção de boas-vindas */}
       <div className="bg-white">
         <div className="custom-section-header">
           <p className="custom-section-title">Entregador Parceiro Shopee</p>
         </div>
         
         <div className="p-3 border-b border-gray-200">
-          <div className="flex flex-col md:flex-row mb-2 gap-2">
-            <div className="w-full md:w-1/2">
-              <img 
-                src={shopeeMotoImage} 
-                alt="Entregador Shopee" 
-                className="w-full h-auto rounded-sm object-cover"
-              />
-            </div>
-            <div className="w-full md:w-1/2">
-              <img 
-                src={shopeeCarsImage} 
-                alt="Entregador Shopee com carro" 
-                className="w-full h-auto rounded-sm object-cover"
-              />
-            </div>
-          </div>
+          <h2 className="text-base font-medium text-[#212121] mb-2">Bem-vindo ao cadastro de entregadores</h2>
+          <p className="text-sm text-[#6E6E6E]">Preencha os dados abaixo para se tornar um entregador parceiro da Shopee.</p>
         </div>
       </div>
       
@@ -576,9 +562,10 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div className="custom-input-field">
-            <div className="flex justify-between">
+            <p className="text-[#212121] mb-3 text-sm">Selecione o tipo de veículo que você utiliza:</p>
+            <div className="flex justify-between gap-4">
               <div 
-                className={`flex items-center ${tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#EF4444]' : 'text-[#212121]'}`}
+                className={`flex-1 p-3 border rounded-sm flex items-center justify-center cursor-pointer transition-colors ${tipoVeiculo === TipoVeiculo.MOTO ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200'}`}
                 onClick={() => setTipoVeiculo(TipoVeiculo.MOTO)}
               >
                 <input
@@ -587,13 +574,15 @@ const Cadastro: React.FC = () => {
                   name="tipoVeiculo"
                   checked={tipoVeiculo === TipoVeiculo.MOTO}
                   onChange={() => setTipoVeiculo(TipoVeiculo.MOTO)}
-                  className="mr-2"
+                  className="mr-2 hidden"
                 />
-                <label htmlFor="moto" className="text-sm">Moto</label>
+                <label htmlFor="moto" className={`text-sm font-medium ${tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#EF4444]' : 'text-[#212121]'}`}>
+                  Moto
+                </label>
               </div>
               
               <div 
-                className={`flex items-center ${tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#EF4444]' : 'text-[#212121]'}`}
+                className={`flex-1 p-3 border rounded-sm flex items-center justify-center cursor-pointer transition-colors ${tipoVeiculo === TipoVeiculo.CARRO ? 'border-[#EF4444] bg-[#FFF8F6]' : 'border-gray-200'}`}
                 onClick={() => setTipoVeiculo(TipoVeiculo.CARRO)}
               >
                 <input
@@ -602,9 +591,11 @@ const Cadastro: React.FC = () => {
                   name="tipoVeiculo"
                   checked={tipoVeiculo === TipoVeiculo.CARRO}
                   onChange={() => setTipoVeiculo(TipoVeiculo.CARRO)}
-                  className="mr-2"
+                  className="mr-2 hidden"
                 />
-                <label htmlFor="carro" className="text-sm">Carro</label>
+                <label htmlFor="carro" className={`text-sm font-medium ${tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#EF4444]' : 'text-[#212121]'}`}>
+                  Carro
+                </label>
               </div>
             </div>
           </div>
