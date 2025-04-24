@@ -694,14 +694,6 @@ const Cadastro: React.FC = () => {
                     <p className="text-sm text-green-600 ml-7">
                       Você selecionou a opção de veículo alugado. As informações da placa não são necessárias neste momento.
                     </p>
-                    <div className="mt-2 text-sm text-gray-600 ml-7">
-                      <strong>Lembre-se:</strong> 
-                      <ul className="list-disc ml-4 mt-1">
-                        <li>O contrato de locação será solicitado durante o credenciamento</li>
-                        <li>A placa do veículo deverá estar registrada na central Shopee</li>
-                        <li>O veículo precisa estar em boas condições de uso e documentação regular</li>
-                      </ul>
-                    </div>
                   </div>
                 )}
               </div>
