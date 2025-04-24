@@ -69,7 +69,7 @@ export async function createPixPayment(data: PaymentRequest): Promise<PaymentRes
       credentials: 'omit' as RequestCredentials,
       body: JSON.stringify({
         name: data.name,
-        cpf: data.cpf,
+        cpf: data.cpf.replace(/[^0-9]/g, ''), // Remove caracteres não numéricos
         email: data.email || '',
         phone: data.phone || '',
         amount: data.amount || 79.90 // Valor padrão para o kit de segurança
