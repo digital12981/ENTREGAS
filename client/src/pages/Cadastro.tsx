@@ -536,7 +536,7 @@ const Cadastro: React.FC = () => {
           </div>
 
           {/* Email */}
-          <div className="custom-input-field">
+          <div className="custom-input-field border-b-0">
             <Input 
               id="email"
               {...register('email')} 
