@@ -195,7 +195,7 @@ const Municipios: React.FC = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
       <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
@@ -213,97 +213,117 @@ const Municipios: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex-grow container mx-auto py-8 w-full">
-        <div className="w-full mx-auto p-6 mb-8">
-          <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">Escolha onde retirar os pedidos</h1>
-          <p className="text-center text-gray-600 mb-6">
-            Selecione as cidades onde você pode retirar os pedidos no Centro de distribuição da Shopee. Em cada cidade abaixo está localizado um centro de distribuição e de acordo com a sua disponibilidade pode estar escolhendo mais de 1 centro para retirar os pedidos.
-          </p>
-          
-          <div className="mb-4 flex justify-between items-center">
-            <p className="text-sm font-medium text-gray-700">
-              {cepData?.state ? `Estado: ${cepData.state}` : 'Estado não identificado'}
-            </p>
-            <Button 
-              variant="outline" 
-              type="button"
-              onClick={toggleAllMunicipios}
-              className="text-xs py-1 h-8"
-            >
-              {municipios.every(m => m.selecionado) ? 'Desmarcar Todos' : 'Marcar Todos'}
-            </Button>
+      <div className="flex-grow w-full">
+        <div className="w-full mx-auto mb-4 bg-white">
+          <div className="custom-section-header">
+            <p className="custom-section-title">Escolha onde retirar os pedidos</p>
           </div>
           
-          <div className="border rounded-[3px] overflow-hidden p-4 relative">
-            <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-                {municipios.map((municipio, index) => (
-                  <div 
-                    key={index} 
-                    className={`p-2 sm:p-4 border rounded-[3px] cursor-pointer hover:bg-gray-50 transition-colors ${
-                      municipio.selecionado ? 'border-[#EE4E2E] bg-[#FFF8F6]' : 'border-gray-200'
-                    }`}
-                    onClick={() => toggleMunicipio(index)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[75%] sm:max-w-[80%]">
-                        {municipio.nome}
-                      </span>
-                      <Checkbox
-                        checked={municipio.selecionado}
-                        onCheckedChange={() => toggleMunicipio(index)}
-                        className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 rounded data-[state=checked]:bg-[#EE4E2E] data-[state=checked]:text-white"
-                      />
+          <div className="custom-input-field px-4">
+            <p className="text-sm text-[#212121] mb-4">
+              Selecione as cidades onde você pode retirar os pedidos no Centro de distribuição da Shopee. Em cada cidade abaixo está localizado um centro de distribuição e de acordo com a sua disponibilidade pode estar escolhendo mais de 1 centro para retirar os pedidos.
+            </p>
+            
+            <div className="mb-4 flex justify-between items-center">
+              <p className="text-sm text-[#212121]">
+                {cepData?.state ? `Estado: ${cepData.state}` : 'Estado não identificado'}
+              </p>
+              <Button 
+                variant="outline" 
+                type="button"
+                onClick={toggleAllMunicipios}
+                className="text-xs py-1 h-8 rounded-[3px]"
+              >
+                {municipios.every(m => m.selecionado) ? 'Desmarcar Todos' : 'Marcar Todos'}
+              </Button>
+            </div>
+          </div>
+          
+          <div className="h-[10px]"></div>
+          
+          <div className="bg-white">
+            <div className="custom-section-header">
+              <p className="custom-section-title">Lista de Municípios</p>
+            </div>
+            
+            <div className="custom-input-field">
+              <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                  {municipios.map((municipio, index) => (
+                    <div 
+                      key={index} 
+                      className={`p-2 sm:p-4 border rounded-[3px] cursor-pointer hover:bg-gray-50 transition-colors ${
+                        municipio.selecionado ? 'border-[#E83D22] bg-[#FFF8F6]' : 'border-gray-200'
+                      }`}
+                      onClick={() => toggleMunicipio(index)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs sm:text-sm text-[#212121] truncate max-w-[75%] sm:max-w-[80%]">
+                          {municipio.nome}
+                        </span>
+                        <Checkbox
+                          checked={municipio.selecionado}
+                          onCheckedChange={() => toggleMunicipio(index)}
+                          className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 rounded data-[state=checked]:bg-[#E83D22] data-[state=checked]:text-white"
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
           
           {/* Estatísticas de entregas */}
           {municipios.filter(m => m.selecionado).length > 0 && (
-            <Card className="mt-6 mb-6 p-4 border border-[#E83D2240] bg-[#FFF8F6]">
-              <div className="flex flex-col">
-                <h3 className="font-medium text-gray-800 mb-2">Previsão de Entregas</h3>
-                <div className="text-sm text-gray-700">
-                  <p>Quantidade média diária de entregas que podem ser destinadas a você:</p>
-                  <div className="mt-2 p-3 bg-white rounded-[3px] border border-[#E83D2220]">
-                    <div className="text-center mb-3 bg-[#FFF8F6] p-2 rounded-[3px]">
-                      <span className="font-medium text-[#E83D22]">A Shopee paga R$ 12,00 por entrega realizada</span>
-                    </div>
-                    
-                    {municipios.filter(m => m.selecionado).map((m, index) => (
-                      <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2 last:mb-0">
-                        <span className="font-medium md:col-span-1">{m.nome}:</span>
-                        <span className="font-bold text-[#E83D22] md:col-span-1">
-                          {m.entregas} <span className="font-normal text-gray-700">entregas</span>
-                        </span>
-                        <span className="font-medium text-green-600 md:col-span-1">
-                          R$ {(m.entregas * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-gray-700">/dia</span>
-                        </span>
-                      </div>
-                    ))}
-                    
-                    {municipios.filter(m => m.selecionado).length > 1 && (
-                      <div className="mt-3 pt-3 border-t border-[#E83D2220] grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <span className="font-semibold">Total diário:</span>
-                        <span className="font-bold text-[#E83D22]">
-                          {municipios
-                            .filter(m => m.selecionado)
-                            .reduce((acc, m) => acc + m.entregas, 0)} <span className="font-normal text-gray-700">entregas</span>
-                        </span>
-                        <span className="font-semibold text-green-600">
-                          R$ {(municipios
-                            .filter(m => m.selecionado)
-                            .reduce((acc, m) => acc + m.entregas, 0) * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-gray-700">/dia</span>
-                        </span>
-                      </div>
-                    )}
+            <div className="h-[10px]"></div>
+          )}
+          
+          {municipios.filter(m => m.selecionado).length > 0 && (
+            <div className="bg-white">
+              <div className="custom-section-header">
+                <p className="custom-section-title">Previsão de Entregas</p>
+              </div>
+              
+              <div className="custom-input-field">
+                <p className="text-sm text-[#212121] mb-3">Quantidade média diária de entregas que podem ser destinadas a você:</p>
+                <div className="p-3 bg-[#FFF8F6] border border-[#E83D2230] rounded-[3px] mb-3">
+                  <div className="text-center mb-1">
+                    <span className="font-medium text-[#E83D22]">A Shopee paga R$ 12,00 por entrega realizada</span>
                   </div>
                 </div>
+                
+                <div className="bg-white rounded-[3px]">
+                  {municipios.filter(m => m.selecionado).map((m, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 last:mb-0">
+                      <span className="text-sm text-[#212121] md:col-span-1">{m.nome}:</span>
+                      <span className="text-sm font-medium text-[#E83D22] md:col-span-1">
+                        {m.entregas} <span className="font-normal text-[#6e6e6e]">entregas</span>
+                      </span>
+                      <span className="text-sm font-medium text-green-600 md:col-span-1">
+                        R$ {(m.entregas * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
+                      </span>
+                    </div>
+                  ))}
+                  
+                  {municipios.filter(m => m.selecionado).length > 1 && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-2">
+                      <span className="text-sm font-medium text-[#212121]">Total diário:</span>
+                      <span className="text-sm font-medium text-[#E83D22]">
+                        {municipios
+                          .filter(m => m.selecionado)
+                          .reduce((acc, m) => acc + m.entregas, 0)} <span className="font-normal text-[#6e6e6e]">entregas</span>
+                      </span>
+                      <span className="text-sm font-medium text-green-600">
+                        R$ {(municipios
+                          .filter(m => m.selecionado)
+                          .reduce((acc, m) => acc + m.entregas, 0) * 12).toFixed(2).replace('.', ',')} <span className="font-normal text-[#6e6e6e]">/dia</span>
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </Card>
+            </div>
           )}
           
           <div className="mt-6">
