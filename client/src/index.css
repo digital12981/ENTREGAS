@@ -218,13 +218,13 @@ ol.list-decimal > li::marker {
 
 .custom-section-header {
   background-color: #F5F5F5;
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem;
 }
 
 .custom-section-title {
-  color: #6E6E6E;
-  font-size: 0.75rem;
-  transform: translateY(0.25rem);
+  color: #212121;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .custom-input-field {
