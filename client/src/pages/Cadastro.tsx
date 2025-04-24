@@ -474,7 +474,7 @@ const Cadastro: React.FC = () => {
       
       {/* Seção de boas-vindas */}
       <div className="bg-white">
-        <div className="p-3 border-b border-gray-200">
+        <div className="p-3">
           <h2 className="text-base font-medium text-[#212121] mb-2">Bem-vindo ao cadastro de entregadores</h2>
           <p className="text-sm text-[#6E6E6E]">Preencha os dados abaixo para se tornar um entregador parceiro da Shopee.</p>
         </div>
@@ -491,7 +491,7 @@ const Cadastro: React.FC = () => {
           </div>
 
           {/* CPF */}
-          <div className="custom-input-field">
+          <div className="custom-input-field with-border">
             <Input 
               id="cpf"
               {...register('cpf')}
@@ -507,7 +507,7 @@ const Cadastro: React.FC = () => {
           </div>
 
           {/* Nome */}
-          <div className="custom-input-field">
+          <div className="custom-input-field with-border">
             <Input 
               id="nome"
               {...register('nome')}
@@ -520,7 +520,7 @@ const Cadastro: React.FC = () => {
           </div>
 
           {/* Telefone */}
-          <div className="custom-input-field">
+          <div className="custom-input-field with-border">
             <Input 
               id="telefone"
               {...register('telefone')} 
@@ -558,7 +558,7 @@ const Cadastro: React.FC = () => {
             <p className="custom-section-title">Tipo de Veículo</p>
           </div>
 
-          <div className="custom-input-field">
+          <div className="custom-input-field border-b-0">
             <p className="text-[#212121] mb-3 text-sm">Selecione o tipo de veículo que você utiliza:</p>
             <div className="flex justify-between gap-4">
               <div 
@@ -621,7 +621,7 @@ const Cadastro: React.FC = () => {
           </div>
 
           {/* Opção de Carro alugado */}
-          <div className="custom-input-field">
+          <div className="custom-input-field border-b-0">
             <div className="p-3 mb-3 bg-[#FFF8F6] border border-[#E83D2230] rounded-sm">
               <h3 className="font-medium text-[#E83D22] mb-2">Opção para Veículo Alugado</h3>
               <p className="text-[#212121] text-sm mb-3">
