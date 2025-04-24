@@ -462,7 +462,7 @@ const Cadastro: React.FC = () => {
   };
 
   return (
-    <div className="custom-layout min-h-screen flex flex-col">
+    <div className="custom-layout min-h-screen flex flex-col bg-[#F5F5F5]">
       {/* Header personalizado */}
       <header className="flex items-center justify-between bg-[#E83D22] p-4 text-white">
         <a href="#" className="text-white text-xl">

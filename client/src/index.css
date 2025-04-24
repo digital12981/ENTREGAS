@@ -248,7 +248,7 @@ ol.list-decimal > li::marker {
 
 .custom-input-field {
   padding: 0.75rem;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 2px solid #E5E7EB;
   background-color: white;
 }
 
