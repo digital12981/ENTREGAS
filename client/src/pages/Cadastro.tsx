@@ -462,257 +462,277 @@ const Cadastro: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
-      <Header />
+    <div className="custom-layout min-h-screen flex flex-col">
+      {/* Header personalizado */}
+      <header className="custom-header">
+        <a href="#" className="text-[#EF4444] text-xl">
+          <i className="fas fa-arrow-left"></i>
+        </a>
+        <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">Cadastro Entregador</h1>
+      </header>
       
-      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
-        {/* Meia-lua no canto direito */}
-        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+      {/* Seção de imagens */}
+      <div className="bg-white">
+        <div className="custom-section-header">
+          <p className="custom-section-title">Entregador Parceiro Shopee</p>
+        </div>
         
-        <div className="flex items-center relative z-10">
-          <div className="text-white mr-3">
-            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
-          </div>
-          <div className="leading-none">
-            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
-            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
+        <div className="p-3 border-b border-gray-200">
+          <div className="flex flex-col md:flex-row mb-2 gap-2">
+            <div className="w-full md:w-1/2">
+              <img 
+                src={shopeeMotoImage} 
+                alt="Entregador Shopee" 
+                className="w-full h-auto rounded-sm object-cover"
+              />
+            </div>
+            <div className="w-full md:w-1/2">
+              <img 
+                src={shopeeCarsImage} 
+                alt="Entregador Shopee com carro" 
+                className="w-full h-auto rounded-sm object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>
       
-      <div className="flex-grow container mx-auto px-2 py-8 w-full">
-        <div className="w-full mx-auto p-6 mb-8">
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Cadastro de Entregador Parceiro</h1>
-          
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="cpf" className="block text-base font-medium text-gray-800 mb-2">
-                  CPF
-                </label>
-                <Input
-                  id="cpf"
-                  {...register('cpf')}
-                  value={cpfValue}
-                  onChange={handleCpfChange}
-                  placeholder="000.000.000-00"
-                  className={errors.cpf ? 'border-red-500' : ''}
-                  inputMode="numeric"
+      <div className="bg-[#F5F5F5] h-[10px]"></div>
+
+      {/* Formulário */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Seção de dados pessoais */}
+        <div className="bg-white">
+          <div className="custom-section-header">
+            <p className="custom-section-title">Dados Pessoais</p>
+          </div>
+
+          {/* CPF */}
+          <div className="custom-input-field">
+            <Input 
+              id="cpf"
+              {...register('cpf')}
+              value={cpfValue}
+              onChange={handleCpfChange}
+              placeholder="CPF (000.000.000-00)" 
+              className={`custom-input ${errors.cpf ? 'border-red-500' : 'border-0'}`}
+              inputMode="numeric"
+            />
+            {errors.cpf && (
+              <p className="mt-1 text-sm text-red-600">{errors.cpf.message}</p>
+            )}
+          </div>
+
+          {/* Nome */}
+          <div className="custom-input-field">
+            <Input 
+              id="nome"
+              {...register('nome')}
+              placeholder="Nome Completo" 
+              className={`custom-input ${errors.nome ? 'border-red-500' : 'border-0'}`}
+            />
+            {errors.nome && (
+              <p className="mt-1 text-sm text-red-600">{errors.nome.message}</p>
+            )}
+          </div>
+
+          {/* Telefone */}
+          <div className="custom-input-field">
+            <Input 
+              id="telefone"
+              {...register('telefone')} 
+              value={telefoneValue}
+              onChange={handleTelefoneChange}
+              placeholder="Telefone ((00) 00000-0000)" 
+              className={`custom-input ${errors.telefone ? 'border-red-500' : 'border-0'}`}
+              inputMode="tel"
+            />
+            {errors.telefone && (
+              <p className="mt-1 text-sm text-red-600">{errors.telefone.message}</p>
+            )}
+          </div>
+
+          {/* Email */}
+          <div className="custom-input-field">
+            <Input 
+              id="email"
+              {...register('email')} 
+              placeholder="Email" 
+              className={`custom-input ${errors.email ? 'border-red-500' : 'border-0'}`}
+              type="email"
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-[#F5F5F5] h-[10px]"></div>
+
+        {/* Seção de Tipo de Veículo */}
+        <div className="bg-white">
+          <div className="custom-section-header">
+            <p className="custom-section-title">Tipo de Veículo</p>
+          </div>
+
+          <div className="custom-input-field">
+            <div className="flex justify-between">
+              <div 
+                className={`flex items-center ${tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#EF4444]' : 'text-[#212121]'}`}
+                onClick={() => setTipoVeiculo(TipoVeiculo.MOTO)}
+              >
+                <input
+                  type="radio"
+                  id="moto"
+                  name="tipoVeiculo"
+                  checked={tipoVeiculo === TipoVeiculo.MOTO}
+                  onChange={() => setTipoVeiculo(TipoVeiculo.MOTO)}
+                  className="mr-2"
                 />
-                {errors.cpf && (
-                  <p className="mt-1 text-sm text-red-600">{errors.cpf.message}</p>
-                )}
+                <label htmlFor="moto" className="text-sm">Moto</label>
               </div>
-
-              <div>
-                <label htmlFor="nome" className="block text-base font-medium text-gray-800 mb-2">
-                  Nome Completo
-                </label>
-                <Input
-                  id="nome"
-                  {...register('nome')}
-                  placeholder="Digite seu nome completo"
-                  className={errors.nome ? 'border-red-500' : ''}
+              
+              <div 
+                className={`flex items-center ${tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#EF4444]' : 'text-[#212121]'}`}
+                onClick={() => setTipoVeiculo(TipoVeiculo.CARRO)}
+              >
+                <input
+                  type="radio"
+                  id="carro"
+                  name="tipoVeiculo"
+                  checked={tipoVeiculo === TipoVeiculo.CARRO}
+                  onChange={() => setTipoVeiculo(TipoVeiculo.CARRO)}
+                  className="mr-2"
                 />
-                {errors.nome && (
-                  <p className="mt-1 text-sm text-red-600">{errors.nome.message}</p>
-                )}
+                <label htmlFor="carro" className="text-sm">Carro</label>
               </div>
+            </div>
+          </div>
+        </div>
 
-              <div>
-                <label htmlFor="telefone" className="block text-base font-medium text-gray-800 mb-2">
-                  Telefone
+        <div className="bg-[#F5F5F5] h-[10px]"></div>
+
+        {/* Seção de Veículo */}
+        <div className="bg-white">
+          <div className="custom-section-header">
+            <p className="custom-section-title">Informações do Veículo</p>
+          </div>
+
+          {/* Opção de Carro alugado */}
+          <div className="custom-input-field">
+            <div className="p-3 mb-3 bg-[#FFF8F6] border border-[#E83D2230] rounded-sm">
+              <h3 className="font-medium text-[#E83D22] mb-2">Opção para Veículo Alugado</h3>
+              <p className="text-[#212121] text-sm mb-3">
+                Se você trabalha com um veículo alugado ou emprestado, selecione esta opção 
+                para prosseguir sem a necessidade de informar a placa do veículo.
+              </p>
+              <div className="flex items-center">
+                <label className="custom-toggle-switch">
+                  <input
+                    id="isRentedCar"
+                    type="checkbox"
+                    checked={isRentedCar}
+                    onChange={handleRentedCarChange}
+                  />
+                  <span className="custom-slider"></span>
                 </label>
-                <Input
-                  id="telefone"
-                  {...register('telefone')}
-                  value={telefoneValue}
-                  onChange={handleTelefoneChange}
-                  placeholder="(00) 00000-0000"
-                  className={errors.telefone ? 'border-red-500' : ''}
-                  inputMode="numeric"
-                />
-                {errors.telefone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.telefone.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-base font-medium text-gray-800 mb-2">
-                  E-mail
+                <label
+                  htmlFor="isRentedCar"
+                  className="ml-2 text-base font-bold text-[#E83D22] leading-tight"
+                >
+                  Estou utilizando um veículo alugado ou emprestado
                 </label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register('email')}
-                  placeholder="seu@email.com"
-                  className={errors.email ? 'border-red-500' : ''}
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div className="pt-4">
-                <label className="block text-lg font-medium text-gray-800 mb-4">
-                  Qual veículo você utiliza?
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setTipoVeiculo(TipoVeiculo.CARRO)}
-                    className={`flex flex-col items-center justify-center p-6 ${
-                      tipoVeiculo === TipoVeiculo.CARRO
-                        ? 'border-[#E83D22] border-3 bg-[#FFF8F6]'
-                        : 'border-gray-200 border-2 bg-white hover:bg-gray-50'
-                    } rounded-lg transition-colors`}
-                  >
-                    <div className="mb-3 h-24 flex items-center justify-center">
-                      <img src={shopeeCarsImage} alt="Carros Shopee" className="h-full w-auto object-contain" />
-                    </div>
-                    <span className={`font-medium ${
-                      tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#E83D22]' : 'text-gray-700'
-                    }`}>
-                      Carro
-                    </span>
-                  </button>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setTipoVeiculo(TipoVeiculo.MOTO)}
-                    className={`flex flex-col items-center justify-center p-6 ${
-                      tipoVeiculo === TipoVeiculo.MOTO
-                        ? 'border-[#E83D22] border-3 bg-[#FFF8F6]'
-                        : 'border-gray-200 border-2 bg-white hover:bg-gray-50'
-                    } rounded-lg transition-colors`}
-                  >
-                    <div className="mb-3 h-20 flex items-center justify-center">
-                      <img src={shopeeMotoImage} alt="Moto Shopee" className="h-full object-contain" />
-                    </div>
-                    <span className={`font-medium ${
-                      tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#E83D22]' : 'text-gray-700'
-                    }`}>
-                      Moto
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                {/* Opção de Carro alugado */}
-                <div className="p-4 mb-6 bg-[#FFF8F6] border border-[#E83D2230] rounded-md">
-                  <h3 className="font-medium text-[#E83D22] mb-2">Opção para Veículo Alugado</h3>
-                  <p className="text-gray-700 text-sm mb-3">
-                    Se você trabalha com um veículo alugado ou emprestado, selecione esta opção 
-                    para prosseguir sem a necessidade de informar a placa do veículo.
-                  </p>
-                  <div className="flex items-center">
-                    <input
-                      id="isRentedCar"
-                      type="checkbox"
-                      checked={isRentedCar}
-                      onChange={handleRentedCarChange}
-                      className="w-5 h-5 text-[#E83D22] rounded border-gray-300 focus:ring-[#E83D22]"
-                    />
-                    <label
-                      htmlFor="isRentedCar"
-                      className="ml-2 text-base font-bold text-[#E83D22] leading-tight"
-                    >
-                      Estou utilizando um veículo alugado ou emprestado
-                    </label>
-                  </div>
-                </div>
-
-                {/* Campo de placa - exibido apenas se não for carro alugado */}
-                {!isRentedCar && (
-                  <>
-                    <label htmlFor="placa" className="block text-base font-medium text-gray-800 mb-2">
-                      Placa do Veículo
-                    </label>
-                    <div className="relative">
-                      <Input
-                        id="placa"
-                        {...register('placa')}
-                        onChange={handlePlacaChange}
-                        placeholder="ABC-1234 ou ABC1D23"
-                        className={`${errors.placa ? 'border-red-500' : ''} ${isLoadingVehicleInfo ? 'pr-10' : ''}`}
-                        inputMode="text"
-                        type="search" 
-                        autoCapitalize="characters"
-                      />
-                      {isLoadingVehicleInfo && (
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
-                        </div>
-                      )}
-                    </div>
-                    {errors.placa && (
-                      <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
-                    )}
-                  </>
-                )}
-                
-                {/* Área para mostrar as informações do veículo - exibida apenas se não for carro alugado */}
-                {!isRentedCar ? (
-                  <div className="mt-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-medium text-gray-800">Informações do Veículo</h3>
-                      {vehicleInfo && (
-                        <button 
-                          type="button"
-                          onClick={handleClearPlate}
-                          className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
-                        >
-                          NÃO É MEU VEÍCULO
-                        </button>
-                      )}
-                    </div>
-                    
-                    {/* Usar o componente VehicleInfoBox */}
-                    <VehicleInfoBox
-                      licensePlate={placaValue}
-                      onChange={(isValid) => {
-                        // Se o veículo é válido, atualizar o estado
-                        setVehicleIsValid(isValid);
-                        if (isValid) {
-                          // O componente já buscará as informações do veículo
-                          setIsLoadingVehicleInfo(false);
-                        }
-                      }}
-                      className="w-full"
-                    />
-                  </div>
-                ) : (
-                  // Mensagem quando é carro alugado
-                  <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-md">
-                    <h4 className="text-base font-medium text-green-700 mb-1 flex items-center">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Veículo Alugado Registrado
-                    </h4>
-                    <p className="text-sm text-green-600 ml-7">
-                      Você selecionou a opção de veículo alugado. As informações da placa não são necessárias neste momento.
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
-              disabled={isSubmitting}
-              style={{ height: '50px' }}
-            >
-              {isSubmitting ? 'Processando...' : 'Prosseguir'}
-            </Button>
-          </form>
+            {/* Campo de placa - exibido apenas se não for carro alugado */}
+            {!isRentedCar && (
+              <div className="mb-3">
+                <p className="text-[#212121] mb-2 text-sm">Placa do Veículo</p>
+                <div className="relative">
+                  <Input
+                    id="placa"
+                    {...register('placa')}
+                    onChange={handlePlacaChange}
+                    value={placaValue}
+                    placeholder="ABC-1234 ou ABC1D23"
+                    className={`custom-input ${errors.placa ? 'border-red-500' : 'border border-gray-200 rounded-sm'} ${isLoadingVehicleInfo ? 'pr-10' : ''}`}
+                    inputMode="text"
+                    type="search" 
+                    autoCapitalize="characters"
+                  />
+                  {isLoadingVehicleInfo && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
+                    </div>
+                  )}
+                </div>
+                {errors.placa && (
+                  <p className="mt-1 text-sm text-red-600">{errors.placa.message}</p>
+                )}
+              </div>
+            )}
+            
+            {/* Área para mostrar as informações do veículo - exibida apenas se não for carro alugado */}
+            {!isRentedCar ? (
+              <div className="mt-3">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-medium text-[#212121] text-sm">Informações do Veículo</h3>
+                  {vehicleInfo && (
+                    <button 
+                      type="button"
+                      onClick={handleClearPlate}
+                      className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-sm hover:bg-red-100 transition-colors"
+                    >
+                      NÃO É MEU VEÍCULO
+                    </button>
+                  )}
+                </div>
+                
+                {/* Usar o componente VehicleInfoBox */}
+                <VehicleInfoBox
+                  licensePlate={placaValue}
+                  onChange={(isValid) => {
+                    // Se o veículo é válido, atualizar o estado
+                    setVehicleIsValid(isValid);
+                    if (isValid) {
+                      // O componente já buscará as informações do veículo
+                      setIsLoadingVehicleInfo(false);
+                    }
+                  }}
+                  className="w-full"
+                />
+              </div>
+            ) : (
+              // Mensagem quando é carro alugado
+              <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-sm">
+                <h4 className="text-base font-medium text-green-700 mb-1 flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Veículo Alugado Registrado
+                </h4>
+                <p className="text-sm text-green-600 ml-7">
+                  Você selecionou a opção de veículo alugado. As informações da placa não são necessárias neste momento.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Botão de envio */}
+        <div className="custom-button-container">
+          <button
+            type="submit"
+            className="custom-button py-3"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Processando...' : 'Prosseguir'}
+          </button>
+        </div>
+      </form>
       
-      <Footer />
-      
+      {/* Modal de carregamento */}
       <LoadingModal
         isOpen={showLoadingModal}
         onComplete={handleLoadingComplete}
