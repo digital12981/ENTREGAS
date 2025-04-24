@@ -254,7 +254,7 @@ const Finalizacao: React.FC = () => {
             <form onSubmit={handleSubmit(handleFormSubmit)}>
               <Button
                 type="submit"
-                className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+                className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Processando...' : 'Solicitar Kit e Finalizar'}
@@ -290,7 +290,7 @@ const Finalizacao: React.FC = () => {
           
           <Button
             onClick={handleFinalizar}
-            className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+            className="w-full bg-[#EF4444] hover:bg-[#D43C1E] text-white py-2 rounded-sm"
           >
             Voltar ao Início
           </Button>
