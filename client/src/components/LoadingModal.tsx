@@ -74,10 +74,6 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
           
           {/* Status Modal */}
           <div className="max-w-md mx-auto w-full">
-            <header className="bg-white shadow-lg py-2 px-4 flex items-center rounded-sm mb-4">
-              <h1 className="text-lg font-normal text-center flex-grow text-[#10172A]">{title}</h1>
-            </header>
-            
             <div className="bg-white rounded-sm shadow-lg">
               <div className="bg-[#F5F5F5] p-3">
                 <p className="text-[#6E6E6E] text-xs translate-y-1">Status do processamento</p>
