@@ -222,9 +222,9 @@ ol.list-decimal > li::marker {
 }
 
 .custom-section-title {
-  color: #212121;
-  font-size: 1.1rem;
-  font-weight: 600;
+  color: #6E6E6E;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .custom-input-field {
