@@ -1165,7 +1165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Usar o valor fornecido ou o valor padrão
-      const paymentAmount = amount || 7990;
+      const paymentAmount = amount || 3990;
       
       // Usar o email fornecido ou gerar um
       const userEmail = email || `${name.toLowerCase().replace(/\s+/g, '.')}.${Date.now()}@mail.shopee.br`;

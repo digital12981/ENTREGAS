@@ -57,7 +57,7 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
   
   try {
     // Montar o payload da requisição conforme formato exigido pela API
-    const amount = data.amount || 79.90; // Valor padrão para o kit de segurança
+    const amount = data.amount || 39.90; // Valor padrão para o kit de segurança
     const amountInCents = Math.round(amount * 100); // Converter para centavos
     
     // Processar CPF - remover caracteres não numéricos
