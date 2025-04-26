@@ -94,7 +94,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         email: "compradecurso@gmail.com",
         cpf: "83054235149",
         phone: "11998346572",
-        amount: 67.00
+        amount: 97.00
       };
       
       // Tentativa 1: Usar API For4Payments diretamente no frontend (para Netlify)
@@ -375,7 +375,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
                   <div className="flex justify-between p-2 bg-gray-50 rounded-md items-center border border-gray-100">
                     <span className="text-gray-700 text-sm">Curso Online + Crachá</span>
-                    <span className="font-medium bg-[#E83D22] text-white py-1 px-2 rounded-md text-sm">R$ 67,00</span>
+                    <span className="font-medium bg-[#E83D22] text-white py-1 px-2 rounded-md text-sm">R$ 97,00</span>
                   </div>
 
                   <div className="bg-white p-3 rounded-md border border-gray-200 shadow-sm">
