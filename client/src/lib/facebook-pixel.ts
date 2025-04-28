@@ -188,7 +188,7 @@ export async function checkPaymentStatus(paymentId: string, apiKey: string): Pro
     
     // Garantir que temos uma API key
     if (!apiKey) {
-      console.error('[PIXEL] VITE_FOR4PAYMENTS_SECRET_KEY não está definida no frontend');
+      console.error('[PIXEL] API Key não disponível');
       return { success: false, error: 'API Key não disponível' };
     }
     

@@ -31,11 +31,11 @@ function isApiKeyAvailable(): boolean {
 }
 
 // Função para obter a API key de forma segura
-function getApiKey(): string {
+export function getApiKey(): string {
   // Verificamos a disponibilidade e retornamos um valor opaco para o cliente
   if (!isApiKeyAvailable()) {
-    console.error('VITE_FOR4PAYMENTS_SECRET_KEY não está definida no frontend');
-    throw new Error('VITE_FOR4PAYMENTS_SECRET_KEY não configurada. Verifique as variáveis de ambiente.');
+    console.error('API Key não está definida no frontend');
+    throw new Error('API Key não configurada. Verifique as variáveis de ambiente.');
   }
   
   // @ts-ignore - Retornamos a chave diretamente apenas quando necessário

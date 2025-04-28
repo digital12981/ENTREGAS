@@ -97,11 +97,21 @@ const Payment: React.FC = () => {
       if (checkStatus) {
         console.log('[PAYMENT] Verificando status diretamente do frontend...');
         
-        // Obter a chave de API For4Payments via variável de ambiente específica para frontend
-        // Esta variável deve ser configurada no arquivo .env com VITE_FOR4PAYMENTS_SECRET_KEY
-        const apiKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
+        // Verificar se temos acesso direto à API For4Payments
+        let apiKeyAvailable = false;
+        let apiKey = '';
         
-        if (apiKey) {
+        try {
+          // Verificar de forma dinâmica se a API key está disponível
+          if (import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY) {
+            apiKeyAvailable = true;
+            apiKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
+          }
+        } catch (e) {
+          console.warn('[PAYMENT] Não foi possível acessar variáveis de ambiente:', e);
+        }
+        
+        if (apiKeyAvailable && apiKey) {
           try {
             // Usar a nova função que verifica diretamente do frontend
             const { success, data: statusData, approved } = await checkPaymentStatus(id, apiKey);
