@@ -11,6 +11,7 @@ import Finalizacao from "@/pages/Finalizacao";
 import Entrega from "@/pages/Entrega";
 import Dashboard from "@/pages/Dashboard";
 import Payment from "@/pages/Payment";
+import Pay from "@/pages/Pay";
 import Treinamento from "@/pages/Treinamento";
 import PagamentoInstrutor from "@/pages/PagamentoInstrutor";
 import { useAppContext } from "@/contexts/AppContext";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/entrega" component={Entrega} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/payment" component={Payment} />
+      <Route path="/pay" component={Pay} />
       <Route path="/treinamento" component={Treinamento} />
       <Route path="/pagamento-instrutor" component={PagamentoInstrutor} />
       <Route component={NotFound} />
