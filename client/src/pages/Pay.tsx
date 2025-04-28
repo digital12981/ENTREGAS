@@ -180,7 +180,7 @@ const Pay: React.FC = () => {
           </div>
 
           <button 
-            className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+            className="w-full bg-[#EF4444] hover:bg-[#D91C1C] text-white py-2 rounded-sm transition-colors duration-200"
             onClick={copyPixCode}
           >
             Copiar Código Pix
