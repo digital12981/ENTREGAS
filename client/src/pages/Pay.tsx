@@ -1,7 +1,88 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'wouter';
+
+interface Cliente {
+  id: number;
+  nome: string;
+  cpf: string;
+  telefone: string;
+  email: string;
+  pixCode: string;
+  cep: string | null;
+  rua: string | null;
+  numero: string | null;
+  complemento: string | null;
+  bairro: string | null;
+  cidade: string | null;
+  estado: string | null;
+  data_cadastro: string;
+}
+
+interface ApiResponse {
+  sucesso: boolean;
+  cliente: Cliente;
+}
 
 const Pay: React.FC = () => {
+  const [location] = useLocation();
+  const [loading, setLoading] = useState(true);
+  const [cliente, setCliente] = useState<Cliente | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Referência para o input do código PIX
+  const [pixCode, setPixCode] = useState<string>('000201010212268500...');
+
+  // Função para copiar o código PIX
+  const copyPixCode = useCallback(() => {
+    if (cliente?.pixCode) {
+      navigator.clipboard.writeText(cliente.pixCode);
+      alert('Código PIX copiado com sucesso!');
+    } else if (pixCode) {
+      navigator.clipboard.writeText(pixCode);
+      alert('Código PIX copiado com sucesso!');
+    }
+  }, [cliente, pixCode]);
+
+  // Efeito para buscar os dados do cliente
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const cpfParam = queryParams.get('cpf');
+    
+    if (cpfParam) {
+      // Remover qualquer formatação do CPF (pontos, traços)
+      const cpfLimpo = cpfParam.replace(/\D/g, '');
+      
+      setLoading(true);
+      
+      // Buscar dados do cliente na API
+      fetch(`https://webhook-manager.replit.app/api/v1/cliente?cpf=${cpfLimpo}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erro ao buscar dados do cliente');
+          }
+          return response.json();
+        })
+        .then((data: ApiResponse) => {
+          if (data.sucesso && data.cliente) {
+            setCliente(data.cliente);
+            setPixCode(data.cliente.pixCode || '000201010212268500...');
+          } else {
+            setError('Cliente não encontrado');
+          }
+        })
+        .catch(err => {
+          console.error('Erro ao buscar cliente:', err);
+          setError('Erro ao buscar dados do cliente');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [location]);
+
   // Adicionar os estilos diretamente no componente
   useEffect(() => {
     // Adicionar as fontes e estilos externos
@@ -67,8 +148,8 @@ const Pay: React.FC = () => {
             <img src="https://i.ibb.co/Q7RXTRzN/a0e45d2fcc7fdab21ea74890cbd0d45e-2-1.png" alt="Uniforme de Segurança" className="w-[100px] bg-[#F5F5F5] rounded-[4px]" />
             <div className="ml-4 flex flex-col justify-start">
               <p className="text-[#212121] font-bold">Entregador Shopee</p>
-              <p className="text-[#212121]"><strong>Nome:</strong> João da Silva</p>
-              <p className="text-[#212121]"><strong>CPF:</strong> 123.456.789-00</p>
+              <p className="text-[#212121]"><strong>Nome:</strong> {cliente ? cliente.nome : 'João da Silva'}</p>
+              <p className="text-[#212121]"><strong>CPF:</strong> {cliente ? cliente.cpf : '123.456.789-00'}</p>
             </div>
           </div>
 
@@ -87,12 +168,21 @@ const Pay: React.FC = () => {
             <p className="text-[#212121] text-center mb-1">Código Pix</p>
             <div className="flex justify-center">
               <div className="w-4/5 bg-[#F5F5F5] border border-[#E0E0E0] rounded">
-                <input type="text" defaultValue="000201010212268500..." className="w-full h-[32px] text-[#737373] bg-transparent focus:outline-none text-center overflow-hidden px-2" readOnly />
+                <input 
+                  type="text" 
+                  value={cliente ? cliente.pixCode : pixCode} 
+                  className="w-full h-[32px] text-[#737373] bg-transparent focus:outline-none text-center overflow-hidden px-2 cursor-pointer" 
+                  readOnly 
+                  onClick={copyPixCode}
+                />
               </div>
             </div>
           </div>
 
-          <button className="w-full bg-[#EF4444] text-white py-2 rounded-sm">
+          <button 
+            className="w-full bg-[#EF4444] text-white py-2 rounded-sm"
+            onClick={copyPixCode}
+          >
             Copiar Código Pix
           </button>
         </div>
@@ -133,6 +223,11 @@ const Pay: React.FC = () => {
       </div>
 
       <div className="p-3 mt-2">
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <p className="text-center">{error}</p>
+          </div>
+        )}
       </div>
     </div>
   );
