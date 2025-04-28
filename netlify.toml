@@ -2,6 +2,9 @@
   publish = "dist/public"
   command = "./netlify.build.sh"
 
+[build.processing.secrets]
+  scan = "false"
+
 [[redirects]]
   from = "/vehicle-api/*"
   to = "/.netlify/functions/vehicle-proxy/:splat"
