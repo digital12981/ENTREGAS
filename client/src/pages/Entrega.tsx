@@ -306,11 +306,13 @@ const Entrega: React.FC = () => {
     console.log('[ENTREGA] Verificando status do pagamento:', paymentId);
     
     // Obter a chave de API For4Payments via variável de ambiente específica para frontend
-    const apiKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
+    // Importamos o valor sem armazenar diretamente
+    const { isDirectClientAvailable, getApiKey } = await import('@/lib/for4payments-direct');
     
-    if (apiKey) {
+    if (isDirectClientAvailable()) {
       try {
-        // Usar a função que verifica diretamente do frontend
+        // Obter a chave API e usar a função que verifica diretamente do frontend
+        const apiKey = getApiKey();
         const { success, data: statusData } = await checkPaymentStatus(paymentId, apiKey);
         
         if (success && statusData) {
