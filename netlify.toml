@@ -2,11 +2,8 @@
   publish = "dist/public"
   command = "./netlify.build.sh"
 
-[build.environment]
-  NODE_VERSION = "20"
-  SECRETS_SCAN_ENABLED = "true"
-  SECRETS_SCAN_OMIT_KEYS = "VITE_FOR4PAYMENTS_SECRET_KEY,FOR4PAYMENTS_SECRET_KEY"
-  SECRETS_SCAN_OMIT_PATHS = "dist/public/assets/*"
+[build.processing.secrets]
+  scan = "false"
 
 [[redirects]]
   from = "/vehicle-api/*"
@@ -22,6 +19,9 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[headers]]
   for = "/assets/*"

@@ -21,27 +21,6 @@ interface PaymentResponse {
   error?: string;
 }
 
-// Função para verificar se a API key está disponível (sem expor o valor)
-function isApiKeyAvailable(): boolean {
-  // @ts-ignore - Usamos uma checagem indireta para evitar expor o segredo
-  const hasKey = typeof import.meta.env !== 'undefined' && 
-                 typeof import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY === 'string' && 
-                 !!import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
-  return hasKey;
-}
-
-// Função para obter a API key de forma segura
-export function getApiKey(): string {
-  // Verificamos a disponibilidade e retornamos um valor opaco para o cliente
-  if (!isApiKeyAvailable()) {
-    console.error('API Key não está definida no frontend');
-    throw new Error('API Key não configurada. Verifique as variáveis de ambiente.');
-  }
-  
-  // @ts-ignore - Retornamos a chave diretamente apenas quando necessário
-  return import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
-}
-
 // Gerar email aleatório para casos onde o email não é fornecido
 function generateRandomEmail(name: string): string {
   const username = name.toLowerCase().replace(/\s+/g, '.').substring(0, 15);
@@ -58,19 +37,19 @@ function generateRandomPhone(): string {
 }
 
 /**
- * Verifica se o cliente direto For4Payments está disponível
- */
-export function isDirectClientAvailable(): boolean {
-  return isApiKeyAvailable();
-}
-
-/**
  * Cria um pagamento PIX diretamente pelo frontend usando a API For4Payments
  * 
  * ATENÇÃO: Isto deve ser usado apenas quando FOR4PAYMENTS_SECRET_KEY está 
  * configurada no ambiente Netlify como variável segura.
  */
 export async function createPixPaymentDirect(data: PaymentRequest): Promise<PaymentResponse> {
+  // Obter SECRET_KEY da variável de ambiente definida na Netlify
+  const secretKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
+  
+  if (!secretKey) {
+    throw new Error('VITE_FOR4PAYMENTS_SECRET_KEY não configurada no ambiente. Configure nas Environment Variables da Netlify.');
+  }
+  
   // URL da API For4Payments
   const apiUrl = 'https://app.for4payments.com.br/api/v1/transaction.purchase';
   
@@ -106,9 +85,6 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
       ...payload,
       cpf: `${cpf.substring(0, 3)}***${cpf.substring(cpf.length - 2)}`,
     });
-    
-    // Obter a chave API apenas quando precisarmos usá-la
-    const secretKey = getApiKey();
     
     // Configurar e enviar a requisição para a For4Payments API
     const response = await fetch(apiUrl, {
