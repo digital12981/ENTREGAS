@@ -219,7 +219,23 @@ const Entrega: React.FC = () => {
       // Salvar endereço completo
       localStorage.setItem('endereco_entrega', JSON.stringify(data));
       
-      // Abrir modal de pagamento e mostrar loading
+      // Mostrar o modal de confirmação primeiro
+      setShowConfirmationModal(true);
+    } catch (error: any) {
+      console.error("Erro ao processar endereço:", error);
+      toast({
+        title: "Erro ao processar formulário",
+        description: error.message || "Não foi possível processar o formulário. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Função para processar o pagamento após a confirmação
+  const processarPagamento = async () => {
+    try {
+      // Fechar o modal de confirmação e abrir o de pagamento
+      setShowConfirmationModal(false);
       setShowPaymentModal(true);
       setIsLoading(true);
       
@@ -888,6 +904,13 @@ const Entrega: React.FC = () => {
           </Button>
         </DialogContent>
       </Dialog>
+      
+      {/* Modal de confirmação para o kit EPI */}
+      <EPIConfirmationModal
+        isOpen={showConfirmationModal}
+        onOpenChange={setShowConfirmationModal}
+        onConfirm={processarPagamento}
+      />
     </div>
   );
 };
