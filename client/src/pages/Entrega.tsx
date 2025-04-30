@@ -18,6 +18,7 @@ import { useScrollTop } from '@/hooks/use-scroll-top';
 import { API_BASE_URL } from '../lib/api-config';
 import { createPixPayment } from '../lib/payments-api';
 import { initFacebookPixel, trackEvent, trackPurchase, checkPaymentStatus } from '../lib/facebook-pixel';
+import EPIConfirmationModal from '@/components/EPIConfirmationModal';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -83,6 +84,7 @@ const Entrega: React.FC = () => {
   const [endereco, setEndereco] = useState<EnderecoUsuario | null>(null);
   const [dadosUsuario, setDadosUsuario] = useState<DadosUsuario | null>(null);
   const [dataEntrega, setDataEntrega] = useState<string>('');
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [pixInfo, setPixInfo] = useState<PixQRCode | null>(null);
   const [isLoading, setIsLoading] = useState(false);
