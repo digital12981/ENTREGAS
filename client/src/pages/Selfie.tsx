@@ -25,6 +25,9 @@ const Selfie = () => {
     setFaceGuideStep(0);
     setCountdown(null);
     
+    // Rolar para o topo da página
+    window.scrollTo(0, 0);
+    
     // Inicializar câmera
     const initCamera = async () => {
       try {
@@ -193,7 +196,7 @@ const Selfie = () => {
                 <img 
                   src={capturedImage} 
                   alt="Selfie capturada" 
-                  className="w-full h-full object-cover transform scale-x-[-1]"
+                  className="w-full h-full object-cover"
                 />
               )}
               
