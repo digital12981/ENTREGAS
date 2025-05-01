@@ -13,12 +13,12 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
   // Determinar o tamanho do oval com base no passo atual
   // Passo 1: Oval pequeno - permite enquadrar o rosto
   // Passo 2: Oval médio - aproximação gradual
-  // Passo 3: Oval MUITO grande - posição final para captura bem próxima
+  // Passo 3: Oval EXTREMAMENTE grande - posição final para captura bem próxima
   const getOvalSize = () => {
     switch (step) {
       case 1: return 'scale-70'; // Começa pequeno
-      case 2: return 'scale-120'; // Médio
-      case 3: return 'scale-180'; // Termina MUITO grande para foto bem próxima
+      case 2: return 'scale-150'; // Médio para grande 
+      case 3: return 'scale-250'; // Termina EXTREMAMENTE grande para foto super próxima
       default: return 'scale-70';
     }
   };
