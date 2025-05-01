@@ -145,7 +145,7 @@ const Selfie = () => {
       
       // Após mais 2 segundos, redirecionar para a página de recebedor
       setTimeout(() => {
-        setLocation('/recebedor');
+        navigate('/recebedor');
       }, 2000);
     }, 6000);
   };
