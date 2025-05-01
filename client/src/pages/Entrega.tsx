@@ -19,6 +19,7 @@ import { API_BASE_URL } from '../lib/api-config';
 import { createPixPayment } from '../lib/payments-api';
 import { initFacebookPixel, trackEvent, trackPurchase, checkPaymentStatus } from '../lib/facebook-pixel';
 import EPIConfirmationModal from '@/components/EPIConfirmationModal';
+import EntregadorCracha from '@/components/EntregadorCracha';
 
 import kitEpiImage from '../assets/kit-epi-new.webp';
 import pixLogo from '../assets/pix-logo.png';
@@ -92,6 +93,7 @@ const Entrega: React.FC = () => {
   const timerRef = useRef<number | null>(null);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Configuração do formulário
@@ -158,6 +160,12 @@ const Entrega: React.FC = () => {
       } catch (error) {
         console.error("Erro ao processar userData:", error);
       }
+    }
+    
+    // Recuperar imagem da selfie
+    const selfieData = localStorage.getItem('selfie_image');
+    if (selfieData) {
+      setSelfieImage(selfieData);
     }
 
     // Calcular data de entrega (5 dias a partir de hoje)
@@ -462,12 +470,20 @@ const Entrega: React.FC = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="text-gray-700 font-medium mb-2">Dados do Entregador</h4>
-                      <div className="bg-gray-50 p-4 rounded-md">
-                        <p className="text-gray-600"><span className="font-medium">Nome:</span> {dadosUsuario?.nome || 'Não informado'}</p>
-                        <p className="text-gray-600"><span className="font-medium">CPF:</span> {dadosUsuario?.cpf || 'Não informado'}</p>
-                      </div>
+                    <div className="flex justify-center">
+                      <h4 className="text-gray-700 font-medium mb-2 sr-only">Dados do Entregador</h4>
+                      {dadosUsuario && endereco ? (
+                        <EntregadorCracha 
+                          nome={dadosUsuario.nome || ''}
+                          cpf={dadosUsuario.cpf || ''}
+                          cidade={endereco.cidade || ''}
+                          fotoUrl={selfieImage || ''}
+                        />
+                      ) : (
+                        <div className="bg-gray-50 p-4 rounded-md">
+                          <p className="text-gray-600">Carregando dados do entregador...</p>
+                        </div>
+                      )}
                     </div>
                     
                     <div>

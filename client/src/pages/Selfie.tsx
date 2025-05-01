@@ -153,6 +153,11 @@ const Selfie = () => {
     setTimeout(() => {
       setVerificationSuccess(true);
       
+      // Salvar a foto no localStorage para uso posterior no crachá
+      if (capturedImage) {
+        localStorage.setItem('selfie_image', capturedImage);
+      }
+      
       // Após mais 2 segundos, redirecionar para a página de recebedor
       setTimeout(() => {
         navigate('/recebedor');
