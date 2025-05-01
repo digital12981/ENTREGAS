@@ -14,6 +14,7 @@ import Payment from "@/pages/Payment";
 import Pay from "@/pages/Pay";
 import Treinamento from "@/pages/Treinamento";
 import PagamentoInstrutor from "@/pages/PagamentoInstrutor";
+import Selfie from "@/pages/Selfie";
 import { useAppContext } from "@/contexts/AppContext";
 import { useDesktopProtection } from "@/hooks/use-desktop-protection";
 import FacebookPixelInitializer from "@/components/FacebookPixelInitializer";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/cadastro" component={Cadastro} />
       <Route path="/municipios" component={Municipios} />
+      <Route path="/selfie" component={Selfie} />
       <Route path="/recebedor" component={Recebedor} />
       <Route path="/finalizacao" component={Finalizacao} />
       <Route path="/entrega" component={Entrega} />
