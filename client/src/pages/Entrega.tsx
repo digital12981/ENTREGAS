@@ -544,7 +544,7 @@ const Entrega: React.FC = () => {
                   </ul>
                   <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200 mb-4">
                     <p className="text-sm text-yellow-800">
-                      <strong>Importante:</strong> O uso do kit completo é obrigatório durante todas as entregas.
+                      <strong>Importante:</strong> O uso do kit completo é obrigatório durante todas as entregas. Este Kit de EPI é fornecido gratuitamente pela Shopee e tem validade de 6 meses. Após esse período, a Shopee enviará automaticamente outro Kit de EPI completo sem nenhum custo adicional.
                     </p>
                   </div>
                   <div className="bg-orange-50 p-4 rounded-md border border-orange-200 mb-2">
@@ -696,8 +696,10 @@ const Entrega: React.FC = () => {
                     <div>
                       <h4 className="text-sm font-medium text-[#E83D22]">Informação Importante:</h4>
                       <p className="text-sm text-gray-700">
-                        Para ativar seu cadastro e se tornar um entregador Shopee, é obrigatório a aquisição do 
-                        Kit Oficial de Entregador da Shopee. O kit é entregue a preço de custo por <strong>R$79,90</strong>.
+                        Após confirmar o endereço de recebimento do Kit de EPI, você será direcionado para realizar 
+                        um treinamento online com duração de 3 horas. Neste treinamento, você aprenderá tudo o que 
+                        precisa saber para trabalhar como entregador Shopee. <strong>O treinamento é obrigatório para 
+                        ativar seu cadastro e começar a trabalhar.</strong>
                       </p>
                     </div>
                   </div>
