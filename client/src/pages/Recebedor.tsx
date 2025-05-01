@@ -58,6 +58,16 @@ const Recebedor: React.FC = () => {
     "Nubank"
   ];
 
+  // Passos do processo de carregamento
+  const loadingSteps = [
+    "Processando Informações",
+    "Validando dados bancários",
+    "Registrando método de recebimento",
+    "Configurando conta para pagamentos",
+    "Verificando segurança das informações",
+    "Concluindo registro financeiro"
+  ];
+
   // Carregar os dados do candidato ao iniciar
   useEffect(() => {
     const candidatoDataString = localStorage.getItem('candidato_data');
@@ -418,9 +428,12 @@ const Recebedor: React.FC = () => {
       {/* Modal de carregamento */}
       {showLoadingModal && (
         <LoadingModal
-          message="Salvando seus dados de pagamento..."
+          isOpen={showLoadingModal}
           onComplete={handleLoadingComplete}
-          autoCompleteMs={3000}
+          loadingSteps={loadingSteps}
+          title="Processando seus dados de pagamento"
+          completionMessage="Dados financeiros registrados com sucesso!"
+          loadingTime={12000}
         />
       )}
       
