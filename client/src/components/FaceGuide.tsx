@@ -11,15 +11,15 @@ interface FaceGuideProps {
  */
 const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
   // Determinar o tamanho do oval com base no passo atual
-  // Passo 1: Oval grande - a pessoa deve se aproximar
-  // Passo 2: Oval médio - ajustar posição
-  // Passo 3: Oval pequeno - posição final para captura
+  // Passo 1: Oval pequeno - incentiva o usuário a se aproximar
+  // Passo 2: Oval médio - continuando aproximação
+  // Passo 3: Oval grande - posição final para captura
   const getOvalSize = () => {
     switch (step) {
-      case 1: return 'scale-125';
-      case 2: return 'scale-110';
-      case 3: return 'scale-100';
-      default: return 'scale-100';
+      case 1: return 'scale-75'; // Começa pequeno
+      case 2: return 'scale-90'; // Aumenta um pouco
+      case 3: return 'scale-110'; // Termina grande
+      default: return 'scale-75';
     }
   };
 
@@ -30,9 +30,9 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
     }
     
     switch (step) {
-      case 1: return 'Centralize seu rosto no oval';
-      case 2: return 'Aproxime-se mais da câmera';
-      case 3: return 'Mantenha a posição para a captura';
+      case 1: return 'Aproxime seu rosto da câmera';
+      case 2: return 'Continue se aproximando';
+      case 3: return 'Perfeito! Mantenha essa posição';
       default: return 'Preparando...';
     }
   };

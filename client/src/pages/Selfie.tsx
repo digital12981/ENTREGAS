@@ -65,15 +65,15 @@ const Selfie = () => {
   
   // Sequência do guia facial
   const startFaceGuideSequence = () => {
-    // Passo 1: Círculo distante, pedindo para centralizar
+    // Passo 1: Círculo pequeno, incentivando a aproximação inicial
     setFaceGuideStep(1);
     
-    // Passo 2: após 4 segundos, círculo médio, pedindo para aproximar
+    // Passo 2: após 4 segundos, círculo médio, incentivando mais aproximação
     setTimeout(() => {
       setFaceGuideStep(2);
     }, 4000);
     
-    // Passo 3: após mais 3 segundos, círculo próximo, centralização final
+    // Passo 3: após mais 3 segundos, círculo grande para captura final focada no rosto
     setTimeout(() => {
       setFaceGuideStep(3);
       
@@ -137,12 +137,49 @@ const Selfie = () => {
   // Tirar uma nova foto
   const handleRetakePhoto = () => {
     setCapturedImage(null);
-    setFaceGuideStep(1);
+    setFaceGuideStep(0);
     
-    // Reiniciar sequência após 1 segundo
+    // Primeiro parar o stream atual (se existir)
+    if (videoRef.current && videoRef.current.srcObject) {
+      const currentStream = videoRef.current.srcObject as MediaStream;
+      const tracks = currentStream.getTracks();
+      tracks.forEach(track => track.stop());
+      
+      // Limpar a referência
+      videoRef.current.srcObject = null;
+    }
+    
+    // Precisamos reinicializar a câmera
+    const reinitCamera = async () => {
+      try {
+        // Primeiro garanta que a câmera está disponível
+        if (!videoRef.current) return;
+        
+        // Obter stream da câmera frontal
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: false
+        });
+        
+        // Conectar o stream ao elemento de vídeo
+        videoRef.current.srcObject = stream;
+        setIsCameraReady(true);
+        
+        // Iniciar a sequência de guia facial após câmera estar pronta
+        setTimeout(() => {
+          setFaceGuideStep(1);
+          startFaceGuideSequence();
+        }, 1000);
+      } catch (err) {
+        console.error('Erro ao reiniciar a câmera:', err);
+        alert('Não foi possível acessar a câmera. Por favor, recarregue a página.');
+      }
+    };
+    
+    // Pequeno delay antes de reiniciar a câmera para garantir limpeza do stream anterior
     setTimeout(() => {
-      startFaceGuideSequence();
-    }, 1000);
+      reinitCamera();
+    }, 300);
   };
   
   // Enviar a foto e processar
