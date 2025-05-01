@@ -336,7 +336,7 @@ const Recebedor: React.FC = () => {
                   <Input
                     id="conta"
                     {...tedForm.register('conta')}
-                    placeholder="Número da conta com dígito (ex: 12345-6)"
+                    placeholder="Número da conta com dígito"
                     className={tedForm.formState.errors.conta ? 'border-red-500' : ''}
                     inputMode="numeric"
                   />
@@ -346,43 +346,21 @@ const Recebedor: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-base font-medium text-gray-800 mb-2">
-                    Tipo de Conta
+                  <label htmlFor="tipoConta" className="block text-base font-medium text-gray-800 mb-2">
+                    Tipo de conta
                   </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div
-                      className={`border p-4 rounded-md cursor-pointer flex items-center ${
-                        tedForm.watch('tipoConta') === 'corrente' 
-                          ? 'border-[#E83D22] bg-[#FFF8F6]' 
-                          : 'border-gray-200 hover:border-[#E83D2280]'
-                      }`}
-                      onClick={() => tedForm.setValue('tipoConta', 'corrente')}
-                    >
-                      <input
-                        type="radio"
-                        className="h-4 w-4 text-[#E83D22] border-[#E83D22]"
-                        checked={tedForm.watch('tipoConta') === 'corrente'}
-                        onChange={() => {}}
-                      />
-                      <span className="ml-2">Conta Corrente</span>
-                    </div>
-                    <div
-                      className={`border p-4 rounded-md cursor-pointer flex items-center ${
-                        tedForm.watch('tipoConta') === 'poupanca' 
-                          ? 'border-[#E83D22] bg-[#FFF8F6]' 
-                          : 'border-gray-200 hover:border-[#E83D2280]'
-                      }`}
-                      onClick={() => tedForm.setValue('tipoConta', 'poupanca')}
-                    >
-                      <input
-                        type="radio"
-                        className="h-4 w-4 text-[#E83D22] border-[#E83D22]"
-                        checked={tedForm.watch('tipoConta') === 'poupanca'}
-                        onChange={() => {}}
-                      />
-                      <span className="ml-2">Conta Poupança</span>
-                    </div>
-                  </div>
+                  <Select
+                    onValueChange={(value) => tedForm.setValue('tipoConta', value as any)}
+                    defaultValue={tedForm.watch('tipoConta')}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione o tipo de conta" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="corrente">Conta Corrente</SelectItem>
+                      <SelectItem value="poupanca">Conta Poupança</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <Button
@@ -391,40 +369,30 @@ const Recebedor: React.FC = () => {
                   disabled={isSubmitting}
                   style={{ height: '50px' }}
                 >
-                  {isSubmitting ? 'Processando...' : 'Confirmar Dados Bancários'}
+                  {isSubmitting ? 'Processando...' : 'Confirmar dados bancários'}
                 </Button>
               </form>
             </div>
           )}
-          
-          {metodo === MetodoPagamento.NENHUM && (
-            <div className="mt-2 text-center">
-              <p className="text-gray-600">Por favor, selecione um método de recebimento acima.</p>
-            </div>
-          )}
-          
-          {/* Botão de continuar para próxima tela */}
-          <div className="mt-8 text-center">
-            <a
-              href="/selfie"
-              className="text-[#E83D22] hover:text-[#d73920] font-medium text-sm mt-4 inline-block"
-            >
-              Voltar para selfie
-            </a>
-          </div>
         </div>
       </div>
       
-      {/* Modal de carregamento */}
-      {showLoadingModal && (
-        <LoadingModal
-          message="Salvando seus dados de pagamento..."
-          onComplete={handleLoadingComplete}
-          autoCompleteMs={3000}
-        />
-      )}
-      
       <Footer />
+      
+      <LoadingModal
+        isOpen={showLoadingModal}
+        onComplete={handleLoadingComplete}
+        title="Processando Informações"
+        loadingSteps={[
+          "Validando dados bancários",
+          "Registrando método de recebimento",
+          "Configurando conta para pagamentos",
+          "Verificando segurança das informações",
+          "Concluindo registro financeiro"
+        ]}
+        completionMessage="Método de pagamento registrado com sucesso!"
+        loadingTime={12000}
+      />
     </div>
   );
 };
