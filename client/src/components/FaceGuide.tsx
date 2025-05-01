@@ -42,10 +42,16 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
     }
   };
 
+  // Determinar se deve aplicar a transição
+  // Removemos a transição durante a contagem para evitar o efeito visual de redução
+  const getTransitionClass = () => {
+    return countdown === null ? 'transition-transform duration-1000' : '';
+  };
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
       {/* Oval guia facial (SVG) */}
-      <div className={`relative ${getOvalSize()} transition-transform duration-1000`}>
+      <div className={`relative ${getOvalSize()} ${getTransitionClass()}`}>
         <div className="w-48 h-64 mx-auto relative">
           <svg 
             viewBox="0 0 100 130" 
