@@ -340,9 +340,9 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         ) : (
           <>
             <DialogHeader className="pb-2">
-              <DialogTitle className="text-lg text-[#E83D22] font-bold">Pagamento do Curso</DialogTitle>
+              <DialogTitle className="text-lg text-[#E83D22] font-bold">Treinamento Shopee</DialogTitle>
               <DialogDescription className="text-sm">
-                Para confirmar seu agendamento é necessário pagar o curso e emissão do crachá.
+                Após a confirmacao do pagamento no valor de R$97,00 seu cadastro será ativado. No treinamento você terá acesso ao aplicativo e aprenderá o passo a passo de como realizar as primeiras entregas.
               </DialogDescription>
             </DialogHeader>
 
