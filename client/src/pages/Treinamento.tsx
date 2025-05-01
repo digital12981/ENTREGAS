@@ -161,6 +161,35 @@ const Treinamento: FC = () => {
                     Este treinamento essencial capacita você com todos os conhecimentos e habilidades 
                     necessários para atuar como um parceiro Shopee de excelência.
                   </p>
+                  
+                  <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mb-4">
+                    <h5 className="font-bold text-md mb-2">Conteúdo do Treinamento:</h5>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li><strong>Módulo 1:</strong> Introdução à Shopee e à sua plataforma de entregas</li>
+                      <li><strong>Módulo 2:</strong> Utilizando o aplicativo de entregas Shopee</li>
+                      <li><strong>Módulo 3:</strong> Procedimentos de coleta e entrega</li>
+                      <li><strong>Módulo 4:</strong> Segurança e boas práticas</li>
+                      <li><strong>Módulo 5:</strong> Atendimento ao cliente e situações especiais</li>
+                      <li><strong>Módulo 6:</strong> Gestão financeira e sistema de pagamentos</li>
+                    </ul>
+                    
+                    <div className="mt-3 bg-orange-50 p-3 rounded-md border border-orange-200">
+                      <h5 className="text-orange-700 font-bold text-sm mb-1">Certificação Shopee para Entregadores</h5>
+                      <p className="text-xs text-orange-700 mb-2">
+                        Ao completar o treinamento, você receberá o Certificado Oficial Shopee que é <strong>OBRIGATÓRIO</strong> para:
+                      </p>
+                      <ul className="list-disc pl-5 space-y-1 text-xs text-orange-700">
+                        <li>Receber as credenciais de acesso ao aplicativo Shopee Entregas</li>
+                        <li>Ativar seu cadastro como entregador oficial</li>
+                        <li>Começar a receber solicitações de entrega na sua região</li>
+                        <li>Ter seu primeiro pagamento processado</li>
+                      </ul>
+                      <p className="text-orange-700 text-xs mt-2 font-bold">
+                        Atenção: Sem a conclusão do treinamento de 3 horas, seu acesso ao sistema permanecerá bloqueado.
+                      </p>
+                    </div>
+                  </div>
+                  
                   <div className="bg-red-50 p-4 rounded-md border border-red-200 mb-4">
                     <h5 className="text-red-700 font-bold text-md mb-2">⚠️ ATENÇÃO: TREINAMENTO OBRIGATÓRIO</h5>
                     <p className="text-sm text-red-800">
@@ -185,145 +214,7 @@ const Treinamento: FC = () => {
             </div>
           </div>
           
-          {/* Conteúdo do treinamento */}
-          <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
-              <h3 className="font-semibold text-[#E83D22]">O que você vai aprender</h3>
-            </div>
-            <div className="p-6">
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-gray-700 font-medium text-left">
-                    Módulo 1: Introdução à Shopee e à sua plataforma de entregas
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 text-left">
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>História e crescimento da Shopee no Brasil</li>
-                      <li>Como funciona o ecossistema de entregas Shopee</li>
-                      <li>Benefícios de ser um Motorista Parceiro Shopee</li>
-                      <li>Estrutura de ganhos e oportunidades de crescimento</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="item-2">
-                  <AccordionTrigger className="text-gray-700 font-medium text-left">
-                    Módulo 2: Utilizando o aplicativo de entregas Shopee
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 text-left">
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Download e configuração do aplicativo de entregas</li>
-                      <li>Navegação e funcionalidades principais</li>
-                      <li>Aceitar, gerenciar e completar entregas</li>
-                      <li>Sistema de rotas otimizadas e GPS integrado</li>
-                      <li>Resolução de problemas comuns no aplicativo</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="item-3">
-                  <AccordionTrigger className="text-gray-700 font-medium text-left">
-                    Módulo 3: Procedimentos de coleta e entrega
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 text-left">
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Protocolo de coleta no centro de distribuição Shopee</li>
-                      <li>Verificação e confirmação de encomendas</li>
-                      <li>Melhores práticas para acondicionamento de pacotes</li>
-                      <li>Procedimentos de entrega e validação</li>
-                      <li>Lidar com ausência de destinatários</li>
-                      <li>Protocolos de devolução quando necessário</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="item-4">
-                  <AccordionTrigger className="text-gray-700 font-medium text-left">
-                    Módulo 4: Segurança e boas práticas
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 text-left">
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Uso correto do kit de segurança Shopee</li>
-                      <li>Prevenção de acidentes durante o transporte</li>
-                      <li>Direção defensiva e economia de combustível</li>
-                      <li>Manutenção preventiva do veículo</li>
-                      <li>Protocolos em caso de emergências</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="item-5">
-                  <AccordionTrigger className="text-gray-700 font-medium text-left">
-                    Módulo 5: Atendimento ao cliente e situações especiais
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 text-left">
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Etiqueta profissional e representação da marca Shopee</li>
-                      <li>Comunicação eficaz com clientes</li>
-                      <li>Lidar com situações desafiadoras</li>
-                      <li>Política de não-confrontação</li>
-                      <li>Protocolo para entregas de alto valor</li>
-                      <li>Entregas sensíveis ou que exigem cuidados especiais</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="item-6">
-                  <AccordionTrigger className="text-gray-700 font-medium text-left">
-                    Módulo 6: Gestão financeira e sistema de pagamentos
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 text-left">
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Compreendendo seu extrato de ganhos</li>
-                      <li>Ciclos de pagamento e processamento</li>
-                      <li>Bônus por desempenho e campanhas especiais</li>
-                      <li>Dicas para maximizar seus ganhos</li>
-                      <li>Questões fiscais para trabalhadores autônomos</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-              
-              <div className="mt-8 bg-orange-50 p-4 rounded-md border border-orange-200 text-left">
-                <h4 className="text-md font-bold text-orange-700 mb-2">Certificação Shopee para Entregadores</h4>
-                <p className="text-orange-700 text-sm mb-2">
-                  Ao completar o treinamento, você receberá o Certificado Oficial Shopee para Entregadores, 
-                  que é <strong>OBRIGATÓRIO</strong> para:
-                </p>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-orange-700">
-                  <li>Receber as credenciais de acesso ao aplicativo Shopee Entregas</li>
-                  <li>Ativar seu cadastro como entregador oficial</li>
-                  <li>Começar a receber solicitações de entrega na sua região</li>
-                  <li>Ter seu primeiro pagamento processado</li>
-                </ul>
-                <p className="text-orange-700 text-sm mt-2 font-bold">
-                  Atenção: Sem a conclusão do treinamento de 3 horas, seu acesso ao sistema permanecerá bloqueado.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Banner de conclusão */}
-          <div className="bg-[#FFF8F6] p-6 rounded-lg border border-[#E83D2220] mb-8">
-            <div className="text-center">
-              <h3 className="text-[#E83D22] text-xl font-bold mb-3">Ganhe dinheiro sendo um Motorista Parceiro Shopee</h3>
-              <p className="text-gray-700 mb-4">
-                Estamos felizes em tê-lo como parte da nossa equipe de entregadores. <strong>Lembre-se:</strong> 
-                você precisa concluir este treinamento obrigatório de 3 horas para liberar seu acesso ao aplicativo 
-                e começar a receber solicitações de entrega na sua região!
-              </p>
-              <p className="text-red-600 text-sm font-bold mb-4">
-                ATENÇÃO: Sem a conclusão do treinamento, seu cadastro permanecerá pendente e você não poderá
-                iniciar suas atividades como entregador Shopee.
-              </p>
-              <Button 
-                className="bg-[#EE4E2E] hover:bg-[#D43C1E] text-white font-medium py-3 px-8"
-                onClick={() => setModalOpen(true)}
-              >
-                Iniciar Treinamento Agora
-              </Button>
-            </div>
-          </div>
+
         </div>
       </div>
       
