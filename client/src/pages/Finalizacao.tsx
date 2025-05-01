@@ -122,10 +122,8 @@ const Finalizacao: React.FC = () => {
         <div className="w-full mx-auto p-6 mb-8">
           {!formSubmitted ? (
             <>
-              <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Kit de Segurança</h1>
-              
               <div className="mb-8">
-                <Card className="overflow-hidden">
+                <Card className="overflow-hidden max-w-6xl mx-auto">
                   <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
                     <h3 className="font-semibold text-[#E83D22]">Equipamento de Proteção Individual (EPI)</h3>
                   </div>
@@ -161,7 +159,7 @@ const Finalizacao: React.FC = () => {
                 </Card>
               </div>
               
-              <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="tamanhoColete" className="block text-base font-medium text-gray-800 mb-2">
