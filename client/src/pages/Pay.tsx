@@ -34,13 +34,28 @@ const Pay: React.FC = () => {
   const [pixCode, setPixCode] = useState<string>('000201010212268500...');
 
   // Função para copiar o código PIX
+  // Estado para controlar a animação de feedback do botão de cópia
+  const [copiedFeedback, setCopiedFeedback] = useState(false);
+
   const copyPixCode = useCallback(() => {
-    if (cliente?.pixCode) {
-      navigator.clipboard.writeText(cliente.pixCode);
-      alert('Código PIX copiado com sucesso!');
-    } else if (pixCode) {
-      navigator.clipboard.writeText(pixCode);
-      alert('Código PIX copiado com sucesso!');
+    const codeToCopy = cliente?.pixCode || pixCode;
+    if (codeToCopy) {
+      // Garantir que todo o código seja copiado, mesmo que seja longo
+      navigator.clipboard.writeText(codeToCopy)
+        .then(() => {
+          // Em vez de um alert, mostramos um feedback visual
+          setCopiedFeedback(true);
+          console.log('Código PIX completo copiado:', codeToCopy);
+          
+          // Resetar o feedback após 2 segundos
+          setTimeout(() => {
+            setCopiedFeedback(false);
+          }, 2000);
+        })
+        .catch(err => {
+          console.error('Erro ao copiar código PIX:', err);
+          alert('Erro ao copiar código. Tente selecionar o código manualmente.');
+        });
     }
   }, [cliente, pixCode]);
 
@@ -167,23 +182,51 @@ const Pay: React.FC = () => {
           <div className="mb-4">
             <p className="text-[#212121] text-center mb-1">Código Pix</p>
             <div className="flex justify-center">
-              <div className="w-4/5 bg-[#F5F5F5] border border-[#E0E0E0] rounded">
-                <input 
-                  type="text" 
+              <div className="w-full bg-[#F5F5F5] border border-[#E0E0E0] rounded mx-1">
+                <textarea 
                   value={cliente ? cliente.pixCode : pixCode} 
-                  className="w-full h-[32px] text-[#737373] bg-transparent focus:outline-none text-center overflow-hidden px-2 cursor-pointer" 
+                  className="w-full h-[60px] text-[#737373] bg-transparent focus:outline-none text-left text-xs px-2 py-1 cursor-pointer resize-none overflow-auto" 
                   readOnly 
                   onClick={copyPixCode}
                 />
               </div>
             </div>
+            {copiedFeedback && (
+              <p className="text-green-600 text-center text-xs mt-1">
+                <span className="bg-green-100 px-2 py-1 rounded inline-flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span className="ml-1">Código completo copiado com sucesso!</span>
+                </span>
+              </p>
+            )}
           </div>
 
           <button 
-            className="w-full bg-[#EF4444] hover:bg-[#D91C1C] text-white py-2 rounded-sm transition-colors duration-200"
+            className={`w-full py-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
+              copiedFeedback 
+                ? "bg-green-600 hover:bg-green-700" 
+                : "bg-[#EF4444] hover:bg-[#D91C1C]"
+            } text-white`}
             onClick={copyPixCode}
           >
-            Copiar Código Pix
+            {copiedFeedback ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Código PIX Copiado
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copiar Código PIX Completo
+              </>
+            )}
           </button>
         </div>
       </div>
