@@ -1,5 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import kitTreinamentoImage from '@assets/a0e45d2fcc7fdab21ea74890cbd0d45e (1).png';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
@@ -311,6 +312,8 @@ const Treinamento: FC = () => {
 
         </div>
       </div>
+      
+      <Footer />
       
       {/* Modal de agendamento do treinamento */}
       <TreinamentoModal open={modalOpen} onOpenChange={setModalOpen} />
