@@ -10,11 +10,16 @@ interface FaceGuideProps {
  * O guia muda de tamanho e instruções dependendo do passo da verificação
  */
 const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
-  // Determinar o tamanho do oval com base no passo atual
+  // Tamanho do oval continua fixo no tamanho grande durante a contagem regressiva
   // Passo 1: Oval pequeno - permite enquadrar o rosto
   // Passo 2: Oval médio - aproximação gradual
   // Passo 3: Oval EXTREMAMENTE grande - posição final para captura bem próxima
   const getOvalSize = () => {
+    // Se estiver contando regressivamente, mantém o tamanho grande
+    if (countdown !== null) {
+      return 'scale-250'; // Durante a contagem, mantém o tamanho máximo
+    }
+    
     switch (step) {
       case 1: return 'scale-70'; // Começa pequeno
       case 2: return 'scale-150'; // Médio para grande 
