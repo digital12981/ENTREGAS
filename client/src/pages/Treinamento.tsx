@@ -257,18 +257,18 @@ const Treinamento: FC = () => {
                       </AccordionItem>
                     </Accordion>
                     
-                    <div className="mt-3">
-                      <h5 className="font-bold text-sm mb-1">Certificação Shopee para Entregadores</h5>
-                      <p className="text-sm mb-2">
+                    <div className="mt-3 bg-orange-50 p-3 rounded-md border border-orange-200">
+                      <h5 className="text-orange-700 font-bold text-sm mb-1">Certificação Shopee para Entregadores</h5>
+                      <p className="text-xs text-orange-700 mb-2">
                         Ao completar o treinamento, você receberá o Certificado Oficial Shopee que é <strong>OBRIGATÓRIO</strong> para:
                       </p>
-                      <ul className="list-disc pl-5 space-y-1 text-sm">
+                      <ul className="list-disc pl-5 space-y-1 text-xs text-orange-700">
                         <li>Receber as credenciais de acesso ao aplicativo Shopee Entregas</li>
                         <li>Ativar seu cadastro como entregador oficial</li>
                         <li>Começar a receber solicitações de entrega na sua região</li>
                         <li>Ter seu primeiro pagamento processado</li>
                       </ul>
-                      <p className="text-sm mt-2 font-bold">
+                      <p className="text-orange-700 text-xs mt-2 font-bold">
                         Atenção: Sem a conclusão do treinamento de 3 horas, seu acesso ao sistema permanecerá bloqueado.
                       </p>
                     </div>
