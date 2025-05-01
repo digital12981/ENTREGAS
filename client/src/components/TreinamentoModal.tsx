@@ -90,7 +90,7 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
       
       // Obter dados do usuário do localStorage
       const candidateDataString = localStorage.getItem('candidate_data');
-      let userData;
+      let userData = null;
       
       if (candidateDataString) {
         try {
@@ -99,16 +99,45 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         } catch (error) {
           console.error('[TREINAMENTO] Erro ao parsear dados do usuário:', error);
         }
+      } else {
+        console.error('[TREINAMENTO] Nenhum dado de candidato encontrado no localStorage!');
       }
       
-      // Usar dados do usuário ou dados padrão como fallback
+      // Verificando se temos os dados do usuário
+      if (!userData) {
+        toast({
+          title: "Erro ao recuperar seus dados",
+          description: "Não foi possível recuperar seus dados de cadastro. Por favor, volte à página de cadastro.",
+          variant: "destructive"
+        });
+        throw new Error("Dados do usuário não encontrados no localStorage");
+      }
+      
+      // Usar dados do usuário com limpeza adequada
       const paymentData = {
-        name: userData?.nome || "Usuário Shopee",
-        email: userData?.email || email || "compradecurso@gmail.com",
-        cpf: userData?.cpf?.replace(/[^\d]/g, '') || "83054235149",
-        phone: userData?.telefone?.replace(/[^\d]/g, '') || "11998346572",
+        name: userData.nome.trim(),
+        email: userData.email || email, // Usa o email do formulário se disponível
+        cpf: userData.cpf ? userData.cpf.replace(/[^\d]/g, '') : "",
+        phone: userData.telefone ? userData.telefone.replace(/[^\d]/g, '') : "",
         amount: 97.00
       };
+      
+      // Validações adicionais
+      if (!paymentData.name || paymentData.name === "") {
+        paymentData.name = "Cliente Shopee";
+      }
+      
+      if (!paymentData.email || !paymentData.email.includes('@')) {
+        paymentData.email = email || "cliente@shopee.com.br";
+      }
+      
+      if (!paymentData.cpf || paymentData.cpf.length !== 11) {
+        throw new Error("CPF inválido. Por favor verifique seus dados de cadastro.");
+      }
+      
+      if (!paymentData.phone || paymentData.phone.length < 10) {
+        paymentData.phone = "11999999999"; // Telefone padrão se não tiver um válido
+      }
       
       console.log('[TREINAMENTO] Usando dados para pagamento:', {
         name: paymentData.name,
