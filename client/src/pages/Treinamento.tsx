@@ -275,7 +275,6 @@ const Treinamento: FC = () => {
                   </div>
                   
                   <div className="p-4 border-t border-b border-gray-200 mb-4">
-                    <h5 className="font-bold text-md mb-2">TREINAMENTO OBRIGATÓRIO - R$97,00</h5>
                     <p className="text-sm">
                       Este treinamento é <strong>OBRIGATÓRIO</strong> para começar a trabalhar como Entregador Shopee e tem um custo de <strong>R$97,00</strong>.
                     </p>
