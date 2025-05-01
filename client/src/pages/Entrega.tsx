@@ -186,9 +186,19 @@ const Entrega: React.FC = () => {
     // Obter o ano
     const ano = format(dataEntregaObj, "yyyy", { locale: ptBR });
     
-    // Construir a data formatada com o dia da semana e mês em negrito
-    const dataFormatada = `<strong>${diaDaSemanaCapitalizado}</strong><br />${diaMes} de <strong>${mesCapitalizado}</strong> de ${ano}`;
+    // Guardar os componentes separados para renderização em JSX
+    const dateComponents = {
+      diaSemana: diaDaSemanaCapitalizado,
+      dia: diaMes,
+      mes: mesCapitalizado,
+      ano: ano
+    };
     
+    // Salvamos os componentes para usar no JSX
+    localStorage.setItem('data_entrega_components', JSON.stringify(dateComponents));
+    
+    // Manter também a data formatada tradicional como fallback
+    const dataFormatada = `${diaDaSemanaCapitalizado}, ${diaMes} de ${mesCapitalizado} de ${ano}`;
     setDataEntrega(dataFormatada);
   }, []);
 
@@ -539,7 +549,22 @@ const Entrega: React.FC = () => {
                   </div>
                   <div className="bg-orange-50 p-4 rounded-md border border-orange-200 mb-2">
                     <p className="text-gray-700">
-                      <span className="font-medium">Data estimada de entrega:</span> <span className="text-[#E83D22] font-medium">{dataEntrega}</span>
+                      <span className="font-medium">Data estimada de entrega:</span> 
+                      <div className="text-[#E83D22] font-medium mt-1">
+                        {(() => {
+                          try {
+                            const dateComponents = JSON.parse(localStorage.getItem('data_entrega_components') || '{}');
+                            return (
+                              <>
+                                <div className="font-bold">{dateComponents.diaSemana}</div>
+                                <div>{dateComponents.dia} de <span className="font-bold">{dateComponents.mes}</span> de {dateComponents.ano}</div>
+                              </>
+                            );
+                          } catch (e) {
+                            return <span>{dataEntrega}</span>;
+                          }
+                        })()}
+                      </div>
                     </p>
                   </div>
                 </div>
