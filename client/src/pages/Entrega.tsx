@@ -454,20 +454,7 @@ const Entrega: React.FC = () => {
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full space-y-4">
-                  <div className="bg-green-50 p-4 rounded-md border border-green-200 mb-4">
-                    <div className="flex items-center">
-                      <div className="text-green-500 mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-medium text-green-700">Aprovado - Aguardando Kit de Segurança</h4>
-                        <p className="text-sm text-green-600">Seu cadastro foi aprovado e está aguardando a confirmação do kit.</p>
-                      </div>
-                    </div>
-                  </div>
+
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="flex justify-center">
