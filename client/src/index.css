@@ -30,6 +30,23 @@
   box-shadow: 0 0 0 1px #E83D22 !important;
 }
 
+/* Estilos específicos para o calendário */
+.react-calendar .day_selected {
+  background-color: #EE4E2E !important;
+  color: white !important;
+}
+
+.react-calendar .rdp-button_selected {
+  background-color: #EE4E2E !important;
+  color: white !important;
+}
+
+.rdp-day_selected, 
+.rdp-button_selected {
+  background-color: #EE4E2E !important;
+  color: white !important;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 20 14.3% 4.1%;

@@ -253,19 +253,25 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
                           selected={date}
                           onSelect={(selectedDate) => {
                             setDate(selectedDate);
-                            // Fecha o popover após 2 segundos
+                            // Fecha o popover imediatamente
                             if (selectedDate) {
-                              setTimeout(() => {
-                                document.body.click(); // Hack para fechar o popover
-                              }, 2000);
+                              // Uso do método correto para fechar o popover
+                              const popoverTrigger = document.querySelector('[data-state="open"][data-radix-popover-trigger-wrapper]');
+                              if (popoverTrigger) {
+                                (popoverTrigger as HTMLElement).click();
+                              } else {
+                                // Fallback para o método anterior
+                                document.body.click();
+                              }
                             }
                           }}
                           disabled={disabledDays}
                           locale={ptBR}
                           initialFocus
                           classNames={{
-                            day_selected: "bg-[#EE4E2E] text-white hover:bg-[#D43C1E]",
-                            day_today: "bg-orange-100 text-[#EE4E2E]"
+                            day_selected: "!bg-[#EE4E2E] !text-white hover:!bg-[#D43C1E]",
+                            day_today: "bg-orange-100 text-[#EE4E2E]",
+                            day_range_middle: "!bg-orange-100"
                           }}
                         />
                       </PopoverContent>
