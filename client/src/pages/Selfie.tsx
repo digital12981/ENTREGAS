@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import FaceGuide from '@/components/FaceGuide';
+// Removendo a importação do FaceGuide para implementar diretamente
 
 const Selfie = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -245,12 +245,55 @@ const Selfie = () => {
               {/* Canvas para captura (oculto) */}
               <canvas ref={canvasRef} className="hidden" />
               
-              {/* Guia de posicionamento facial */}
+              {/* Guia de posicionamento facial implementado diretamente */}
               {!capturedImage && isCameraReady && faceGuideStep > 0 && (
-                <FaceGuide 
-                  step={faceGuideStep} 
-                  countdown={countdown}
-                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  {/* Oval guia facial (SVG) com tamanho fixo grande durante contagem */}
+                  <div 
+                    className={`relative ${
+                      // Condição simplificada: se estiver contando ou no passo 3, mantém tamanho grande
+                      countdown !== null || faceGuideStep === 3 
+                        ? 'scale-250' // Tamanho MUITO grande fixo durante contagem e passo final 
+                        : faceGuideStep === 2 
+                          ? 'scale-150' // Médio para passo 2
+                          : 'scale-70'  // Pequeno para passo 1
+                    }`}
+                    style={{ transition: countdown === null ? 'transform 1s' : 'none' }}
+                  >
+                    <div className="w-48 h-64 mx-auto relative">
+                      <svg 
+                        viewBox="0 0 100 130" 
+                        className="absolute inset-0 w-full h-full"
+                      >
+                        <ellipse 
+                          cx="50" 
+                          cy="65" 
+                          rx="35" 
+                          ry="50" 
+                          fill="none" 
+                          stroke="white" 
+                          strokeWidth="2"
+                          strokeDasharray="5,3"
+                          className="drop-shadow-lg"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Instruções */}
+                  <div className="absolute bottom-4 left-0 right-0 text-center">
+                    <p className="bg-black bg-opacity-50 text-white py-2 px-4 rounded-lg mx-auto inline-block">
+                      {countdown !== null 
+                        ? `Capturando em ${countdown}...` 
+                        : faceGuideStep === 1 
+                          ? 'Posicione seu rosto dentro do círculo'
+                          : faceGuideStep === 2 
+                            ? 'Aproxime mais seu rosto da câmera'
+                            : 'Ótimo! Rosto bem visível para o crachá'
+                      }
+                    </p>
+                  </div>
+                </div>
               )}
               
               {/* Overlay de verificação */}
