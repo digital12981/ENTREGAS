@@ -14,32 +14,64 @@ const Treinamento: FC = () => {
   useEffect(() => {
     // Carregar dados do usuário do localStorage
     try {
-      const dadosUsuarioString = localStorage.getItem('dados_usuario');
-      if (dadosUsuarioString) {
-        const dadosUsuario = JSON.parse(dadosUsuarioString);
-        console.log('Dados do usuário recuperados:', dadosUsuario);
+      // Tentar primeiro do candidato_data (formato usado pela página Entrega)
+      const candidatoDataString = localStorage.getItem('candidato_data');
+      if (candidatoDataString) {
+        const candidatoData = JSON.parse(candidatoDataString);
+        console.log('Dados do candidato recuperados:', candidatoData);
+        
+        // Obter a cidade do dados do endereço se existir
+        const enderecoString = localStorage.getItem('endereco_entrega');
+        let cidade = 'Cidade';
+        if (enderecoString) {
+          const endereco = JSON.parse(enderecoString);
+          cidade = endereco.cidade || candidatoData.cidade || 'Cidade';
+        } else {
+          cidade = candidatoData.cidade || 'Cidade';
+        }
+        
         setUserData({
-          nome: dadosUsuario.nome || 'Nome do Entregador',
-          cpf: dadosUsuario.cpf || '000.000.000-00',
-          cidade: dadosUsuario.cidade || 'Cidade'
+          nome: candidatoData.nome || 'Nome do Entregador',
+          cpf: candidatoData.cpf || '000.000.000-00',
+          cidade: cidade
         });
       } else {
-        console.log('Dados do usuário não encontrados no localStorage, usando valores padrão');
-        // Valores padrão para demonstração se não houver dados no localStorage
-        setUserData({
-          nome: 'Nome do Entregador',
-          cpf: '000.000.000-00',
-          cidade: 'Cidade'
-        });
+        // Tentar formato alternativo
+        const dadosUsuarioString = localStorage.getItem('dados_usuario');
+        if (dadosUsuarioString) {
+          const dadosUsuario = JSON.parse(dadosUsuarioString);
+          console.log('Dados do usuário alternativos recuperados:', dadosUsuario);
+          setUserData({
+            nome: dadosUsuario.nome || 'Nome do Entregador',
+            cpf: dadosUsuario.cpf || '000.000.000-00',
+            cidade: dadosUsuario.cidade || 'Cidade'
+          });
+        } else {
+          console.log('Nenhum dado de usuário encontrado, usando valores padrão');
+          // Valores padrão para demonstração se não houver dados no localStorage
+          setUserData({
+            nome: 'Nome do Entregador',
+            cpf: '000.000.000-00',
+            cidade: 'Cidade'
+          });
+        }
       }
       
       // Carregar a foto do localStorage
-      const selfieDataUrl = localStorage.getItem('selfie_data_url');
-      if (selfieDataUrl) {
-        setFotoUrl(selfieDataUrl);
-        console.log('Foto do usuário recuperada do localStorage');
+      // Tentar primeiro do formato da página selfie
+      const selfieImage = localStorage.getItem('selfie_image');
+      if (selfieImage) {
+        setFotoUrl(selfieImage);
+        console.log('Foto do usuário (selfie_image) recuperada do localStorage');
       } else {
-        console.log('Foto do usuário não encontrada no localStorage');
+        // Tentar formato alternativo
+        const selfieDataUrl = localStorage.getItem('selfie_data_url');
+        if (selfieDataUrl) {
+          setFotoUrl(selfieDataUrl);
+          console.log('Foto do usuário (selfie_data_url) recuperada do localStorage');
+        } else {
+          console.log('Foto do usuário não encontrada no localStorage');
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error);
@@ -81,7 +113,7 @@ const Treinamento: FC = () => {
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full space-y-4">
-                  <div className="flex justify-center mb-8 mt-8 scale-125 transform">
+                  <div className="flex justify-center mb-8 mt-8 scale-110 transform">
                     {userData ? (
                       <EntregadorCracha
                         nome={userData.nome}

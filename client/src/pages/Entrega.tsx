@@ -484,7 +484,7 @@ const Entrega: React.FC = () => {
 
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex justify-center scale-125 transform my-8">
+                    <div className="flex justify-center scale-110 transform my-6">
                       <h4 className="text-gray-700 font-medium mb-2 sr-only">Dados do Entregador</h4>
                       {dadosUsuario && endereco ? (
                         <EntregadorCracha 
