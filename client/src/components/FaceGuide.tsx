@@ -13,12 +13,12 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
   // Determinar o tamanho do oval com base no passo atual
   // Passo 1: Oval médio - permite enquadrar o rosto
   // Passo 2: Oval um pouco maior - aproximação gradual
-  // Passo 3: Oval grande - posição final para captura mais próxima
+  // Passo 3: Oval muito grande - posição final para captura bem próxima
   const getOvalSize = () => {
     switch (step) {
       case 1: return 'scale-100'; // Começa em tamanho médio
-      case 2: return 'scale-115'; // Aumenta para um tamanho intermediário
-      case 3: return 'scale-130'; // Termina grande
+      case 2: return 'scale-125'; // Aumenta para um tamanho intermediário
+      case 3: return 'scale-160'; // Termina muito grande para foto bem próxima
       default: return 'scale-100';
     }
   };
@@ -30,9 +30,9 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
     }
     
     switch (step) {
-      case 1: return 'Aproxime seu rosto da câmera';
-      case 2: return 'Continue se aproximando';
-      case 3: return 'Perfeito! Mantenha essa posição';
+      case 1: return 'Posicione seu rosto dentro do círculo';
+      case 2: return 'Aproxime mais seu rosto da câmera';
+      case 3: return 'Ótimo! Rosto bem visível para o crachá';
       default: return 'Preparando...';
     }
   };
