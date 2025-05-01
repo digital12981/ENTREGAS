@@ -81,7 +81,7 @@ const Treinamento: FC = () => {
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full space-y-4">
-                  <div className="flex justify-center mb-4">
+                  <div className="flex justify-center mb-8 mt-8 scale-125 transform">
                     {userData ? (
                       <EntregadorCracha
                         nome={userData.nome}
