@@ -274,17 +274,28 @@ const Treinamento: FC = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-red-50 p-4 rounded-md border border-red-200 mb-4">
-                    <h5 className="text-red-700 font-bold text-md mb-2">⚠️ ATENÇÃO: TREINAMENTO OBRIGATÓRIO</h5>
-                    <p className="text-sm text-red-800">
-                      Este treinamento é <strong>OBRIGATÓRIO</strong> para começar a trabalhar como Entregador Shopee. 
-                      Sem a conclusão do curso online de 3 horas:
+                  <div className="p-4 border-t border-b border-gray-200 mb-4">
+                    <h5 className="font-bold text-md mb-2">⚠️ ATENÇÃO: TREINAMENTO OBRIGATÓRIO - R$97,00</h5>
+                    <p className="text-sm">
+                      Este treinamento é <strong>OBRIGATÓRIO</strong> para começar a trabalhar como Entregador Shopee e tem um custo de <strong>R$97,00</strong>.
                     </p>
-                    <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-red-800">
-                      <li>Você <strong>NÃO receberá</strong> as credenciais para acessar o aplicativo</li>
-                      <li>Seu cadastro ficará <strong>PENDENTE</strong> no sistema</li>
-                      <li>Você <strong>NÃO poderá</strong> receber ou realizar entregas</li>
-                      <li>Seu kit de segurança será entregue, mas você <strong>NÃO poderá</strong> iniciar suas atividades</li>
+                    
+                    <h6 className="font-semibold text-sm mt-3 mb-1">Por que existe este valor?</h6>
+                    <ul className="list-disc pl-5 space-y-1 text-sm">
+                      <li>É uma <strong>aula online AO VIVO</strong> com instrutores Shopee certificados</li>
+                      <li>A Shopee verificou que muitas pessoas se inscrevem apenas para receber o <strong>Kit de EPI gratuito</strong> sem se tornarem entregadores, gerando prejuízo</li>
+                      <li>O valor ajuda a cobrir os custos do <strong>Kit de EPI</strong> e do <strong>crachá de identificação oficial</strong></li>
+                      <li>Parte do valor é destinada ao <strong>Plano de Saúde de excelente qualidade</strong> disponibilizado a todos os entregadores</li>
+                    </ul>
+                    
+                    <p className="text-sm mt-3 font-medium">
+                      Sem a conclusão do treinamento, você:
+                    </p>
+                    <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
+                      <li>Não receberá as credenciais para acessar o aplicativo</li>
+                      <li>Seu cadastro ficará pendente no sistema</li>
+                      <li>Não poderá receber ou realizar entregas</li>
+                      <li>Não terá acesso ao plano de saúde exclusivo</li>
                     </ul>
                   </div>
                   <Button 
