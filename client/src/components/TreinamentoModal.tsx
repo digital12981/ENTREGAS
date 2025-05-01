@@ -389,6 +389,9 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
                         <p className="text-xs text-orange-700">
                           Treinamento: <span className="font-medium">{date ? format(date, "EEE, dd 'de' MMMM", { locale: ptBR }) : ""} às {horario}</span>
                         </p>
+                        <p className="text-xs text-orange-800 mt-2 font-medium">
+                          Atenção: Caso o pagamento não seja realizado, você será desqualificado e sua vaga será oferecida a outro candidato de sua região.
+                        </p>
                       </div>
                     </div>
                   </div>
