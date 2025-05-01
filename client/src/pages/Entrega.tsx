@@ -520,7 +520,7 @@ const Entrega: React.FC = () => {
           
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
             <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
-              <h3 className="font-semibold text-[#E83D22]">Kit de Segurança Oficial Shopee</h3>
+              <h3 className="font-semibold text-[#E83D22]">KIT DE SEGURANÇA EPI GRATUITO</h3>
             </div>
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -735,7 +735,7 @@ const Entrega: React.FC = () => {
       >
         <DialogContent className="sm:max-w-md h-[100vh] max-h-screen overflow-y-auto p-2">
           <DialogHeader className="pb-1">
-            <DialogTitle className="text-center text-sm">Pagamento do Kit de Segurança</DialogTitle>
+            <DialogTitle className="text-center text-sm">KIT DE SEGURANÇA EPI GRATUITO</DialogTitle>
             <DialogDescription className="text-center text-xs">
               Finalize o pagamento para ativar seu cadastro Shopee
             </DialogDescription>
@@ -760,7 +760,7 @@ const Entrega: React.FC = () => {
                   />
                 </div>
                 <div className="flex-grow">
-                  <h3 className="text-sm font-medium text-gray-800">Kit de Segurança Oficial</h3>
+                  <h3 className="text-sm font-medium text-gray-800">KIT DE SEGURANÇA EPI GRATUITO</h3>
                   <p className="text-md font-bold text-[#E83D22]">R$ 79,90</p>
                   
                   <div className="w-full mt-1">
@@ -884,7 +884,7 @@ const Entrega: React.FC = () => {
           
           <div className="text-center space-y-2">
             <p className="text-sm text-gray-800 font-medium">
-              Seu cadastro ainda não está ativo pois falta apenas o Kit de Segurança Oficial dos Entregadores.
+              Seu cadastro ainda não está ativo pois falta receber o KIT DE SEGURANÇA EPI GRATUITO.
             </p>
             <p className="text-sm text-gray-700">
               Se você não realizar o pagamento agora, poderá perder a vaga para outro interessado.
