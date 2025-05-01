@@ -88,14 +88,34 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
     try {
       console.log('[TREINAMENTO] Iniciando pagamento via For4Payments diretamente no frontend');
       
-      // Dados fixos para o pagamento conforme solicitado
+      // Obter dados do usuário do localStorage
+      const candidateDataString = localStorage.getItem('candidate_data');
+      let userData;
+      
+      if (candidateDataString) {
+        try {
+          userData = JSON.parse(candidateDataString);
+          console.log('[TREINAMENTO] Dados do usuário recuperados do localStorage:', userData);
+        } catch (error) {
+          console.error('[TREINAMENTO] Erro ao parsear dados do usuário:', error);
+        }
+      }
+      
+      // Usar dados do usuário ou dados padrão como fallback
       const paymentData = {
-        name: "Marina Souza",
-        email: "compradecurso@gmail.com",
-        cpf: "83054235149",
-        phone: "11998346572",
+        name: userData?.nome || "Usuário Shopee",
+        email: userData?.email || email || "compradecurso@gmail.com",
+        cpf: userData?.cpf?.replace(/[^\d]/g, '') || "83054235149",
+        phone: userData?.telefone?.replace(/[^\d]/g, '') || "11998346572",
         amount: 97.00
       };
+      
+      console.log('[TREINAMENTO] Usando dados para pagamento:', {
+        name: paymentData.name,
+        email: paymentData.email,
+        cpf: paymentData.cpf.substring(0, 3) + '***' + paymentData.cpf.substring(paymentData.cpf.length - 2),
+        phone: paymentData.phone
+      });
       
       // Tentativa 1: Usar API For4Payments diretamente no frontend (para Netlify)
       try {
