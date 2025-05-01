@@ -77,22 +77,35 @@ const Selfie = () => {
     setTimeout(() => {
       setFaceGuideStep(3);
       
-      // Iniciar contagem regressiva de 3 segundos
-      setCountdown(3);
+      // Adicionar console log para verificar o passo antes da contagem
+      console.log("[DEBUG] Chegou ao passo 3, tamanho deve ser scale(2.5)");
       
-      const countdownInterval = setInterval(() => {
-        setCountdown(prevCount => {
-          if (prevCount === null || prevCount <= 1) {
-            clearInterval(countdownInterval);
-            // Capturar automaticamente após contagem
-            setTimeout(() => {
-              captureImage();
-            }, 500);
-            return null;
-          }
-          return prevCount - 1;
-        });
-      }, 1000);
+      // Pequeno delay antes de iniciar a contagem para garantir que a UI esteja atualizada
+      setTimeout(() => {
+        // Iniciar contagem regressiva de 3 segundos
+        console.log("[DEBUG] Iniciando contagem, tamanho DEVE se manter scale(2.5)");
+        setCountdown(3);
+        
+        const countdownInterval = setInterval(() => {
+          setCountdown(prevCount => {
+            if (prevCount === null) return null;
+            
+            console.log(`[DEBUG] Contagem em ${prevCount}, tamanho deve permanecer scale(2.5)`);
+            
+            if (prevCount <= 1) {
+              clearInterval(countdownInterval);
+              console.log("[DEBUG] Contagem finalizada, tamanho final deve ser scale(2.5) no momento da captura");
+              
+              // Capturar automaticamente após contagem
+              setTimeout(() => {
+                captureImage();
+              }, 500);
+              return null;
+            }
+            return prevCount - 1;
+          });
+        }, 1000);
+      }, 100);
     }, 7000);
   };
   
@@ -248,17 +261,19 @@ const Selfie = () => {
               {/* Guia de posicionamento facial implementado diretamente */}
               {!capturedImage && isCameraReady && faceGuideStep > 0 && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  {/* Oval guia facial (SVG) com tamanho fixo grande durante contagem */}
+                  {/* Oval guia facial (SVG) com tamanho ABSOLUTAMENTE fixo durante contagem */}
                   <div 
-                    className={`relative ${
-                      // Condição simplificada: se estiver contando ou no passo 3, mantém tamanho grande
-                      countdown !== null || faceGuideStep === 3 
-                        ? 'scale-250' // Tamanho MUITO grande fixo durante contagem e passo final 
-                        : faceGuideStep === 2 
-                          ? 'scale-150' // Médio para passo 2
-                          : 'scale-70'  // Pequeno para passo 1
-                    }`}
-                    style={{ transition: countdown === null ? 'transform 1s' : 'none' }}
+                    className="relative"
+                    style={{ 
+                      transform: countdown !== null 
+                        ? 'scale(2.5)' // Tamanho fixo na propriedade style durante contagem (250%)
+                        : faceGuideStep === 3 
+                          ? 'scale(2.5)' // Passo 3 também tamanho grande
+                          : faceGuideStep === 2 
+                            ? 'scale(1.5)' 
+                            : 'scale(0.7)',
+                      transition: countdown !== null ? 'none' : 'transform 1s'
+                    }}
                   >
                     <div className="w-48 h-64 mx-auto relative">
                       <svg 
