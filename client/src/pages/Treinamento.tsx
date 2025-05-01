@@ -1,13 +1,38 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import Header from '../components/Header';
 import kitTreinamentoImage from '@assets/a0e45d2fcc7fdab21ea74890cbd0d45e (1).png';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
 import TreinamentoModal from '../components/TreinamentoModal';
+import EntregadorCracha from '../components/EntregadorCracha';
 
 const Treinamento: FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [userData, setUserData] = useState<{nome: string, cpf: string, cidade: string} | null>(null);
+  const [fotoUrl, setFotoUrl] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Carregar dados do usuário do localStorage
+    try {
+      const dadosUsuarioString = localStorage.getItem('dados_usuario');
+      if (dadosUsuarioString) {
+        const dadosUsuario = JSON.parse(dadosUsuarioString);
+        setUserData({
+          nome: dadosUsuario.nome || '',
+          cpf: dadosUsuario.cpf || '',
+          cidade: dadosUsuario.cidade || ''
+        });
+      }
+      
+      // Carregar a foto do localStorage
+      const selfieDataUrl = localStorage.getItem('selfie_data_url');
+      if (selfieDataUrl) {
+        setFotoUrl(selfieDataUrl);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados do usuário:', error);
+    }
+  }, []);
   
   return (
     <div className="bg-white min-h-screen flex flex-col">
@@ -38,16 +63,15 @@ const Treinamento: FC = () => {
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full space-y-4">
-                  <div className="bg-green-50 p-4 rounded-md border border-green-200 mb-4">
-                    <div className="flex items-center">
-                      <div className="text-green-500 mr-3">
-                        <CheckCircle size={24} />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-medium text-green-700">Aprovado - Kit de Segurança Confirmado!</h4>
-                        <p className="text-sm text-green-600">Seu cadastro foi aprovado e o pagamento do Kit foi confirmado. Entrega em até 5 dias úteis.</p>
-                      </div>
-                    </div>
+                  <div className="flex justify-center mb-4">
+                    {userData && (
+                      <EntregadorCracha
+                        nome={userData.nome}
+                        cpf={userData.cpf}
+                        cidade={userData.cidade}
+                        fotoUrl={fotoUrl || ''}
+                      />
+                    )}
                   </div>
                   
                   <div className="mt-6">
@@ -118,7 +142,7 @@ const Treinamento: FC = () => {
                   <AccordionTrigger className="text-gray-700 font-medium">
                     Módulo 1: Introdução à Shopee e à sua plataforma de entregas
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  <AccordionContent className="text-gray-600 text-left">
                     <ul className="list-disc pl-5 space-y-1">
                       <li>História e crescimento da Shopee no Brasil</li>
                       <li>Como funciona o ecossistema de entregas Shopee</li>
@@ -132,7 +156,7 @@ const Treinamento: FC = () => {
                   <AccordionTrigger className="text-gray-700 font-medium">
                     Módulo 2: Utilizando o aplicativo de entregas Shopee
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  <AccordionContent className="text-gray-600 text-left">
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Download e configuração do aplicativo de entregas</li>
                       <li>Navegação e funcionalidades principais</li>
@@ -147,7 +171,7 @@ const Treinamento: FC = () => {
                   <AccordionTrigger className="text-gray-700 font-medium">
                     Módulo 3: Procedimentos de coleta e entrega
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  <AccordionContent className="text-gray-600 text-left">
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Protocolo de coleta no centro de distribuição Shopee</li>
                       <li>Verificação e confirmação de encomendas</li>
@@ -163,7 +187,7 @@ const Treinamento: FC = () => {
                   <AccordionTrigger className="text-gray-700 font-medium">
                     Módulo 4: Segurança e boas práticas
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  <AccordionContent className="text-gray-600 text-left">
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Uso correto do kit de segurança Shopee</li>
                       <li>Prevenção de acidentes durante o transporte</li>
@@ -206,7 +230,7 @@ const Treinamento: FC = () => {
                 </AccordionItem>
               </Accordion>
               
-              <div className="mt-8 bg-orange-50 p-4 rounded-md border border-orange-200">
+              <div className="mt-8 bg-orange-50 p-4 rounded-md border border-orange-200 text-left">
                 <h4 className="text-md font-bold text-orange-700 mb-2">Certificação Shopee para Entregadores</h4>
                 <p className="text-orange-700 text-sm mb-2">
                   Ao completar o treinamento, você receberá o Certificado Oficial Shopee para Entregadores, 
