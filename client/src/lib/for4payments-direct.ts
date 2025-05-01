@@ -56,43 +56,23 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
   console.log(`Criando pagamento PIX diretamente via For4Payments`);
   
   try {
-    // Forçar a usar os dados do candidato salvos no localStorage
-    let userData = null;
-    try {
-      // Tentar obter os dados direto do localStorage para garantir que são os mesmos
-      const candidatoDataString = localStorage.getItem('candidato_data');
-      if (candidatoDataString) {
-        userData = JSON.parse(candidatoDataString);
-        console.log('For4Payments: Usando dados do localStorage (candidato_data):', userData);
-      } else {
-        // Tentar outras chaves como fallback
-        const userDataString = localStorage.getItem('user_data');
-        if (userDataString) {
-          userData = JSON.parse(userDataString);
-          console.log('For4Payments: Usando dados do localStorage (user_data):', userData);
-        }
-      }
-    } catch (e) {
-      console.error('Erro ao recuperar dados do usuário do localStorage:', e);
-    }
+    // Usar exatamente os dados fornecidos pelo parâmetro data
+    // Não buscar do localStorage para evitar conflitos
+    console.log('For4Payments: Usando dados do parâmetro:', data);
     
     // Montar o payload da requisição conforme formato exigido pela API
     const amount = data.amount || 79.90; // Valor padrão para o kit de segurança
     const amountInCents = Math.round(amount * 100); // Converter para centavos
     
-    // Preferir dados do localStorage, mas usar os recebidos como fallback
-    const userName = userData?.nome || data.name;
-    const userEmail = userData?.email || data.email || generateRandomEmail(userName);
+    // Usar apenas os dados do parâmetro data
+    const userName = data.name;
+    const userEmail = data.email || generateRandomEmail(userName);
     
     // Processar CPF - remover caracteres não numéricos
-    // Preferir o CPF do localStorage
-    const cpf = (userData?.cpf ? userData.cpf.replace(/[^0-9]/g, '') : data.cpf.replace(/[^0-9]/g, ''));
+    const cpf = data.cpf.replace(/[^0-9]/g, '');
     
     // Processar telefone - remover caracteres não numéricos
-    // Preferir o telefone do localStorage
-    const phone = userData?.telefone ? 
-                  userData.telefone.replace(/\D/g, '') : 
-                  (data.phone ? data.phone.replace(/\D/g, '') : generateRandomPhone());
+    const phone = data.phone ? data.phone.replace(/\D/g, '') : generateRandomPhone();
     
     const payload = {
       name: userName,

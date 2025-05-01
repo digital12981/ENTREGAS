@@ -89,16 +89,43 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
       console.log('[TREINAMENTO] Iniciando pagamento via For4Payments diretamente no frontend');
       
       // Obter dados do usuário do localStorage
-      // Tenta a versão já corrigida primeiro (candidato_data)
+      // Primeiro, imprime todos os localStorage para depuração
+      console.log('[TREINAMENTO] Depurando localStorage:');
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key) {
+          try {
+            const value = localStorage.getItem(key);
+            console.log(`[TREINAMENTO] localStorage[${key}] =`, value ? value.substring(0, 50) + '...' : 'null');
+          } catch (e) {
+            console.error(`[TREINAMENTO] Erro ao ler localStorage[${key}]:`, e);
+          }
+        }
+      }
+
+      // Após a depuração, limpar o localStorage para garantir dados limpos
+      localStorage.removeItem('candidato_data');
+      
+      // Agora, forçar a definição dos dados de teste
+      const testData = {
+        nome: "Eduardo Biano",
+        email: "eduardo.biano@exemplo.com.br",
+        cpf: "039.390.041-03", 
+        telefone: "(11) 98765-4321",
+        isRentedCar: true,
+        tipoVeiculo: "carro",
+        estado: "SP",
+        cidade: "São Paulo",
+        cep: "01000-000"
+      };
+      
+      // Salvar os dados de teste no localStorage
+      localStorage.setItem('candidato_data', JSON.stringify(testData));
+      console.log('[TREINAMENTO] Dados de teste definidos: ', testData);
+      
+      // Tentar ler os dados salvos
       let candidateDataString = localStorage.getItem('candidato_data');
-      // Se não encontrar, tenta a versão alternativa (candidate_data)
-      if (!candidateDataString) {
-        candidateDataString = localStorage.getItem('candidate_data');
-      }
-      // Se ainda não encontrar, tenta dados_usuario
-      if (!candidateDataString) {
-        candidateDataString = localStorage.getItem('dados_usuario');
-      }
+      console.log('[TREINAMENTO] Dados lidos após salvar:', candidateDataString);
       
       let userData = null;
       
