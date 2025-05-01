@@ -6,11 +6,15 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import TreinamentoModal from '../components/TreinamentoModal';
 import EntregadorCracha from '../components/EntregadorCracha';
+import { useScrollTop } from '@/hooks/use-scroll-top';
 
 const Treinamento: FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState<{nome: string, cpf: string, cidade: string} | null>(null);
   const [fotoUrl, setFotoUrl] = useState<string | null>(null);
+  
+  // Aplicar scroll para o topo quando o componente montar
+  useScrollTop();
   
   useEffect(() => {
     // Carregar dados do usuário do localStorage
