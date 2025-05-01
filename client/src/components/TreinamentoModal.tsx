@@ -251,10 +251,22 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
                         <Calendar
                           mode="single"
                           selected={date}
-                          onSelect={setDate}
+                          onSelect={(selectedDate) => {
+                            setDate(selectedDate);
+                            // Fecha o popover após 2 segundos
+                            if (selectedDate) {
+                              setTimeout(() => {
+                                document.body.click(); // Hack para fechar o popover
+                              }, 2000);
+                            }
+                          }}
                           disabled={disabledDays}
                           locale={ptBR}
                           initialFocus
+                          classNames={{
+                            day_selected: "bg-[#EE4E2E] text-white hover:bg-[#D43C1E]",
+                            day_today: "bg-orange-100 text-[#EE4E2E]"
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
@@ -361,13 +373,15 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
               {!isLoading && paymentInfo && (
                 <div className="space-y-3 pb-2">
-                  <div className="bg-green-50 p-3 rounded-md border border-green-200">
+                  <div className="bg-orange-50 p-3 rounded-md border border-orange-200">
                     <div className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-green-600 mr-2 mt-0.5 shrink-0" />
+                      <div className="h-5 w-5 text-orange-500 mr-2 mt-0.5 shrink-0 flex items-center justify-center">
+                        <span className="text-lg">⏱️</span>
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-green-800 text-sm">Agendamento confirmado!</h3>
-                        <p className="text-xs text-green-700">
-                          Treinamento: {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : ""} às {horario}
+                        <h3 className="font-semibold text-orange-800 text-sm">Agendamento pendente</h3>
+                        <p className="text-xs text-orange-700">
+                          Treinamento: <span className="font-medium">{date ? format(date, "EEE, dd 'de' MMMM", { locale: ptBR }) : ""} às {horario}</span>
                         </p>
                       </div>
                     </div>
