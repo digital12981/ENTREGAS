@@ -254,8 +254,17 @@ const Entrega: React.FC = () => {
       // Salvar endereço completo
       localStorage.setItem('endereco_entrega', JSON.stringify(data));
       
-      // Mostrar o modal de confirmação primeiro
-      setShowConfirmationModal(true);
+      // Mostrar mensagem de sucesso
+      toast({
+        title: "Endereço confirmado!",
+        description: "Redirecionando para a página de treinamento...",
+      });
+      
+      // Redirecionar diretamente para a página de treinamento
+      setTimeout(() => {
+        setLocation('/treinamento');
+      }, 1500);
+      
     } catch (error: any) {
       console.error("Erro ao processar endereço:", error);
       toast({
@@ -710,7 +719,7 @@ const Entrega: React.FC = () => {
                   className="w-full text-white font-medium py-6 text-base rounded-[3px] transition-all bg-[#E83D22] hover:bg-[#d73920]"
                   style={{ height: '50px' }}
                 >
-                  Confirmar endereco
+                  Confirmar endereço
                 </Button>
               </form>
             </div>
