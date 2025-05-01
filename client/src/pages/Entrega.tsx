@@ -556,8 +556,9 @@ const Entrega: React.FC = () => {
                             const dateComponents = JSON.parse(localStorage.getItem('data_entrega_components') || '{}');
                             return (
                               <>
-                                <div className="font-bold">{dateComponents.diaSemana}</div>
-                                <div>{dateComponents.dia} de <span className="font-bold">{dateComponents.mes}</span> de {dateComponents.ano}</div>
+                                <div>
+                                  <span className="font-bold">{dateComponents.diaSemana}</span> {dateComponents.dia} de <span className="font-bold">{dateComponents.mes}</span> de {dateComponents.ano}
+                                </div>
                               </>
                             );
                           } catch (e) {
