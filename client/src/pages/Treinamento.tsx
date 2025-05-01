@@ -139,7 +139,7 @@ const Treinamento: FC = () => {
             <div className="p-6">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-gray-700 font-medium">
+                  <AccordionTrigger className="text-gray-700 font-medium text-left">
                     Módulo 1: Introdução à Shopee e à sua plataforma de entregas
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-600 text-left">
@@ -153,7 +153,7 @@ const Treinamento: FC = () => {
                 </AccordionItem>
                 
                 <AccordionItem value="item-2">
-                  <AccordionTrigger className="text-gray-700 font-medium">
+                  <AccordionTrigger className="text-gray-700 font-medium text-left">
                     Módulo 2: Utilizando o aplicativo de entregas Shopee
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-600 text-left">
@@ -168,7 +168,7 @@ const Treinamento: FC = () => {
                 </AccordionItem>
                 
                 <AccordionItem value="item-3">
-                  <AccordionTrigger className="text-gray-700 font-medium">
+                  <AccordionTrigger className="text-gray-700 font-medium text-left">
                     Módulo 3: Procedimentos de coleta e entrega
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-600 text-left">
@@ -184,7 +184,7 @@ const Treinamento: FC = () => {
                 </AccordionItem>
                 
                 <AccordionItem value="item-4">
-                  <AccordionTrigger className="text-gray-700 font-medium">
+                  <AccordionTrigger className="text-gray-700 font-medium text-left">
                     Módulo 4: Segurança e boas práticas
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-600 text-left">
@@ -199,7 +199,7 @@ const Treinamento: FC = () => {
                 </AccordionItem>
                 
                 <AccordionItem value="item-5">
-                  <AccordionTrigger className="text-gray-700 font-medium">
+                  <AccordionTrigger className="text-gray-700 font-medium text-left">
                     Módulo 5: Atendimento ao cliente e situações especiais
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-600 text-left">
@@ -215,7 +215,7 @@ const Treinamento: FC = () => {
                 </AccordionItem>
                 
                 <AccordionItem value="item-6">
-                  <AccordionTrigger className="text-gray-700 font-medium">
+                  <AccordionTrigger className="text-gray-700 font-medium text-left">
                     Módulo 6: Gestão financeira e sistema de pagamentos
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-600 text-left">
