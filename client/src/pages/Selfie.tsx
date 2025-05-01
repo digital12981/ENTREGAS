@@ -78,23 +78,23 @@ const Selfie = () => {
       setFaceGuideStep(3);
       
       // Adicionar console log para verificar o passo antes da contagem
-      console.log("[DEBUG] Chegou ao passo 3, tamanho deve ser scale(2.5)");
+      console.log("[DEBUG] Chegou ao passo 3, tamanho deve ser scale(1.8)");
       
       // Pequeno delay antes de iniciar a contagem para garantir que a UI esteja atualizada
       setTimeout(() => {
         // Iniciar contagem regressiva de 3 segundos
-        console.log("[DEBUG] Iniciando contagem, tamanho DEVE se manter scale(2.5)");
+        console.log("[DEBUG] Iniciando contagem, tamanho DEVE se manter scale(1.8)");
         setCountdown(3);
         
         const countdownInterval = setInterval(() => {
           setCountdown(prevCount => {
             if (prevCount === null) return null;
             
-            console.log(`[DEBUG] Contagem em ${prevCount}, tamanho deve permanecer scale(2.5)`);
+            console.log(`[DEBUG] Contagem em ${prevCount}, tamanho deve permanecer scale(1.8)`);
             
             if (prevCount <= 1) {
               clearInterval(countdownInterval);
-              console.log("[DEBUG] Contagem finalizada, tamanho final deve ser scale(2.5) no momento da captura");
+              console.log("[DEBUG] Contagem finalizada, tamanho final deve ser scale(1.8) no momento da captura");
               
               // Capturar automaticamente após contagem
               setTimeout(() => {
@@ -265,13 +265,11 @@ const Selfie = () => {
                   <div 
                     className="relative"
                     style={{ 
-                      transform: countdown !== null 
-                        ? 'scale(2.5)' // Tamanho fixo na propriedade style durante contagem (250%)
-                        : faceGuideStep === 3 
-                          ? 'scale(2.5)' // Passo 3 também tamanho grande
-                          : faceGuideStep === 2 
-                            ? 'scale(1.5)' 
-                            : 'scale(0.7)',
+                      transform: countdown !== null || faceGuideStep === 3
+                        ? 'scale(1.8)' // Tamanho intermediário durante contagem e passo 3
+                        : faceGuideStep === 2 
+                          ? 'scale(1.3)' 
+                          : 'scale(0.9)',
                       transition: countdown !== null ? 'none' : 'transform 1s'
                     }}
                   >
