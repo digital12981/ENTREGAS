@@ -13,13 +13,13 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
   // Determinar o tamanho do oval com base no passo atual
   // Passo 1: Oval grande - a pessoa deve se aproximar
   // Passo 2: Oval médio - ajustar posição
-  // Passo 3: Oval pequeno - posição final para captura
+  // Passo 3: Oval pequeno - posição final para captura (maior que antes)
   const getOvalSize = () => {
     switch (step) {
-      case 1: return 'scale-125';
-      case 2: return 'scale-110';
-      case 3: return 'scale-100';
-      default: return 'scale-100';
+      case 1: return 'scale-150';
+      case 2: return 'scale-140';
+      case 3: return 'scale-130';
+      default: return 'scale-130';
     }
   };
 
@@ -41,7 +41,7 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
       {/* Oval guia facial (SVG) */}
       <div className={`relative ${getOvalSize()} transition-transform duration-1000`}>
-        <div className="w-48 h-64 mx-auto relative">
+        <div className="w-56 h-72 mx-auto relative">
           <svg 
             viewBox="0 0 100 130" 
             className="absolute inset-0 w-full h-full"

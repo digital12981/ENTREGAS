@@ -137,12 +137,39 @@ const Selfie = () => {
   // Tirar uma nova foto
   const handleRetakePhoto = () => {
     setCapturedImage(null);
-    setFaceGuideStep(1);
+    setIsCameraReady(false);
     
-    // Reiniciar sequência após 1 segundo
-    setTimeout(() => {
-      startFaceGuideSequence();
-    }, 1000);
+    // Reimplementação baseada no initCamera original
+    const reinitCamera = async () => {
+      try {
+        // Se o vídeo já estava com um stream, precisamos interrompê-lo
+        if (videoRef.current && videoRef.current.srcObject) {
+          const stream = videoRef.current.srcObject as MediaStream;
+          stream.getTracks().forEach(track => track.stop());
+        }
+        
+        // Solicitar nova permissão para a câmera frontal
+        const newStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: false
+        });
+        
+        // Conectar o novo stream ao elemento de vídeo
+        if (videoRef.current) {
+          videoRef.current.srcObject = newStream;
+          videoRef.current.onloadedmetadata = () => {
+            setIsCameraReady(true);
+            setFaceGuideStep(1);
+            startFaceGuideSequence();
+          };
+        }
+      } catch (err) {
+        console.error('Erro ao reiniciar a câmera:', err);
+        alert('Não foi possível reiniciar a câmera. Por favor, recarregue a página.');
+      }
+    };
+    
+    reinitCamera();
   };
   
   // Enviar a foto e processar
@@ -186,14 +213,22 @@ const Selfie = () => {
             >
               {/* Elemento de vídeo (câmera) */}
               {!capturedImage && (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={`w-full h-full object-cover transform scale-x-[-1] ${isCameraReady ? '' : 'hidden'}`}
-                  onLoadedMetadata={() => setIsCameraReady(true)}
-                />
+                <>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className={`w-full h-full object-cover transform scale-x-[-1] ${isCameraReady ? '' : 'hidden'}`}
+                    onLoadedMetadata={() => setIsCameraReady(true)}
+                  />
+                  {!isCameraReady && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
+                      <div className="animate-spin w-10 h-10 border-4 border-white border-t-transparent rounded-full mb-3"></div>
+                      <p className="text-sm font-medium">Inicializando câmera...</p>
+                    </div>
+                  )}
+                </>
               )}
               
               {/* Imagem capturada */}
