@@ -10,14 +10,13 @@ interface EntregadorCrachaProps {
 const EntregadorCracha: React.FC<EntregadorCrachaProps> = ({ nome, cpf, cidade, fotoUrl }) => {
   return (
     <div className="relative">
-      <div className="absolute -top-9 left-1/2 transform -translate-x-1/2">
-        <img 
-          src="https://i.ibb.co/7dsrFY5q/Entregador-Shopee-2-1-2-removebg-preview-2-1.png" 
-          alt="Imagem de um crachá de entregador Shopee com design oficial, sem fundo, com um layout atualizado" 
-          className="w-20 h-20 filter-none" 
-        />
+      {/* Ícone do crachá no topo */}
+      <div className="w-full flex justify-center mb-2">
+        <div className="bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center">
+          <i className="fas fa-id-card text-3xl"></i>
+        </div>
       </div>
-      <div className="bg-white rounded-lg shadow-lg w-96 p-4 pt-8">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-4">
         <div className="flex items-center mb-4 justify-start">
           <img 
             src="https://d290ny10omyv12.cloudfront.net/images/shopee-large.png" 

@@ -17,10 +17,19 @@ const Treinamento: FC = () => {
       const dadosUsuarioString = localStorage.getItem('dados_usuario');
       if (dadosUsuarioString) {
         const dadosUsuario = JSON.parse(dadosUsuarioString);
+        console.log('Dados do usuário recuperados:', dadosUsuario);
         setUserData({
-          nome: dadosUsuario.nome || '',
-          cpf: dadosUsuario.cpf || '',
-          cidade: dadosUsuario.cidade || ''
+          nome: dadosUsuario.nome || 'Nome do Entregador',
+          cpf: dadosUsuario.cpf || '000.000.000-00',
+          cidade: dadosUsuario.cidade || 'Cidade'
+        });
+      } else {
+        console.log('Dados do usuário não encontrados no localStorage, usando valores padrão');
+        // Valores padrão para demonstração se não houver dados no localStorage
+        setUserData({
+          nome: 'Nome do Entregador',
+          cpf: '000.000.000-00',
+          cidade: 'Cidade'
         });
       }
       
@@ -28,9 +37,18 @@ const Treinamento: FC = () => {
       const selfieDataUrl = localStorage.getItem('selfie_data_url');
       if (selfieDataUrl) {
         setFotoUrl(selfieDataUrl);
+        console.log('Foto do usuário recuperada do localStorage');
+      } else {
+        console.log('Foto do usuário não encontrada no localStorage');
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error);
+      // Em caso de erro, também definimos valores padrão
+      setUserData({
+        nome: 'Nome do Entregador',
+        cpf: '000.000.000-00',
+        cidade: 'Cidade'
+      });
     }
   }, []);
   
@@ -64,13 +82,17 @@ const Treinamento: FC = () => {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full space-y-4">
                   <div className="flex justify-center mb-4">
-                    {userData && (
+                    {userData ? (
                       <EntregadorCracha
                         nome={userData.nome}
                         cpf={userData.cpf}
                         cidade={userData.cidade}
                         fotoUrl={fotoUrl || ''}
                       />
+                    ) : (
+                      <div className="text-center p-4 bg-gray-100 rounded-lg">
+                        <p className="text-gray-500">Carregando dados do entregador...</p>
+                      </div>
                     )}
                   </div>
                   
