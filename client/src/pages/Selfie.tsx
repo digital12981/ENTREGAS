@@ -108,14 +108,21 @@ const Selfie = () => {
       const xOffset = (video.videoWidth - size) / 2;
       const yOffset = (video.videoHeight - size) / 2;
       
-      // Desenhar a imagem no canvas
+      // Desenhar a imagem no canvas com espelhamento horizontal
       const context = canvas.getContext('2d');
       if (context) {
+        // Aplicar transformação para espelhar a imagem horizontalmente
+        context.translate(size, 0);
+        context.scale(-1, 1);
+        
         context.drawImage(
           video, 
           xOffset, yOffset, size, size,
           0, 0, size, size
         );
+        
+        // Resetar a transformação para o estado padrão
+        context.setTransform(1, 0, 0, 1, 0, 0);
         
         // Converter para data URL
         const imageDataUrl = canvas.toDataURL('image/jpeg');
@@ -176,7 +183,7 @@ const Selfie = () => {
                   autoPlay
                   playsInline
                   muted
-                  className={`w-full h-full object-cover ${isCameraReady ? '' : 'hidden'}`}
+                  className={`w-full h-full object-cover transform scale-x-[-1] ${isCameraReady ? '' : 'hidden'}`}
                   onLoadedMetadata={() => setIsCameraReady(true)}
                 />
               )}
@@ -186,7 +193,7 @@ const Selfie = () => {
                 <img 
                   src={capturedImage} 
                   alt="Selfie capturada" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transform scale-x-[-1]"
                 />
               )}
               

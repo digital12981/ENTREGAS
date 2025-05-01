@@ -5,63 +5,68 @@ interface FaceGuideProps {
   countdown: number | null;
 }
 
+/**
+ * Componente que exibe um guia visual para posicionamento facial
+ * O guia muda de tamanho e instruções dependendo do passo da verificação
+ */
 const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
-  // Determinar o tamanho do círculo baseado no passo atual
-  const getCircleSize = () => {
+  // Determinar o tamanho do oval com base no passo atual
+  // Passo 1: Oval grande - a pessoa deve se aproximar
+  // Passo 2: Oval médio - ajustar posição
+  // Passo 3: Oval pequeno - posição final para captura
+  const getOvalSize = () => {
     switch (step) {
-      case 1: // Círculo inicial, mais distante
-        return 'w-40 h-40';
-      case 2: // Círculo médio, aproximando
-        return 'w-52 h-52';
-      case 3: // Círculo próximo, centralização final
-        return 'w-64 h-64';
-      default:
-        return 'w-48 h-48';
+      case 1: return 'scale-125';
+      case 2: return 'scale-110';
+      case 3: return 'scale-100';
+      default: return 'scale-100';
     }
   };
-  
-  // Mensagem de instrução baseada no passo atual
-  const getInstruction = () => {
+
+  // Obter a mensagem de instrução com base no passo atual
+  const getMessage = () => {
+    if (countdown !== null) {
+      return `Capturando em ${countdown}...`;
+    }
+    
     switch (step) {
-      case 1:
-        return 'Centralize seu rosto no círculo';
-      case 2:
-        return 'Aproxime um pouco mais o rosto';
-      case 3:
-        return countdown !== null 
-          ? `Mantenha-se centralizado. Foto em ${countdown}...` 
-          : 'Pronto! Capturando...';
-      default:
-        return 'Preparando...';
+      case 1: return 'Centralize seu rosto no oval';
+      case 2: return 'Aproxime-se mais da câmera';
+      case 3: return 'Mantenha a posição para a captura';
+      default: return 'Preparando...';
     }
   };
-  
+
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center">
-      {/* Overlay semi-transparente */}
-      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-      
-      {/* Círculo guia com animação de pulso */}
-      <div className={`relative ${getCircleSize()} rounded-full border-2 border-dashed border-white animate-pulse`}>
-        {/* Círculo interno para representar o formato de rosto */}
-        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3/4 h-[90%] rounded-full border border-white"></div>
+    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+      {/* Oval guia facial (SVG) */}
+      <div className={`relative ${getOvalSize()} transition-transform duration-1000`}>
+        <div className="w-48 h-64 mx-auto relative">
+          <svg 
+            viewBox="0 0 100 130" 
+            className="absolute inset-0 w-full h-full"
+          >
+            <ellipse 
+              cx="50" 
+              cy="65" 
+              rx="35" 
+              ry="50" 
+              fill="none" 
+              stroke="white" 
+              strokeWidth="2"
+              strokeDasharray="5,3"
+              className="drop-shadow-lg"
+            />
+          </svg>
+        </div>
       </div>
       
-      {/* Texto de instrução */}
-      <div className="absolute bottom-10 left-0 right-0 text-center">
-        <p className="bg-black bg-opacity-60 text-white px-4 py-2 rounded-lg inline-block font-medium">
-          {getInstruction()}
+      {/* Instruções */}
+      <div className="absolute bottom-4 left-0 right-0 text-center">
+        <p className="bg-black bg-opacity-50 text-white py-2 px-4 rounded-lg mx-auto inline-block">
+          {getMessage()}
         </p>
       </div>
-      
-      {/* Indicador de contagem regressiva (apenas para passo 3) */}
-      {step === 3 && countdown !== null && (
-        <div className="absolute top-10 left-0 right-0 text-center">
-          <span className="text-3xl font-bold text-white bg-black bg-opacity-60 px-5 py-2 rounded-full inline-block">
-            {countdown}
-          </span>
-        </div>
-      )}
     </div>
   );
 };
