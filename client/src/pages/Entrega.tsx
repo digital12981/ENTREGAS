@@ -171,8 +171,25 @@ const Entrega: React.FC = () => {
     // Calcular data de entrega (5 dias a partir de hoje)
     const hoje = new Date();
     const dataEntregaObj = addDays(hoje, 5);
-    const dataFormatada = format(dataEntregaObj, "EEEE, dd/MM/yyyy", { locale: ptBR });
-    setDataEntrega(dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1));
+    
+    // Obter o dia da semana
+    const diaDaSemana = format(dataEntregaObj, "EEEE", { locale: ptBR });
+    const diaDaSemanaCapitalizado = diaDaSemana.charAt(0).toUpperCase() + diaDaSemana.slice(1);
+    
+    // Obter o dia do mês
+    const diaMes = format(dataEntregaObj, "dd", { locale: ptBR });
+    
+    // Obter o mês
+    const mes = format(dataEntregaObj, "MMMM", { locale: ptBR });
+    const mesCapitalizado = mes.charAt(0).toUpperCase() + mes.slice(1);
+    
+    // Obter o ano
+    const ano = format(dataEntregaObj, "yyyy", { locale: ptBR });
+    
+    // Construir a data formatada com o dia da semana e mês em negrito
+    const dataFormatada = `<strong>${diaDaSemanaCapitalizado}</strong><br />${diaMes} de <strong>${mesCapitalizado}</strong> de ${ano}`;
+    
+    setDataEntrega(dataFormatada);
   }, []);
 
   // Função para buscar dados do CEP
