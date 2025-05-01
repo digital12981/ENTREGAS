@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-// Removendo a importação do FaceGuide para implementar diretamente
+import FaceGuide from '@/components/FaceGuide';
 
 const Selfie = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -65,47 +65,34 @@ const Selfie = () => {
   
   // Sequência do guia facial
   const startFaceGuideSequence = () => {
-    // Passo 1: Círculo pequeno, incentivando a aproximação inicial
+    // Passo 1: Círculo distante, pedindo para centralizar
     setFaceGuideStep(1);
     
-    // Passo 2: após 4 segundos, círculo médio, incentivando mais aproximação
+    // Passo 2: após 4 segundos, círculo médio, pedindo para aproximar
     setTimeout(() => {
       setFaceGuideStep(2);
     }, 4000);
     
-    // Passo 3: após mais 3 segundos, círculo grande para captura final focada no rosto
+    // Passo 3: após mais 3 segundos, círculo próximo, centralização final
     setTimeout(() => {
       setFaceGuideStep(3);
       
-      // Adicionar console log para verificar o passo antes da contagem
-      console.log("[DEBUG] Chegou ao passo 3, tamanho deve ser scale(1.8)");
+      // Iniciar contagem regressiva de 3 segundos
+      setCountdown(3);
       
-      // Pequeno delay antes de iniciar a contagem para garantir que a UI esteja atualizada
-      setTimeout(() => {
-        // Iniciar contagem regressiva de 3 segundos
-        console.log("[DEBUG] Iniciando contagem, tamanho DEVE se manter scale(1.8)");
-        setCountdown(3);
-        
-        const countdownInterval = setInterval(() => {
-          setCountdown(prevCount => {
-            if (prevCount === null) return null;
-            
-            console.log(`[DEBUG] Contagem em ${prevCount}, tamanho deve permanecer scale(1.8)`);
-            
-            if (prevCount <= 1) {
-              clearInterval(countdownInterval);
-              console.log("[DEBUG] Contagem finalizada, tamanho final deve ser scale(1.8) no momento da captura");
-              
-              // Capturar automaticamente após contagem
-              setTimeout(() => {
-                captureImage();
-              }, 500);
-              return null;
-            }
-            return prevCount - 1;
-          });
-        }, 1000);
-      }, 100);
+      const countdownInterval = setInterval(() => {
+        setCountdown(prevCount => {
+          if (prevCount === null || prevCount <= 1) {
+            clearInterval(countdownInterval);
+            // Capturar automaticamente após contagem
+            setTimeout(() => {
+              captureImage();
+            }, 500);
+            return null;
+          }
+          return prevCount - 1;
+        });
+      }, 1000);
     }, 7000);
   };
   
@@ -150,49 +137,12 @@ const Selfie = () => {
   // Tirar uma nova foto
   const handleRetakePhoto = () => {
     setCapturedImage(null);
-    setFaceGuideStep(0);
+    setFaceGuideStep(1);
     
-    // Primeiro parar o stream atual (se existir)
-    if (videoRef.current && videoRef.current.srcObject) {
-      const currentStream = videoRef.current.srcObject as MediaStream;
-      const tracks = currentStream.getTracks();
-      tracks.forEach(track => track.stop());
-      
-      // Limpar a referência
-      videoRef.current.srcObject = null;
-    }
-    
-    // Precisamos reinicializar a câmera
-    const reinitCamera = async () => {
-      try {
-        // Primeiro garanta que a câmera está disponível
-        if (!videoRef.current) return;
-        
-        // Obter stream da câmera frontal
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user' },
-          audio: false
-        });
-        
-        // Conectar o stream ao elemento de vídeo
-        videoRef.current.srcObject = stream;
-        setIsCameraReady(true);
-        
-        // Iniciar a sequência de guia facial após câmera estar pronta
-        setTimeout(() => {
-          setFaceGuideStep(1);
-          startFaceGuideSequence();
-        }, 1000);
-      } catch (err) {
-        console.error('Erro ao reiniciar a câmera:', err);
-        alert('Não foi possível acessar a câmera. Por favor, recarregue a página.');
-      }
-    };
-    
-    // Pequeno delay antes de reiniciar a câmera para garantir limpeza do stream anterior
+    // Reiniciar sequência após 1 segundo
     setTimeout(() => {
-      reinitCamera();
-    }, 300);
+      startFaceGuideSequence();
+    }, 1000);
   };
   
   // Enviar a foto e processar
@@ -258,55 +208,12 @@ const Selfie = () => {
               {/* Canvas para captura (oculto) */}
               <canvas ref={canvasRef} className="hidden" />
               
-              {/* Guia de posicionamento facial implementado diretamente */}
+              {/* Guia de posicionamento facial */}
               {!capturedImage && isCameraReady && faceGuideStep > 0 && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  {/* Oval guia facial (SVG) com tamanho ABSOLUTAMENTE fixo durante contagem */}
-                  <div 
-                    className="relative"
-                    style={{ 
-                      transform: countdown !== null || faceGuideStep === 3
-                        ? 'scale(1.8)' // Tamanho intermediário durante contagem e passo 3
-                        : faceGuideStep === 2 
-                          ? 'scale(1.3)' 
-                          : 'scale(0.9)',
-                      transition: countdown !== null ? 'none' : 'transform 1s'
-                    }}
-                  >
-                    <div className="w-48 h-64 mx-auto relative">
-                      <svg 
-                        viewBox="0 0 100 130" 
-                        className="absolute inset-0 w-full h-full"
-                      >
-                        <ellipse 
-                          cx="50" 
-                          cy="65" 
-                          rx="35" 
-                          ry="50" 
-                          fill="none" 
-                          stroke="white" 
-                          strokeWidth="2"
-                          strokeDasharray="5,3"
-                          className="drop-shadow-lg"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  
-                  {/* Instruções */}
-                  <div className="absolute bottom-4 left-0 right-0 text-center">
-                    <p className="bg-black bg-opacity-50 text-white py-2 px-4 rounded-lg mx-auto inline-block">
-                      {countdown !== null 
-                        ? `Capturando em ${countdown}...` 
-                        : faceGuideStep === 1 
-                          ? 'Posicione seu rosto dentro do círculo'
-                          : faceGuideStep === 2 
-                            ? 'Aproxime mais seu rosto da câmera'
-                            : 'Ótimo! Rosto bem visível para o crachá'
-                      }
-                    </p>
-                  </div>
-                </div>
+                <FaceGuide 
+                  step={faceGuideStep} 
+                  countdown={countdown}
+                />
               )}
               
               {/* Overlay de verificação */}

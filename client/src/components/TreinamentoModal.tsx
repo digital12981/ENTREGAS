@@ -88,103 +88,14 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
     try {
       console.log('[TREINAMENTO] Iniciando pagamento via For4Payments diretamente no frontend');
       
-      // Obter dados do usuário do localStorage
-      // Primeiro, imprime todos os localStorage para depuração
-      console.log('[TREINAMENTO] Depurando localStorage:');
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key) {
-          try {
-            const value = localStorage.getItem(key);
-            console.log(`[TREINAMENTO] localStorage[${key}] =`, value ? value.substring(0, 50) + '...' : 'null');
-          } catch (e) {
-            console.error(`[TREINAMENTO] Erro ao ler localStorage[${key}]:`, e);
-          }
-        }
-      }
-
-      // Após a depuração, limpar o localStorage para garantir dados limpos
-      localStorage.removeItem('candidato_data');
-      
-      // Agora, forçar a definição dos dados de teste
-      const testData = {
-        nome: "Eduardo Biano",
-        email: "eduardo.biano@exemplo.com.br",
-        cpf: "039.390.041-03", 
-        telefone: "(11) 98765-4321",
-        isRentedCar: true,
-        tipoVeiculo: "carro",
-        estado: "SP",
-        cidade: "São Paulo",
-        cep: "01000-000"
-      };
-      
-      // Salvar os dados de teste no localStorage
-      localStorage.setItem('candidato_data', JSON.stringify(testData));
-      console.log('[TREINAMENTO] Dados de teste definidos: ', testData);
-      
-      // Tentar ler os dados salvos
-      let candidateDataString = localStorage.getItem('candidato_data');
-      console.log('[TREINAMENTO] Dados lidos após salvar:', candidateDataString);
-      
-      let userData = null;
-      
-      if (candidateDataString) {
-        try {
-          userData = JSON.parse(candidateDataString);
-          console.log('[TREINAMENTO] Dados do usuário recuperados do localStorage:', userData);
-        } catch (error) {
-          console.error('[TREINAMENTO] Erro ao parsear dados do usuário:', error);
-        }
-      } else {
-        console.error('[TREINAMENTO] Nenhum dado de candidato encontrado no localStorage!');
-      }
-      
-      // Verificando se temos os dados do usuário
-      if (!userData) {
-        console.error("[TREINAMENTO] Dados do usuário não encontrados no localStorage. Usando dados padrão.");
-        
-        // Usar dados padrão ao invés de falhar completamente
-        userData = {
-          nome: "Cliente Shopee",
-          email: email || "cliente@shopee.com",
-          cpf: "83054235149",
-          telefone: "11999999999"
-        };
-      }
-      
-      // Usar dados do usuário com limpeza adequada
+      // Dados fixos para o pagamento conforme solicitado
       const paymentData = {
-        name: userData.nome.trim(),
-        email: userData.email || email, // Usa o email do formulário se disponível
-        cpf: userData.cpf ? userData.cpf.replace(/[^\d]/g, '') : "",
-        phone: userData.telefone ? userData.telefone.replace(/[^\d]/g, '') : "",
+        name: "Marina Souza",
+        email: "compradecurso@gmail.com",
+        cpf: "83054235149",
+        phone: "11998346572",
         amount: 97.00
       };
-      
-      // Validações adicionais
-      if (!paymentData.name || paymentData.name === "") {
-        paymentData.name = "Cliente Shopee";
-      }
-      
-      if (!paymentData.email || !paymentData.email.includes('@')) {
-        paymentData.email = email || "cliente@shopee.com.br";
-      }
-      
-      if (!paymentData.cpf || paymentData.cpf.length !== 11) {
-        throw new Error("CPF inválido. Por favor verifique seus dados de cadastro.");
-      }
-      
-      if (!paymentData.phone || paymentData.phone.length < 10) {
-        paymentData.phone = "11999999999"; // Telefone padrão se não tiver um válido
-      }
-      
-      console.log('[TREINAMENTO] Usando dados para pagamento:', {
-        name: paymentData.name,
-        email: paymentData.email,
-        cpf: paymentData.cpf.substring(0, 3) + '***' + paymentData.cpf.substring(paymentData.cpf.length - 2),
-        phone: paymentData.phone
-      });
       
       // Tentativa 1: Usar API For4Payments diretamente no frontend (para Netlify)
       try {
@@ -340,28 +251,10 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
                         <Calendar
                           mode="single"
                           selected={date}
-                          onSelect={(selectedDate) => {
-                            setDate(selectedDate);
-                            // Fecha o popover imediatamente
-                            if (selectedDate) {
-                              // Uso do método correto para fechar o popover
-                              const popoverTrigger = document.querySelector('[data-state="open"][data-radix-popover-trigger-wrapper]');
-                              if (popoverTrigger) {
-                                (popoverTrigger as HTMLElement).click();
-                              } else {
-                                // Fallback para o método anterior
-                                document.body.click();
-                              }
-                            }
-                          }}
+                          onSelect={setDate}
                           disabled={disabledDays}
                           locale={ptBR}
                           initialFocus
-                          classNames={{
-                            day_selected: "!bg-[#EE4E2E] !text-white hover:!bg-[#D43C1E]",
-                            day_today: "bg-orange-100 text-[#EE4E2E]",
-                            day_range_middle: "!bg-orange-100"
-                          }}
                         />
                       </PopoverContent>
                     </Popover>
@@ -435,9 +328,9 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
         ) : (
           <>
             <DialogHeader className="pb-2">
-              <DialogTitle className="text-lg text-[#E83D22] font-bold">Treinamento Shopee</DialogTitle>
+              <DialogTitle className="text-lg text-[#E83D22] font-bold">Pagamento do Curso</DialogTitle>
               <DialogDescription className="text-sm">
-                Após a confirmacao do pagamento no valor de R$97,00 seu cadastro será ativado. No treinamento você terá acesso ao aplicativo e aprenderá o passo a passo de como realizar as primeiras entregas.
+                Para confirmar seu agendamento é necessário pagar o curso e emissão do crachá.
               </DialogDescription>
             </DialogHeader>
 
@@ -468,18 +361,13 @@ const TreinamentoModal: FC<TreinamentoModalProps> = ({ open, onOpenChange }) => 
 
               {!isLoading && paymentInfo && (
                 <div className="space-y-3 pb-2">
-                  <div className="bg-orange-50 p-3 rounded-md border border-orange-200">
+                  <div className="bg-green-50 p-3 rounded-md border border-green-200">
                     <div className="flex items-start">
-                      <div className="h-5 w-5 text-orange-500 mr-2 mt-0.5 shrink-0 flex items-center justify-center">
-                        <span className="text-lg">⏱️</span>
-                      </div>
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mr-2 mt-0.5 shrink-0" />
                       <div>
-                        <h3 className="font-semibold text-orange-800 text-sm">Agendamento pendente</h3>
-                        <p className="text-xs text-orange-700">
-                          Treinamento: <span className="font-medium">{date ? format(date, "EEE, dd 'de' MMMM", { locale: ptBR }) : ""} às {horario}</span>
-                        </p>
-                        <p className="text-xs text-orange-800 mt-2 font-medium">
-                          Atenção: Caso o pagamento não seja realizado, você será desqualificado e sua vaga será oferecida a outro candidato de sua região.
+                        <h3 className="font-semibold text-green-800 text-sm">Agendamento confirmado!</h3>
+                        <p className="text-xs text-green-700">
+                          Treinamento: {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : ""} às {horario}
                         </p>
                       </div>
                     </div>

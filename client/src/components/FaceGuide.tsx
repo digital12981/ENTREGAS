@@ -10,21 +10,16 @@ interface FaceGuideProps {
  * O guia muda de tamanho e instruções dependendo do passo da verificação
  */
 const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
-  // Tamanho do oval continua fixo no tamanho grande durante a contagem regressiva
-  // Passo 1: Oval pequeno - permite enquadrar o rosto
-  // Passo 2: Oval médio - aproximação gradual
-  // Passo 3: Oval EXTREMAMENTE grande - posição final para captura bem próxima
+  // Determinar o tamanho do oval com base no passo atual
+  // Passo 1: Oval grande - a pessoa deve se aproximar
+  // Passo 2: Oval médio - ajustar posição
+  // Passo 3: Oval pequeno - posição final para captura
   const getOvalSize = () => {
-    // Se estiver contando regressivamente, mantém o tamanho grande
-    if (countdown !== null) {
-      return 'scale-250'; // Durante a contagem, mantém o tamanho máximo
-    }
-    
     switch (step) {
-      case 1: return 'scale-70'; // Começa pequeno
-      case 2: return 'scale-150'; // Médio para grande 
-      case 3: return 'scale-250'; // Termina EXTREMAMENTE grande para foto super próxima
-      default: return 'scale-70';
+      case 1: return 'scale-125';
+      case 2: return 'scale-110';
+      case 3: return 'scale-100';
+      default: return 'scale-100';
     }
   };
 
@@ -35,23 +30,17 @@ const FaceGuide: React.FC<FaceGuideProps> = ({ step, countdown }) => {
     }
     
     switch (step) {
-      case 1: return 'Posicione seu rosto dentro do círculo';
-      case 2: return 'Aproxime mais seu rosto da câmera';
-      case 3: return 'Ótimo! Rosto bem visível para o crachá';
+      case 1: return 'Centralize seu rosto no oval';
+      case 2: return 'Aproxime-se mais da câmera';
+      case 3: return 'Mantenha a posição para a captura';
       default: return 'Preparando...';
     }
-  };
-
-  // Determinar se deve aplicar a transição
-  // Removemos a transição durante a contagem para evitar o efeito visual de redução
-  const getTransitionClass = () => {
-    return countdown === null ? 'transition-transform duration-1000' : '';
   };
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
       {/* Oval guia facial (SVG) */}
-      <div className={`relative ${getOvalSize()} ${getTransitionClass()}`}>
+      <div className={`relative ${getOvalSize()} transition-transform duration-1000`}>
         <div className="w-48 h-64 mx-auto relative">
           <svg 
             viewBox="0 0 100 130" 

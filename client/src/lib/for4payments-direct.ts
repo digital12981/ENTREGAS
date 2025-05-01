@@ -56,17 +56,9 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
   console.log(`Criando pagamento PIX diretamente via For4Payments`);
   
   try {
-    // Usar exatamente os dados fornecidos pelo parâmetro data
-    // Não buscar do localStorage para evitar conflitos
-    console.log('For4Payments: Usando dados do parâmetro:', data);
-    
     // Montar o payload da requisição conforme formato exigido pela API
     const amount = data.amount || 79.90; // Valor padrão para o kit de segurança
     const amountInCents = Math.round(amount * 100); // Converter para centavos
-    
-    // Usar apenas os dados do parâmetro data
-    const userName = data.name;
-    const userEmail = data.email || generateRandomEmail(userName);
     
     // Processar CPF - remover caracteres não numéricos
     const cpf = data.cpf.replace(/[^0-9]/g, '');
@@ -75,8 +67,8 @@ export async function createPixPaymentDirect(data: PaymentRequest): Promise<Paym
     const phone = data.phone ? data.phone.replace(/\D/g, '') : generateRandomPhone();
     
     const payload = {
-      name: userName,
-      email: userEmail,
+      name: data.name,
+      email: data.email || generateRandomEmail(data.name),
       cpf: cpf,
       phone: phone, // Telefone limpo, apenas números
       paymentMethod: "PIX",

