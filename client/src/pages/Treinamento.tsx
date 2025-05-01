@@ -202,7 +202,7 @@ const Treinamento: FC = () => {
                   <AccordionTrigger className="text-gray-700 font-medium">
                     Módulo 5: Atendimento ao cliente e situações especiais
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  <AccordionContent className="text-gray-600 text-left">
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Etiqueta profissional e representação da marca Shopee</li>
                       <li>Comunicação eficaz com clientes</li>
@@ -218,7 +218,7 @@ const Treinamento: FC = () => {
                   <AccordionTrigger className="text-gray-700 font-medium">
                     Módulo 6: Gestão financeira e sistema de pagamentos
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  <AccordionContent className="text-gray-600 text-left">
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Compreendendo seu extrato de ganhos</li>
                       <li>Ciclos de pagamento e processamento</li>
