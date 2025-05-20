@@ -108,8 +108,8 @@ app.post('/api/create-payment', async (req, res) => {
     }
     
     // Preparar payload
-    const cpfClean = cpf.replace(/\D/g, '');
-    const phoneClean = phone ? phone.replace(/\D/g, '') : generateRandomPhone();
+    const cpfClean = cpf.replace(/\\D/g, '');
+    const phoneClean = phone ? phone.replace(/\\D/g, '') : generateRandomPhone();
     const amountInCents = Math.round(amount * 100);
     
     const payload = {
