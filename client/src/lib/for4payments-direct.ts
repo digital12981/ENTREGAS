@@ -1,6 +1,6 @@
 /**
  * Cliente direto para a For4Payments API
- * Para uso quando o secret está disponível como variável de ambiente na Netlify
+ * Para uso quando o secret está disponível como variável de ambiente na Netlify ou Vercel
  */
 
 // Interface para os dados da solicitação de pagamento
