@@ -39,15 +39,15 @@ function generateRandomPhone(): string {
 /**
  * Cria um pagamento PIX diretamente pelo frontend usando a API For4Payments
  * 
- * ATENÇÃO: Isto deve ser usado apenas quando FOR4PAYMENTS_SECRET_KEY está 
- * configurada no ambiente Netlify como variável segura.
+ * ATENÇÃO: Isto deve ser usado apenas quando VITE_FOR4PAYMENTS_SECRET_KEY está 
+ * configurada no ambiente Netlify ou Vercel como variável segura.
  */
 export async function createPixPaymentDirect(data: PaymentRequest): Promise<PaymentResponse> {
-  // Obter SECRET_KEY da variável de ambiente definida na Netlify
+  // Obter SECRET_KEY da variável de ambiente definida na Netlify/Vercel
   const secretKey = import.meta.env.VITE_FOR4PAYMENTS_SECRET_KEY;
   
   if (!secretKey) {
-    throw new Error('VITE_FOR4PAYMENTS_SECRET_KEY não configurada no ambiente. Configure nas Environment Variables da Netlify.');
+    throw new Error('VITE_FOR4PAYMENTS_SECRET_KEY não configurada no ambiente. Configure nas Environment Variables da Vercel ou Netlify.');
   }
   
   // URL da API For4Payments
