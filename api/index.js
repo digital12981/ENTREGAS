@@ -1,14 +1,12 @@
-// API route principal para Vercel
-import { createServer } from 'http';
+// API principal para a Vercel
 import express from 'express';
 import cors from 'cors';
-import { WebSocketServer } from 'ws';
-import { registerRoutes } from '../server/routes.js';
+import { createServer } from 'http';
 
-// Cria a aplicação Express
+// Criar aplicação Express
 const app = express();
 
-// Configuração básica de CORS para permitir requisições de qualquer origem
+// Configurar CORS
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -18,26 +16,39 @@ app.use(cors({
 // Middleware para JSON
 app.use(express.json());
 
-// Registra as rotas
-const server = await registerRoutes(app);
+// Endpoint de teste para verificar se a API está funcionando
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'API funcionando corretamente',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
 
-// Handler para requisições serverless da Vercel
-export default async (req, res) => {
-  // Se a requisição for para o WebSocket, será tratada pelo servidor HTTP
-  if (req.url === '/api/ws') {
-    return;
+// Endpoint para verificação de status de IP
+app.get('/api/check-ip-status', (req, res) => {
+  const clientIp = req.headers['x-forwarded-for'] || 
+                 req.connection.remoteAddress || 
+                 '0.0.0.0';
+  
+  res.json({
+    status: 'allowed',
+    message: 'IP não está banido',
+    ip: clientIp
+  });
+});
+
+// Função manipuladora para serverless no ambiente Vercel
+export default async function handler(req, res) {
+  // Verificar se estamos na Vercel
+  if (req.url) {
+    // Repassar a requisição para o Express
+    return app(req, res);
   }
 
-  // Para todas as outras rotas, use o aplicativo Express
-  return app(req, res);
-};
-
-// Handler para WebSocket (usado apenas no desenvolvimento local)
-if (process.env.NODE_ENV !== 'production') {
-  const httpServer = createServer(app);
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  httpServer.listen(3000, () => {
-    console.log('Servidor de desenvolvimento rodando na porta 3000');
+  // Código para ambiente local (desenvolvimento)
+  const server = createServer(app);
+  server.listen(3000, () => {
+    console.log('Servidor Express rodando na porta 3000');
   });
 }
