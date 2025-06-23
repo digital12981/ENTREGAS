@@ -169,6 +169,11 @@ header {
   padding-top: 0;
 }
 
+/* Forçar textos do rodapé em branco */
+footer p, footer a, footer span, footer div {
+  color: white !important;
+}
+
 /* Uber Custom Styles */
 .bg-uber {
   background-color: #000000;
