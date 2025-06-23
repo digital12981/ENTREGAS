@@ -30,7 +30,7 @@ h1, h2, h3, h4, h5, h6, .title, .heading {
   font-size: 36px !important;
   font-weight: 700 !important;
   line-height: 44px !important;
-  color: currentColor !important;
+  color: #333333 !important;
   letter-spacing: 0 !important;
   margin: 0 !important;
 }
@@ -38,9 +38,11 @@ h1, h2, h3, h4, h5, h6, .title, .heading {
 /* Estilização para textos do corpo */
 p, .body-text, .text-content {
   margin-top: 0 !important;
-  color: currentColor !important;
+  color: #333333 !important;
   margin-bottom: 15px !important;
   margin-top: 15px !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
 }
 
 /* Responsivo para mobile */
@@ -48,11 +50,13 @@ p, .body-text, .text-content {
   h1, h2, h3, h4, h5, h6, .title, .heading {
     font-size: 24px !important;
     line-height: 32px !important;
+    color: #333333 !important;
   }
   
   p, .body-text, .text-content {
     font-size: 16px !important;
     line-height: 24px !important;
+    color: #333333 !important;
   }
 }
 

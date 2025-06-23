@@ -469,7 +469,7 @@ const Cadastro: React.FC = () => {
       
       <div className="flex-grow container mx-auto px-2 py-8 w-full">
         <div className="w-full mx-auto p-6 mb-8">
-          <h1 className="title text-center mb-8 text-gray-800">Cadastro de Entregador Parceiro</h1>
+          <h1 className="title text-center mb-8">Cadastro de Entregador Parceiro</h1>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
