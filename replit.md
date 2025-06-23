@@ -1,8 +1,8 @@
-# Shopee Delivery Partners
+# Uber Delivery Partners
 
 ## Overview
 
-This is a full-stack web application for recruiting delivery partners for Shopee, optimized for the Brazilian market. The platform provides a digital onboarding process specifically designed for mobile users, with desktop access protection to ensure the proper user experience.
+This is a full-stack web application for recruiting delivery partners for Uber, optimized for the Brazilian market. The platform provides a digital onboarding process specifically designed for mobile users, with desktop access protection to ensure the proper user experience.
 
 ## System Architecture
 
@@ -11,7 +11,7 @@ The application follows a modern full-stack architecture with clear separation b
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript
 - **Routing**: Wouter for lightweight client-side routing
-- **Styling**: Tailwind CSS with custom Shopee branding
+- **Styling**: Tailwind CSS with custom Uber branding
 - **UI Components**: Radix UI primitives with shadcn/ui components
 - **State Management**: React Context API with custom AppContext
 - **Form Handling**: React Hook Form with Zod validation
@@ -98,7 +98,8 @@ The application supports multiple deployment configurations:
 - **Static Assets**: Proper CORS headers and caching strategies
 
 ## Changelog
-- June 23, 2025. Initial setup
+- June 23, 2025. Initial setup with Shopee branding
+- June 23, 2025. Complete rebrand to Uber theme - updated colors from orange to black/white, replaced logos, implemented Uber fonts, updated all components and text references
 
 ## User Preferences
 
