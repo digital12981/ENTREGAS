@@ -3,22 +3,22 @@ import React from 'react';
 const InfoSection: React.FC = () => {
   return (
     <section className="container mx-auto px-4 py-8 text-[#555]">
-      <h2 className="heading border-b-2 border-gray-200 pb-2">Programa Uber Adesivo: Ganhe R$ 500,00 por mês</h2>
-      <p className="body-text leading-relaxed">A Uber está oferecendo uma oportunidade única para motoristas parceiros: receba R$ 500,00 mensais durante 3 anos apenas por aderir um adesivo da Uber no parabrisa traseiro do seu veículo. O adesivo não danifica o vidro nem compromete a visão.</p>
-      <p className="body-text leading-relaxed">Aceita diferentes tipos de veículos, como <span className="font-bold text-black">motos, carros de passeio (2 ou 4 portas), Fiorino, Kombi e vans</span>. O programa tem vagas limitadas para manter a exclusividade e está disponível apenas para os primeiros 1.000 veículos em todo o Brasil.</p>
+      <h2 className="heading border-b-2 border-gray-200 pb-2">Programa Oficial Uber: Parceria de Publicidade Veicular</h2>
+      <p className="body-text leading-relaxed">A Uber Technologies Inc. anuncia oficialmente o lançamento do Programa de Parceria de Publicidade Veicular, oferecendo compensação financeira mensal de R$ 500,00 aos parceiros selecionados que aderirem à campanha publicitária através da aplicação de adesivo institucional no parabrisa traseiro de seus veículos.</p>
+      <p className="body-text leading-relaxed">Este programa representa uma iniciativa estratégica da Uber para fortalecer a presença da marca no mercado brasileiro, proporcionando aos parceiros uma fonte adicional de receita passiva durante o período contratual de 36 meses. O material publicitário utiliza tecnologia avançada que preserva a integridade do vidro e mantém a segurança visual exigida pela legislação de trânsito.</p>
 
-      <h3 className="heading border-b-2 border-gray-200 pb-2">Pagamentos via PIX todo dia 08</h3>
-      <p className="body-text leading-relaxed">Os pagamentos são realizados automaticamente via PIX todo dia 08 de cada mês, diretamente na sua conta. Não há necessidade de cobrança ou solicitação - o valor de R$ 500,00 é creditado automaticamente enquanto o contrato de 3 anos estiver ativo. Total de R$ 18.000 ao longo do programa.</p>
+      <h3 className="heading border-b-2 border-gray-200 pb-2">Estrutura de Compensação Financeira</h3>
+      <p className="body-text leading-relaxed">A compensação mensal no valor de R$ 500,00 é processada automaticamente via sistema PIX no dia 08 de cada mês, sendo creditada diretamente na conta bancária cadastrada pelo parceiro. O programa mantém vigência por 36 meses consecutivos, totalizando R$ 18.000,00 em compensação durante todo o período contratual, sem necessidade de solicitações ou procedimentos adicionais por parte do beneficiário.</p>
 
-      <h3 className="heading border-b-2 border-gray-200 pb-2">Como participar</h3>
-      <p className="body-text leading-relaxed">O cadastro é totalmente online. Para participar, basta:</p>
+      <h3 className="heading border-b-2 border-gray-200 pb-2">Critérios de Elegibilidade e Processo de Adesão</h3>
+      <p className="body-text leading-relaxed">O processo de candidatura é conduzido integralmente através de plataforma digital oficial. Os requisitos para participação incluem:</p>
       <ol className="list-decimal list-inside mb-6 pl-4">
-        <li>Ter veículo próprio em bom estado e documentação em dia;</li>
-        <li>Ser maior de 21 anos e possuir conta bancária;</li>
-        <li>Preencher o formulário de cadastro com seus dados;</li>
-        <li>Aguardar aprovação e agendamento da aplicação do adesivo.</li>
+        <li>Propriedade de veículo automotor em condições adequadas com documentação regularizada;</li>
+        <li>Idade mínima de 21 anos e titularidade de conta bancária para recebimento via PIX;</li>
+        <li>Preenchimento completo do formulário oficial de candidatura;</li>
+        <li>Submissão à análise de elegibilidade e posterior agendamento técnico para instalação.</li>
       </ol>
-      <p className="body-text leading-relaxed">O adesivo é fornecido gratuitamente e aplicado por profissionais especializados. Pode ser removido sem danos ao final do contrato. Não há custos para participar do programa.</p>
+      <p className="body-text leading-relaxed">A Uber fornece integralmente o material publicitário e serviços de instalação através de equipe técnica especializada, sem custos para o parceiro. O material é desenvolvido com tecnologia removível que garante a preservação da superfície do veículo ao término do contrato.</p>
     </section>
   );
 };
