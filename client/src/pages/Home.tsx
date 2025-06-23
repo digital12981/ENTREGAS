@@ -3,7 +3,6 @@ import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import Carousel from '@/components/Carousel';
 import InfoSection from '@/components/InfoSection';
-import JobOpeningsSection from '@/components/JobOpeningsSection';
 import BenefitsSection from '@/components/BenefitsSection';
 import FAQSection from '@/components/FAQSection';
 import CTASection from '@/components/CTASection';
@@ -64,7 +63,6 @@ const Home: React.FC = () => {
       <HeroSection />
       <Carousel />
       <InfoSection />
-      <JobOpeningsSection />
       <BenefitsSection />
       <FAQSection />
       <CTASection />

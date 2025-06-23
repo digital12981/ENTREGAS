@@ -58,7 +58,6 @@ const Carousel: React.FC = () => {
       <div className="carousel-inner" ref={carouselInnerRef}>
         {slides.map((slide, index) => (
           <div className="carousel-item" key={index}>
-            <img src={slide.url} alt={slide.alt} className="w-full" />
           </div>
         ))}
       </div>

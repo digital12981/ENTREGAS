@@ -90,7 +90,6 @@ const JobOpeningsSection: React.FC = () => {
         ) : (
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 divide-y-[5px] sm:divide-y-0 sm:divide-x-[5px] divide-gray-200">
-              
               {processedRegions.map((region, index) => {
                 const hasVacancies = region.vacancies > 0;
                 const isUserState = 'isUserState' in region && region.isUserState;
@@ -130,7 +129,6 @@ const JobOpeningsSection: React.FC = () => {
                   </div>
                 );
               })}
-              
             </div>
           </div>
         )}
