@@ -455,15 +455,15 @@ const Entrega: React.FC = () => {
                         />
                       ) : (
                         <div className="bg-gray-50 p-4 rounded-md">
-                          <p className="text-gray-600">Carregando dados do entregador...</p>
+                          <p className="body-text">Carregando dados do entregador...</p>
                         </div>
                       )}
                     </div>
                     
                     <div>
-                      <h4 className="text-gray-700 font-medium mb-2">Próximos Passos</h4>
+                      <h4 className="heading mb-2">Próximos Passos</h4>
                       <div className="bg-gray-50 p-4 rounded-md">
-                        <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                        <ul className="list-disc pl-5 space-y-1 body-text">
                           <li>Adquirir Kit de Segurança oficial</li>
                           <li>Aguardar entrega em até 5 dias úteis</li>
                           <li>Começar a receber entregas na sua região</li>

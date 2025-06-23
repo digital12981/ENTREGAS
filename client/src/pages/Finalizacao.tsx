@@ -124,12 +124,12 @@ const Finalizacao: React.FC = () => {
                         />
                       </div>
                       <div className="w-full md:w-3/5">
-                        <h4 className="text-lg font-medium mb-3">Kit Completo de Segurança</h4>
-                        <p className="text-gray-600 mb-4">
+                        <h4 className="heading mb-3">Kit Completo de Segurança</h4>
+                        <p className="body-text mb-4">
                           Para garantir sua segurança durante as entregas, a Shopee exige que todos os entregadores 
                           utilizem equipamentos de proteção individual. O kit inclui:
                         </p>
-                        <ul className="list-disc pl-5 mb-4 space-y-1 text-gray-700">
+                        <ul className="list-disc pl-5 mb-4 space-y-1 body-text">
                           <li>2 Coletes refletivos com identificação Shopee (laranja e amarelo)</li>
                           <li>Par de luvas de proteção</li>
                           <li>Botas de segurança antiderrapantes</li>

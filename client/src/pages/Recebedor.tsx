@@ -185,7 +185,7 @@ const Recebedor: React.FC = () => {
         <div className="w-full mx-auto p-6 mb-8">
           <h1 className="title text-center mb-8">Método de Recebimento</h1>
           
-          <p className="text-center text-gray-600 mb-8">
+          <p className="body-text text-center mb-8">
             Como você deseja receber os pagamentos das suas entregas?
           </p>
           
