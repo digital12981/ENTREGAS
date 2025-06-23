@@ -140,21 +140,39 @@ p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
   * {
     @apply border-border;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
   }
 
   html, body {
     @apply bg-background text-foreground;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     box-sizing: border-box;
+  }
+  
+  #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block;
   }
   
   h1, h2, h3, h4, h5, h6, p, span, div, button, input, label, a, li, td, th {
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
+}
+
+/* Remove qualquer espaço no topo */
+body > div:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+header:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Uber Custom Styles */
