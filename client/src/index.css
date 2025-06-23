@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Importando a fonte Rawline */
-@import url('/fonts/rawline/rawline.css');
+/* Importando as fontes do Uber */
+@import url('/fonts/uber/uber-fonts.css');
 
 /* Estilização personalizada da barra de rolagem */
 .custom-scrollbar::-webkit-scrollbar {
@@ -15,65 +15,65 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #E83D2280;
+  background-color: #00000080;
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #E83D22;
+  background-color: #000000;
 }
 
 /* Estilos personalizados para o campo de CEP */
 .cep-input:focus {
   outline: none !important;
-  border-color: #E83D22 !important;
-  box-shadow: 0 0 0 1px #E83D22 !important;
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 1px #000000 !important;
 }
 
 :root {
   --background: 0 0% 100%;
-  --foreground: 20 14.3% 4.1%;
-  --muted: 60 4.8% 95.9%;
-  --muted-foreground: 25 5.3% 44.7%;
+  --foreground: 0 0% 9%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
   --popover: 0 0% 100%;
-  --popover-foreground: 20 14.3% 4.1%;
+  --popover-foreground: 0 0% 9%;
   --card: 0 0% 100%;
-  --card-foreground: 20 14.3% 4.1%;
-  --border: 20 5.9% 90%;
-  --input: 20 5.9% 90%;
-  --primary: 207 90% 54%;
-  --primary-foreground: 211 100% 99%;
-  --secondary: 60 4.8% 95.9%;
-  --secondary-foreground: 24 9.8% 10%;
-  --accent: 60 4.8% 95.9%;
-  --accent-foreground: 24 9.8% 10%;
+  --card-foreground: 0 0% 9%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --primary: 0 0% 0%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 9%;
   --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 60 9.1% 97.8%;
-  --ring: 20 14.3% 4.1%;
-  --radius: 0.5rem;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 0 0% 9%;
+  --radius: 0.375rem;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --primary: 207 90% 54%;
-  --primary-foreground: 211 100% 99%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
+  --background: 0 0% 9%;
+  --foreground: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 100%;
+  --card: 0 0% 9%;
+  --card-foreground: 0 0% 100%;
+  --border: 0 0% 15%;
+  --input: 0 0% 15%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 9%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --ring: 240 4.9% 83.9%;
-  --radius: 0.5rem;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 0 0% 83.9%;
+  --radius: 0.375rem;
 }
 
 @layer base {
@@ -83,27 +83,30 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    font-family: 'Rawline', 'Poppins', sans-serif;
+    font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
-/* Shopee Custom Styles */
-.bg-shopee {
-  background-color: #EE4D2D;
+/* Uber Custom Styles */
+.bg-uber {
+  background-color: #000000;
 }
-.bg-custom-orange {
-  background-color: #EE4D2D;
+.bg-uber-green {
+  background-color: #06C167;
 }
-.text-shopee {
-  color: #EE4D2D;
+.bg-uber-light {
+  background-color: #F6F6F6;
 }
-.text-custom-orange {
-  color: #EE4D2D;
+.text-uber {
+  color: #000000;
+}
+.text-uber-green {
+  color: #06C167;
 }
 .hamburger-line {
   width: 24px;
   height: 3px;
-  background-color: #EE4D2D;
+  background-color: #000000;
   margin: 4px 0;
   transition: 0.4s;
 }
@@ -129,8 +132,8 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(238, 77, 45, 0.2);
-  color: #EE4D2D;
+  background: rgba(0, 0, 0, 0.2);
+  color: #000000;
   padding: 10px;
   text-decoration: none;
   border-radius: 50%;
@@ -148,7 +151,7 @@
 }
 ol.list-decimal > li::marker {
   font-weight: bold;
-  color: #F24A2C;
+  color: #000000;
 }
 
 /* Estilos para o modal de carregamento */
@@ -181,7 +184,7 @@ ol.list-decimal > li::marker {
 }
 
 .status-item.active .status-icon {
-  background-color: #E83D22;
+  background-color: #000000;
   color: white;
 }
 
