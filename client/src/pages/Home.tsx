@@ -58,7 +58,6 @@ const Home: React.FC = () => {
       <InfoSection />
       <BenefitsSection />
       <FAQSection />
-      <CTASection />
       <Footer />
     </div>
   );
