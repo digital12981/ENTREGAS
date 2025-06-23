@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import InfoSection from '@/components/InfoSection';
-import BenefitsSection from '@/components/BenefitsSection';
 import FAQSection from '@/components/FAQSection';
-import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import CepModal from '@/components/CepModal';
 import { useAppContext } from '@/contexts/AppContext';
@@ -56,7 +54,6 @@ const Home: React.FC = () => {
       <Header />
       <HeroSection />
       <InfoSection />
-      <BenefitsSection />
       <FAQSection />
       <Footer />
     </div>
