@@ -103,20 +103,7 @@ const Finalizacao: React.FC = () => {
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
       
-      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
-        {/* Meia-lua no canto direito */}
-        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
-        
-        <div className="flex items-center relative z-10">
-          <div className="text-white mr-3">
-            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
-          </div>
-          <div className="leading-none">
-            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
-            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
-          </div>
-        </div>
-      </div>
+
       
       <div className="flex-grow container mx-auto px-2 py-8 w-full">
         <div className="w-full mx-auto p-6 mb-8">
