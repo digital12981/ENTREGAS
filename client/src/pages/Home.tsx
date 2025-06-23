@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
-import Carousel from '@/components/Carousel';
 import InfoSection from '@/components/InfoSection';
 import BenefitsSection from '@/components/BenefitsSection';
 import FAQSection from '@/components/FAQSection';
@@ -53,7 +52,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white m-0 p-0">
       <CepModal 
         isOpen={showCepModal} 
         onClose={handleCepModalClose}
@@ -61,7 +60,6 @@ const Home: React.FC = () => {
       />
       <Header />
       <HeroSection />
-      <Carousel />
       <InfoSection />
       <BenefitsSection />
       <FAQSection />

@@ -140,11 +140,16 @@ p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
   * {
     @apply border-border;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    margin: 0;
+    padding: 0;
   }
 
-  body {
+  html, body {
     @apply bg-background text-foreground;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
   
   h1, h2, h3, h4, h5, h6, p, span, div, button, input, label, a, li, td, th {

@@ -55,12 +55,6 @@ const Carousel: React.FC = () => {
   
   return (
     <section className="carousel">
-      <div className="carousel-inner" ref={carouselInnerRef}>
-        {slides.map((slide, index) => (
-          <div className="carousel-item" key={index}>
-          </div>
-        ))}
-      </div>
       <a className="carousel-control carousel-control-prev" href="#" role="button" onClick={prevSlide}>
         <i className="fas fa-chevron-left"></i>
       </a>

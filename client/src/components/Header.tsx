@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 
 const Header: React.FC = () => {
   return (
-    <header className="bg-black">
+    <header className="bg-black w-full m-0 p-0">
       <div className="container mx-auto px-4 py-6 flex items-center justify-start">
         <Link href="/">
           <img 

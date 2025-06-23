@@ -427,7 +427,7 @@ const Entrega: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col m-0 p-0">
       <Header />
       
 
