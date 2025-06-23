@@ -52,7 +52,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="bg-white m-0 p-0">
+    <div className="bg-white">
       <CepModal 
         isOpen={showCepModal} 
         onClose={handleCepModalClose}

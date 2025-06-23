@@ -462,7 +462,7 @@ const Cadastro: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen flex flex-col m-0 p-0">
+    <div className="bg-white min-h-screen flex flex-col">
       <Header />
       
 

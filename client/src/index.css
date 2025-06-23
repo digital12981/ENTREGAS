@@ -36,8 +36,7 @@ h1, h2, h3, h4, h5, h6, .title, .heading {
 }
 
 /* Estilização para textos do corpo */
-p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
-  margin-top: 0 !important;
+p, .body-text, .text-content {
   color: #333333 !important;
   margin-bottom: 15px !important;
   margin-top: 15px !important;
@@ -53,7 +52,7 @@ p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
     color: #333333 !important;
   }
   
-  p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
+  p, .body-text, .text-content {
     font-size: 16px !important;
     line-height: 24px !important;
     color: #333333 !important;
@@ -140,23 +139,23 @@ p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
   * {
     @apply border-border;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
   }
 
-  html, body {
+  body {
     @apply bg-background text-foreground;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html {
+    margin: 0;
+    padding: 0;
   }
   
   #root {
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block;
+    margin: 0;
+    padding: 0;
   }
   
   h1, h2, h3, h4, h5, h6, p, span, div, button, input, label, a, li, td, th {
@@ -164,15 +163,10 @@ p, .body-text, .text-content, li, span, div:not(.title):not(.heading) {
   }
 }
 
-/* Remove qualquer espaço no topo */
-body > div:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-header:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
+/* Remove apenas o espaço acima da header */
+header {
+  margin-top: 0;
+  padding-top: 0;
 }
 
 /* Uber Custom Styles */
