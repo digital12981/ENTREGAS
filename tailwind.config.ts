@@ -5,9 +5,9 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontFamily: {
-      sans: ['UberMoveText', 'UberMove', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-      'uber': ['UberMove', 'UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-      'body': ['UberMoveText', 'UberMove', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      sans: ['UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+      'uber': ['UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+      'body': ['UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
     },
     extend: {
       borderWidth: {

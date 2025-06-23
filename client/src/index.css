@@ -5,13 +5,27 @@
 /* Importando as fontes do Uber */
 @import url('/fonts/uber/uber-fonts.css');
 
-/* Forçar aplicação das fontes Uber */
-html, body, * {
+/* Preload das fontes principais */
+@font-face {
+  font-family: 'UberMoveText';
+  src: url('/fonts/uber/UberMoveText-Regular_1750718678013.woff') format('woff'),
+       url('/fonts/uber/UberMoveText-Regular_1750718678011.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Forçar aplicação das fontes Uber com mais especificidade */
+html * {
+  font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body * {
   font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 /* Reset adicional para garantir que as fontes sejam aplicadas */
-.font-sans, .font-body {
+.font-sans, .font-body, h1, h2, h3, h4, h5, h6, p, span, div, button, input, label, a {
   font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
@@ -93,11 +107,11 @@ html, body, * {
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply bg-background text-foreground;
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
   
-  h1, h2, h3, h4, h5, h6, p, span, div, button, input, label {
+  h1, h2, h3, h4, h5, h6, p, span, div, button, input, label, a, li, td, th {
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
 }
