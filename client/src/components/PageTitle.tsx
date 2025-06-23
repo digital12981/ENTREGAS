@@ -5,7 +5,6 @@ const PageTitle: React.FC = () => {
     <div className="w-full bg-gray-100 py-1 px-6 flex items-center">
       <div className="flex items-center">
         <div className="mr-3">
-          {/* Usando um caractere > estilizado em vez do ícone Font Awesome */}
           <span 
             style={{
               color: '#d3d3d3',
@@ -19,8 +18,8 @@ const PageTitle: React.FC = () => {
           </span>
         </div>
         <div className="leading-none">
-          <h1 className="text-base font-bold" style={{color: '#EE4D2D'}} >Motorista Parceiro</h1>
-          <p className="text-sm mt-0" style={{transform: 'translateY(-2px)', color: '#EE4D2D'}}>Shopee</p>
+          <h1 className="text-base font-bold text-black">Motorista Parceiro</h1>
+          <p className="text-sm mt-0 text-black" style={{transform: 'translateY(-2px)'}}>Uber</p>
         </div>
       </div>
     </div>

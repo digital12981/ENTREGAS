@@ -44,7 +44,7 @@ const FAQSection: React.FC = () => {
                 onClick={() => toggleFAQ(index)}
               >
                 <h3 className="font-medium">{faq.question}</h3>
-                <i className={`fas ${faq.isOpen ? 'fa-chevron-up' : 'fa-chevron-down'} text-custom-orange`}></i>
+                <i className={`fas ${faq.isOpen ? 'fa-chevron-up' : 'fa-chevron-down'} text-black`}></i>
               </div>
               <div className="px-4 py-3" style={{ display: faq.isOpen ? 'block' : 'none' }}>
                 <p className="text-gray-600">{faq.answer}</p>

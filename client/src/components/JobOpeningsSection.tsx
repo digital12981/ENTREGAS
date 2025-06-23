@@ -80,7 +80,7 @@ const JobOpeningsSection: React.FC = () => {
         
         {isLoading ? (
           <div className="text-center py-10">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#EE4E2E] border-r-transparent"></div>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-black border-r-transparent"></div>
             <p className="mt-4 text-gray-600">Carregando vagas disponíveis...</p>
           </div>
         ) : isError ? (
@@ -106,8 +106,8 @@ const JobOpeningsSection: React.FC = () => {
                           {region.name} <span className="text-gray-500">({region.abbr})</span>
                         </span>
                       </div>
-                      <div className={`px-3 py-1 rounded-[3px] ${hasVacancies ? 'bg-[#EDCDC7] bg-opacity-50' : 'bg-gray-200'}`}>
-                        <span className={`text-sm sm:text-base font-semibold ${hasVacancies ? 'text-[#EE4E2E]' : 'text-gray-500'}`}>
+                      <div className={`px-3 py-1 rounded-[3px] ${hasVacancies ? 'bg-gray-100' : 'bg-gray-200'}`}>
+                        <span className={`text-sm sm:text-base font-semibold ${hasVacancies ? 'text-black' : 'text-gray-500'}`}>
                           {hasVacancies ? (
                             <>
                               <span className="font-bold">{region.vacancies}</span> vagas
@@ -119,7 +119,7 @@ const JobOpeningsSection: React.FC = () => {
                     <button 
                       className={`w-full ${
                         hasVacancies 
-                          ? 'bg-[#ee6c4d] hover:bg-[#e85c3a] text-white' 
+                          ? 'bg-black hover:bg-gray-800 text-white' 
                           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       } text-sm sm:text-base font-medium py-2 px-4 rounded-[3px] transition-colors duration-200 shadow-sm`}
                       disabled={!hasVacancies}
