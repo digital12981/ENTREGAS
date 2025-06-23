@@ -53,11 +53,6 @@ const Home: React.FC = () => {
 
   return (
     <div className="bg-white">
-      <CepModal 
-        isOpen={showCepModal} 
-        onClose={handleCepModalClose}
-        onConfirm={handleCepConfirm}
-      />
       <Header />
       <HeroSection />
       <InfoSection />
