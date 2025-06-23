@@ -24,8 +24,40 @@ body * {
   font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
+/* Estilização específica para títulos */
+h1, h2, h3, h4, h5, h6, .title, .heading {
+  font-family: UberMove, UberMoveText, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 36px !important;
+  font-weight: 700 !important;
+  line-height: 44px !important;
+  color: currentColor !important;
+  letter-spacing: 0 !important;
+  margin: 0 !important;
+}
+
+/* Estilização para textos do corpo */
+p, .body-text, .text-content {
+  margin-top: 0 !important;
+  color: currentColor !important;
+  margin-bottom: 15px !important;
+  margin-top: 15px !important;
+}
+
+/* Responsivo para mobile */
+@media (max-width: 767px) {
+  h1, h2, h3, h4, h5, h6, .title, .heading {
+    font-size: 24px !important;
+    line-height: 32px !important;
+  }
+  
+  p, .body-text, .text-content {
+    font-size: 16px !important;
+    line-height: 24px !important;
+  }
+}
+
 /* Reset adicional para garantir que as fontes sejam aplicadas */
-.font-sans, .font-body, h1, h2, h3, h4, h5, h6, p, span, div, button, input, label, a {
+.font-sans, .font-body, span, div, button, input, label, a {
   font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 

@@ -33,9 +33,9 @@ const BenefitsSection: React.FC = () => {
     <section className="bg-gradient-to-b from-white to-gray-50 py-16 px-4">
       <div className="container mx-auto">
         <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Vantagens de ser um Motorista Parceiro Uber</h2>
+          <h2 className="title text-gray-800 mb-3">Vantagens de ser um Motorista Parceiro Uber</h2>
           <div className="w-20 h-1 bg-black mx-auto rounded-full"></div>
-          <p className="mt-4 text-gray-600 max-w-3xl mx-auto">Junte-se a milhares de motoristas que já estão transformando seu tempo em oportunidades lucrativas</p>
+          <p className="body-text text-gray-600 max-w-3xl mx-auto">Junte-se a milhares de motoristas que já estão transformando seu tempo em oportunidades lucrativas</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -44,8 +44,8 @@ const BenefitsSection: React.FC = () => {
               <div className="text-black text-4xl mb-4 flex justify-center">
                 <i className={benefit.icon}></i>
               </div>
-              <h3 className="text-lg font-semibold mb-3 text-center">{benefit.title}</h3>
-              <p className="text-gray-600 text-center text-sm">{benefit.description}</p>
+              <h3 className="heading text-center">{benefit.title}</h3>
+              <p className="body-text text-gray-600 text-center">{benefit.description}</p>
             </div>
           ))}
         </div>
