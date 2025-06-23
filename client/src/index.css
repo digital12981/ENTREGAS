@@ -5,6 +5,16 @@
 /* Importando as fontes do Uber */
 @import url('/fonts/uber/uber-fonts.css');
 
+/* Forçar aplicação das fontes Uber */
+html, body, * {
+  font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Reset adicional para garantir que as fontes sejam aplicadas */
+.font-sans, .font-body {
+  font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 /* Estilização personalizada da barra de rolagem */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
@@ -79,6 +89,7 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
 
   body {
@@ -86,7 +97,7 @@
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
   
-  * {
+  h1, h2, h3, h4, h5, h6, p, span, div, button, input, label {
     font-family: 'UberMoveText', 'UberMove', -apple-system, BlinkMacSystemFont, sans-serif !important;
   }
 }

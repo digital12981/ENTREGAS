@@ -7,6 +7,7 @@ export default {
     fontFamily: {
       sans: ['UberMoveText', 'UberMove', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       'uber': ['UberMove', 'UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      'body': ['UberMoveText', 'UberMove', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
     },
     extend: {
       borderWidth: {
