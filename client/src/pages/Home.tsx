@@ -1,8 +1,13 @@
 import React, { useEffect } from 'react';
 import Header from '@/components/Header';
+import PageTitle from '@/components/PageTitle';
 import HeroSection from '@/components/HeroSection';
+import Carousel from '@/components/Carousel';
 import InfoSection from '@/components/InfoSection';
+import JobOpeningsSection from '@/components/JobOpeningsSection';
+import BenefitsSection from '@/components/BenefitsSection';
 import FAQSection from '@/components/FAQSection';
+import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import CepModal from '@/components/CepModal';
 import { useAppContext } from '@/contexts/AppContext';
@@ -51,10 +56,20 @@ const Home: React.FC = () => {
 
   return (
     <div className="bg-white">
+      <CepModal 
+        isOpen={showCepModal} 
+        onClose={handleCepModalClose}
+        onConfirm={handleCepConfirm}
+      />
       <Header />
+      <PageTitle />
       <HeroSection />
+      <Carousel />
       <InfoSection />
+      <JobOpeningsSection />
+      <BenefitsSection />
       <FAQSection />
+      <CTASection />
       <Footer />
     </div>
   );

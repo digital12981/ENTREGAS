@@ -5,9 +5,7 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontFamily: {
-      sans: ['UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-      'uber': ['UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-      'body': ['UberMoveText', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+      sans: ['Rawline', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
     },
     extend: {
       borderWidth: {
@@ -21,14 +19,6 @@ export default {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        uber: {
-          black: "#000000",
-          white: "#FFFFFF", 
-          green: "#06C167",
-          light: "#F6F6F6",
-          gray: "#E5E5E5",
-          'dark-gray': "#333333",
-        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

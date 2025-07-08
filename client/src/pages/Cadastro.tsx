@@ -465,11 +465,24 @@ const Cadastro: React.FC = () => {
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
       
-
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        {/* Meia-lua no canto direito */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+        
+        <div className="flex items-center relative z-10">
+          <div className="text-white mr-3">
+            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
+          </div>
+          <div className="leading-none">
+            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
+          </div>
+        </div>
+      </div>
       
       <div className="flex-grow container mx-auto px-2 py-8 w-full">
         <div className="w-full mx-auto p-6 mb-8">
-          <h1 className="title text-center mb-8">Cadastro de Entregador Parceiro</h1>
+          <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">Cadastro de Entregador Parceiro</h1>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
@@ -550,15 +563,15 @@ const Cadastro: React.FC = () => {
                     onClick={() => setTipoVeiculo(TipoVeiculo.CARRO)}
                     className={`flex flex-col items-center justify-center p-6 ${
                       tipoVeiculo === TipoVeiculo.CARRO
-                        ? 'border-black border-3 bg-gray-50'
+                        ? 'border-[#E83D22] border-3 bg-[#FFF8F6]'
                         : 'border-gray-200 border-2 bg-white hover:bg-gray-50'
                     } rounded-lg transition-colors`}
                   >
                     <div className="mb-3 h-24 flex items-center justify-center">
-                      <img src={shopeeCarsImage} alt="Carros Uber" className="h-full w-auto object-contain" />
+                      <img src={shopeeCarsImage} alt="Carros Shopee" className="h-full w-auto object-contain" />
                     </div>
                     <span className={`font-medium ${
-                      tipoVeiculo === TipoVeiculo.CARRO ? 'text-black' : 'text-gray-700'
+                      tipoVeiculo === TipoVeiculo.CARRO ? 'text-[#E83D22]' : 'text-gray-700'
                     }`}>
                       Carro
                     </span>
@@ -569,15 +582,15 @@ const Cadastro: React.FC = () => {
                     onClick={() => setTipoVeiculo(TipoVeiculo.MOTO)}
                     className={`flex flex-col items-center justify-center p-6 ${
                       tipoVeiculo === TipoVeiculo.MOTO
-                        ? 'border-black border-3 bg-gray-50'
+                        ? 'border-[#E83D22] border-3 bg-[#FFF8F6]'
                         : 'border-gray-200 border-2 bg-white hover:bg-gray-50'
                     } rounded-lg transition-colors`}
                   >
                     <div className="mb-3 h-20 flex items-center justify-center">
-                      <img src={shopeeMotoImage} alt="Moto Uber" className="h-full object-contain" />
+                      <img src={shopeeMotoImage} alt="Moto Shopee" className="h-full object-contain" />
                     </div>
                     <span className={`font-medium ${
-                      tipoVeiculo === TipoVeiculo.MOTO ? 'text-black' : 'text-gray-700'
+                      tipoVeiculo === TipoVeiculo.MOTO ? 'text-[#E83D22]' : 'text-gray-700'
                     }`}>
                       Moto
                     </span>
@@ -587,8 +600,8 @@ const Cadastro: React.FC = () => {
 
               <div className="pt-2">
                 {/* Opção de Carro alugado */}
-                <div className="p-4 mb-6 bg-gray-50 border border-gray-200 rounded-md">
-                  <h3 className="font-medium text-black mb-2">Opção para Veículo Alugado</h3>
+                <div className="p-4 mb-6 bg-[#FFF8F6] border border-[#E83D2230] rounded-md">
+                  <h3 className="font-medium text-[#E83D22] mb-2">Opção para Veículo Alugado</h3>
                   <p className="text-gray-700 text-sm mb-3">
                     Se você trabalha com um veículo alugado ou emprestado, selecione esta opção 
                     para prosseguir sem a necessidade de informar a placa do veículo.
@@ -599,11 +612,11 @@ const Cadastro: React.FC = () => {
                       type="checkbox"
                       checked={isRentedCar}
                       onChange={handleRentedCarChange}
-                      className="w-5 h-5 text-black rounded border-gray-300 focus:ring-black"
+                      className="w-5 h-5 text-[#E83D22] rounded border-gray-300 focus:ring-[#E83D22]"
                     />
                     <label
                       htmlFor="isRentedCar"
-                      className="ml-2 text-base font-bold text-black leading-tight"
+                      className="ml-2 text-base font-bold text-[#E83D22] leading-tight"
                     >
                       Estou utilizando um veículo alugado ou emprestado
                     </label>
@@ -629,7 +642,7 @@ const Cadastro: React.FC = () => {
                       />
                       {isLoadingVehicleInfo && (
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          <div className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></div>
+                          <div className="animate-spin h-4 w-4 border-2 border-[#E83D22] border-t-transparent rounded-full"></div>
                         </div>
                       )}
                     </div>
@@ -688,7 +701,7 @@ const Cadastro: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full bg-black hover:bg-gray-800 text-white font-medium py-6 text-base rounded-[3px]"
+              className="w-full bg-[#E83D22] hover:bg-[#d73920] text-white font-medium py-6 text-base rounded-[3px]"
               disabled={isSubmitting}
               style={{ height: '50px' }}
             >
@@ -711,7 +724,7 @@ const Cadastro: React.FC = () => {
           "Analisando disponibilidade na região",
           "Verificando histórico de entregas"
         ]}
-        completionMessage="Seus dados foram validados com sucesso! Você está apto a ser um Entregador Parceiro Uber."
+        completionMessage="Seus dados foram validados com sucesso! Você está apto a ser um Entregador Parceiro Shopee."
         loadingTime={7000}
       />
     </div>

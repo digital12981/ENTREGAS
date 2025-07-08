@@ -66,9 +66,9 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
           {/* Loader */}
           {!isComplete && (
             <div className="flex space-x-2 mb-8 fixed top-1/4">
-              <div className="loading-dot w-3 h-3 bg-black rounded-full"></div>
-              <div className="loading-dot w-3 h-3 bg-black rounded-full"></div>
-              <div className="loading-dot w-3 h-3 bg-black rounded-full"></div>
+              <div className="loading-dot w-3 h-3 bg-[#E83D22] rounded-full"></div>
+              <div className="loading-dot w-3 h-3 bg-[#E83D22] rounded-full"></div>
+              <div className="loading-dot w-3 h-3 bg-[#E83D22] rounded-full"></div>
             </div>
           )}
           
@@ -83,7 +83,7 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
                   id={`status${index+1}`} 
                   className={`status-item flex items-center p-2 bg-gray-100 rounded-lg ${index <= currentStep ? 'active' : ''}`}
                 >
-                  <div className={`status-icon bg-gray-300 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 ${index <= currentStep ? 'bg-black' : ''}`}>
+                  <div className={`status-icon bg-gray-300 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 ${index <= currentStep ? 'bg-[#E83D22]' : ''}`}>
                     {index < currentStep ? (
                       <i className="fas fa-check text-sm"></i>
                     ) : (

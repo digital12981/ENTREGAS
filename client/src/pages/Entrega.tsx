@@ -430,7 +430,20 @@ const Entrega: React.FC = () => {
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
       
-
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        {/* Meia-lua no canto direito */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+        
+        <div className="flex items-center relative z-10">
+          <div className="text-white mr-3">
+            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
+          </div>
+          <div className="leading-none">
+            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
+          </div>
+        </div>
+      </div>
       
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="w-full max-w-4xl mx-auto">
@@ -455,15 +468,15 @@ const Entrega: React.FC = () => {
                         />
                       ) : (
                         <div className="bg-gray-50 p-4 rounded-md">
-                          <p className="body-text">Carregando dados do entregador...</p>
+                          <p className="text-gray-600">Carregando dados do entregador...</p>
                         </div>
                       )}
                     </div>
                     
                     <div>
-                      <h4 className="heading mb-2">Próximos Passos</h4>
+                      <h4 className="text-gray-700 font-medium mb-2">Próximos Passos</h4>
                       <div className="bg-gray-50 p-4 rounded-md">
-                        <ul className="list-disc pl-5 space-y-1 body-text">
+                        <ul className="list-disc pl-5 space-y-1 text-gray-600">
                           <li>Adquirir Kit de Segurança oficial</li>
                           <li>Aguardar entrega em até 5 dias úteis</li>
                           <li>Começar a receber entregas na sua região</li>

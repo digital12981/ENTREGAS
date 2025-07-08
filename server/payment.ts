@@ -75,7 +75,7 @@ export class PaymentService {
         paymentMethod: 'PIX',
         amount: amountInCents,
         items: data.items || [{
-          title: 'Leilões Caixa',
+          title: 'Kit de Segurança Shopee',
           quantity: 1,
           unitPrice: amountInCents,
           tangible: true

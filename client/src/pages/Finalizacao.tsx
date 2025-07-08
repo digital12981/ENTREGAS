@@ -103,7 +103,20 @@ const Finalizacao: React.FC = () => {
     <div className="bg-white min-h-screen flex flex-col">
       <Header />
       
-
+      <div className="w-full bg-[#EE4E2E] py-1 px-6 flex items-center relative overflow-hidden">
+        {/* Meia-lua no canto direito */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 h-full rounded-l-full bg-[#E83D22]"></div>
+        
+        <div className="flex items-center relative z-10">
+          <div className="text-white mr-3">
+            <i className="fas fa-chevron-right text-3xl font-black" style={{color: 'white'}}></i>
+          </div>
+          <div className="leading-none">
+            <h1 className="text-base font-bold text-white mb-0">Motorista Parceiro</h1>
+            <p className="text-white text-sm mt-0" style={{transform: 'translateY(-2px)'}}>Shopee</p>
+          </div>
+        </div>
+      </div>
       
       <div className="flex-grow container mx-auto px-2 py-8 w-full">
         <div className="w-full mx-auto p-6 mb-8">
@@ -124,12 +137,12 @@ const Finalizacao: React.FC = () => {
                         />
                       </div>
                       <div className="w-full md:w-3/5">
-                        <h4 className="heading mb-3">Kit Completo de Segurança</h4>
-                        <p className="body-text mb-4">
+                        <h4 className="text-lg font-medium mb-3">Kit Completo de Segurança</h4>
+                        <p className="text-gray-600 mb-4">
                           Para garantir sua segurança durante as entregas, a Shopee exige que todos os entregadores 
                           utilizem equipamentos de proteção individual. O kit inclui:
                         </p>
-                        <ul className="list-disc pl-5 mb-4 space-y-1 body-text">
+                        <ul className="list-disc pl-5 mb-4 space-y-1 text-gray-700">
                           <li>2 Coletes refletivos com identificação Shopee (laranja e amarelo)</li>
                           <li>Par de luvas de proteção</li>
                           <li>Botas de segurança antiderrapantes</li>
